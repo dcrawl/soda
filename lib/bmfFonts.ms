@@ -8,7 +8,7 @@
 
 if not globals.hasIndex("hex2") then
 	if not globals.hasIndex("stringUtil") then import "stringUtil"
-	hex2 = @stringUtil.hexStr
+	globals.hex2 = @stringUtil.hexStr
 end if		
 
 // CharData class, storing data about just one character in a particular font.
