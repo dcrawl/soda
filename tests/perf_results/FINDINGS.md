@@ -463,6 +463,60 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
   now all fixed, the only §4.3 items still open are the bug checks noted
   below.
 
+### §4.3 bug checks
+
+Four suspects from the plan's original PixelDisplay read-through (§4.3),
+investigated this session:
+
+- **`clear`'s possible double-free of an `autoUnload`-created render
+  texture on resize — not a bug.** `clear` calls
+  `rl.UnloadRenderTexture self._renderTex` by hand on a texture that was
+  originally wrapped with `autoUnload`, raising the question of whether the
+  GC later unloads it a second time when it collects the (by-then-orphaned)
+  old texture object. Read `raylib-miniscript`'s binding layer
+  (`RaylibTypes.h`'s `TakeResource`, used by every `Unload*` intrinsic): a
+  manual unload empties the resource box and sets `box->live = false`;
+  the `autoUnload` finalizer (`FinalizeResource`, `RaylibTypes.cpp`) only
+  queues a real GPU unload when `box->live && box->autoUnload` — so a
+  manually-unloaded-then-GC'd box is just freed as a C++ wrapper, never
+  double-unloaded at the GPU level. Verified empirically too: created a
+  `PixelDisplay`, forced its texture into existence, called `clear` with a
+  different size 20 times in a row (every call hits the resize-and-replace
+  path), forced GC pressure, and checked `resourceCounts.RenderTexture`
+  throughout — stayed at exactly 1 (plus the 8 baseline render textures
+  already in use) the whole time: no leak, no crash, no double-free.
+- **`clear(color)` with no size resets a non-960×640 display to 960×640 —
+  confirmed real bug.** `PixelDisplay.clear = function(color=null,
+  width=960, height=640)` hardcodes the Mini-Micro-screen-sized default
+  instead of defaulting to the display's *current* size. Reproduced: a
+  `PixelDisplay.Make(100, 50)` instance, after a bare `d.clear` with no
+  arguments, reports `d.width`/`d.height` as `960`/`640` — silently
+  resizing (and blanking) any custom-sized display the moment code calls
+  `clear` to, say, just change the background color. This is very likely
+  unintended (nothing else in the API resizes as a side effect of an
+  unrelated call) and worth fixing: default `width`/`height` to `null` and
+  fall back to `self.width`/`self.height` when not given, matching how
+  every other optional-dimension method in this file already behaves.
+- **`render`'s "NULL `_renderTex`!" print-then-dereference — already
+  fixed upstream, not reproducible.** The plan's note refers to a specific
+  line in the pre-sync code snapshot; the current `render` (after the
+  Session 1 upstream sync) simply does `if self._renderTex == null then
+  return` with no print statement and no dereference afterward. Closed,
+  same as S-P3/S-P4.
+- **`setClip`/`clearClip` edge behavior — no crashes or corruption found.**
+  Tried: a clip with negative width/height (no crash; the fillRect painted
+  through unclipped rather than being hidden or erroring — raylib's
+  `BeginScissorMode` evidently treats a degenerate scissor rect as a no-op
+  rather than clipping everything, which isn't obviously wrong but isn't
+  specified anywhere either), a clip rectangle placed entirely outside the
+  display (correctly blocks all drawing, no crash), a clip covering exactly
+  the whole display (draws normally, including the corner pixels), `line`
+  with `penSize` 0 and negative (no crash either way), and drawing
+  (`fillRect`/`setPixel`) with coordinates entirely off-display (no
+  crash). No fix needed; the negative-size-clip behavior is a minor
+  unspecified edge case, not a correctness bug, and isn't pursued further
+  without a Mini Micro reference to compare against.
+
 ### Not yet done (left for next session)
 
 - §4.1's "idle display stack" cost and the `display(5).mode = displayMode.off`
@@ -473,10 +527,11 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
   scenarios: next session, per §8 step 2. (§4.3 PixelDisplay is now
   re-verified and measured, above, ahead of the rest of Tier A.)
 - §9 binding overhead and §10 VM profiling: later sessions, per §8 steps 5–6.
-- §4.3's bug checks (not yet done): `clear`'s possible double-free of an
-  `autoUnload`-created render texture on resize, the non-960×640 resize
-  default, `render`'s "NULL _renderTex!" dereference-after-print, and
-  `setClip`/`clearClip` edge behavior.
+- §4.3's bug checks are done (see above): three closed (double-free isn't
+  real, the NULL-dereference print was already fixed upstream, setClip/
+  clearClip edges don't crash), one confirmed real and not yet fixed —
+  `clear`'s hardcoded 960×640 default silently resizes any custom-sized
+  display.
 - S-P1's fix (`beginBatch`/`endBatch`, ~35× speedup measured, see above) is
   merged into `Fixes` (commit `16e6ced`, cherry-picked from
   `perf/fix-pixelDisplay-batch`'s `8df7753`) and pushed to `origin/Fixes`.
