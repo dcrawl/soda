@@ -239,19 +239,82 @@ iterate a snapshot (`_playingSounds[:]`) instead of the live list. Verified:
 `Fixes` at the user's request; `perf/bug-sound-stopall` deleted. Not pushed
 to `origin`, and not yet proposed upstream to `main`/JoeStrout.
 
+### §4.3 PixelDisplay — re-verification of S-P1–S-P5 against the synced code
+
+The sync pulled in four of JoeStrout's own pixel/color optimization commits
+(`fe30532`, `67ba779`, `e24b598`, `2d1abbc`, all 2026-11-04) that directly
+touch three of the five plan suspects. Re-read `lib/PixelDisplay.ms` and
+`lib/color.ms` against those diffs, then measured all five with a new
+benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
+`build-release`). Raw numbers: `perf_results/perf_pixelDisplay.run1.csv`.
+
+- **S-P3 (`pixel()` full-texture readback) — closed, fixed upstream.**
+  `fe30532`/`2d1abbc` added `_pixCache`: a lazily-rebuilt `RawData` CPU copy
+  of the render texture (`rl.rlReadTexturePixels`, not `LoadImageFromTexture`
+  + `GetImageColor`), read directly with `.int(...)` and a 4096-entry
+  int→hex-string memo (`_intToHex`). Measured: repeated `pixel()` reads
+  **0.0024 ms/call**; `pixel()` interleaved with `setPixel()` (the
+  flood-fill pattern this cache exists for) **0.0049 ms/call**. Both
+  negligible. No further action.
+- **S-P4 (`colorToList` parsing every call) — closed, fixed upstream.**
+  `e24b598`/`2d1abbc` removed `colorToList`/`colorFromList` entirely from
+  `PixelDisplay.ms`'s hot paths; `color.ms`'s `fromList`/`rgb`/`rgba` now use
+  a frozen 256-entry `_hexByte` lookup table instead of per-channel
+  `floor`/`%`/string-concat, and `PixelDisplay.pixel`'s int→hex conversion
+  reuses the same table via `_intToHex`. Not independently re-measured
+  (S-P3's numbers already include whatever's left of this path) — no
+  further action.
+- **S-P1 (per-call `BeginTextureMode`/`EndTextureMode`) — still open; NOT
+  fixed by the sync for the plan's actual workload.** `2d1abbc` added a
+  cache fast path to `setPixel` that skips the GPU bracket entirely — but
+  only once `_pixCache` is non-null, which only happens after a `pixel()`
+  call. A plain loop of consecutive `setPixel` calls (the plan's literal
+  workload: "a loop of 10 000 `setPixel` calls") never populates the cache,
+  so it still takes the `_beginDraw`/`_endDraw` bracket every call. Measured
+  **~0.098 ms/call**, flat across N = 1/100/1 000/10 000 (no amortization) —
+  for N = 10 000 that's **~1 second** of wall time for one `setPixel` loop,
+  well past "catastrophic" for a 16.67 ms frame budget. `fillRect` (which
+  has no cache path at all) measured identically, ~0.097–0.098 ms/call,
+  confirming the bracket itself, not color conversion, is the cost. Still
+  the top-priority target per §8 step 3's ordering (S-T1 → **S-P1** → ...).
+  A fix should batch consecutive calls to the *same* display (track "are we
+  already inside a `_beginDraw` bracket for this display" rather than
+  requiring the specific pixel-cache precondition), not just extend the
+  flood-fill-shaped cache trick to more call sites.
+- **S-P2 (`drawImage`/`patternFill` upload-per-call) — still open,
+  unchanged by the sync.** Measured **~0.08–0.10 ms/call for 16×16**,
+  **~0.12–0.14 ms/call for 256×256**, flat across N = 1/10/100 (no
+  amortization, as expected — nothing is cached). The 16×→256× size jump
+  (256× the pixel data) only costs ~30–40% more, confirming the fixed
+  `LoadTextureFromImage`/`UnloadTexture` churn dominates over the actual
+  upload size — a fix that caches the GPU texture on the `Image` (the plan's
+  suggestion: reuse `img.texture`) should erase nearly all of this cost
+  rather than just scaling better with image size.
+- **S-P5 (`_triangulate` O(n²) or worse) — still open, confirmed
+  super-linear, unchanged by the sync.** Measured `fillPoly` on regular
+  convex polygons: 5 verts **0.090 ms**, 20 verts **0.267 ms**, 100 verts
+  **1.612 ms**, 500 verts **18.29 ms** per call. 5→100 verts (20×) costs
+  ~18×; 100→500 verts (5×) costs ~11× — consistent with worse-than-O(n²)
+  growth (the ear-finding inner loop is itself O(n) per candidate, scanning
+  all reflex vertices, inside an O(n) outer loop per ear removed). A single
+  500-vertex `fillPoly` call alone (18.29 ms) exceeds the entire 16.67 ms
+  frame budget. Second-priority fix candidate behind S-P1 per §8 step 3.
+
 ### Not yet done (left for next session)
 
 - §4.1's "idle display stack" cost and the `display(5).mode = displayMode.off`
   fill-rate-floor comparison, and the `wait` timing-accuracy checks (0.1s/1s/5s),
   are additional 4.1 workloads not yet built — only the fixed per-frame engine
   cost via `perf.frames` was covered this session.
-- Baselines for the rest of Tier A (§4.2–4.11) and the §5 integration
-  scenarios: next session, per §8 step 2.
+- Baselines for the rest of Tier A (§4.2, §4.4–§4.11) and the §5 integration
+  scenarios: next session, per §8 step 2. (§4.3 PixelDisplay is now
+  re-verified and measured, above, ahead of the rest of Tier A.)
 - §9 binding overhead and §10 VM profiling: later sessions, per §8 steps 5–6.
-- Re-verify §4.3 PixelDisplay suspects (S-P1 through S-P5) against the
-  current code before baselining — `fe30532`/`67ba779`/`e24b598`/`2d1abbc`
-  (pulled in by the unplanned sync above) touch pixel/color code paths the
-  plan's suspects were written against commit `0d6276b`, before those
-  changes landed.
+- §4.3's bug checks (not yet done): `clear`'s possible double-free of an
+  `autoUnload`-created render texture on resize, the non-960×640 resize
+  default, `render`'s "NULL _renderTex!" dereference-after-print, and
+  `setClip`/`clearClip` edge behavior.
+- S-P1 and S-P2 (still open, see above) are now the plan's top two
+  prototype-fix candidates for a future session, per §8 step 3's ordering.
 - `perf/bug-sound-stopall` is merged into `Fixes` locally but not pushed,
   and not yet proposed upstream to JoeStrout's `main`.
