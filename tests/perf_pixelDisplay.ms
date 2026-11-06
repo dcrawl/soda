@@ -43,6 +43,29 @@ for N in [1, 100, 1000, 10000]
 	end function, N
 end for
 
+// --- S-P1 fix: the same setPixel/fillRect calls, but wrapped in a single
+// beginBatch/endBatch bracket spanning the whole measurement, so the
+// framebuffer bind/unbind happens once instead of once per call. n=N here
+// (not 1), so these are still genuine per-call numbers, comparable to the
+// unbatched ones above -- just measured while one bracket stays open. ---
+for N in [1, 100, 1000, 10000]
+	d.beginBatch
+	perf.timeit "px_setPixel_batched", N, function()
+		d.setPixel counter.x, counter.y, "#FF0000FF"
+		bumpXY
+	end function, N
+	d.endBatch
+end for
+
+for N in [1, 100, 1000, 10000]
+	d.beginBatch
+	perf.timeit "px_fillRect_1x1_batched", N, function()
+		d.fillRect counter.x, counter.y, 1, 1, "#00FF00FF"
+		bumpXY
+	end function, N
+	d.endBatch
+end for
+
 // --- S-P3: pixel() reads, after a draw invalidates the cache each time vs
 // repeated reads that reuse one cached readback ---
 perf.timeit "px_pixel_repeatedRead", 1000, function()

@@ -264,23 +264,54 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
   reuses the same table via `_intToHex`. Not independently re-measured
   (S-P3's numbers already include whatever's left of this path) — no
   further action.
-- **S-P1 (per-call `BeginTextureMode`/`EndTextureMode`) — still open; NOT
-  fixed by the sync for the plan's actual workload.** `2d1abbc` added a
-  cache fast path to `setPixel` that skips the GPU bracket entirely — but
-  only once `_pixCache` is non-null, which only happens after a `pixel()`
-  call. A plain loop of consecutive `setPixel` calls (the plan's literal
-  workload: "a loop of 10 000 `setPixel` calls") never populates the cache,
-  so it still takes the `_beginDraw`/`_endDraw` bracket every call. Measured
-  **~0.098 ms/call**, flat across N = 1/100/1 000/10 000 (no amortization) —
-  for N = 10 000 that's **~1 second** of wall time for one `setPixel` loop,
-  well past "catastrophic" for a 16.67 ms frame budget. `fillRect` (which
-  has no cache path at all) measured identically, ~0.097–0.098 ms/call,
-  confirming the bracket itself, not color conversion, is the cost. Still
-  the top-priority target per §8 step 3's ordering (S-T1 → **S-P1** → ...).
-  A fix should batch consecutive calls to the *same* display (track "are we
-  already inside a `_beginDraw` bracket for this display" rather than
-  requiring the specific pixel-cache precondition), not just extend the
-  flood-fill-shaped cache trick to more call sites.
+- **S-P1 (per-call `BeginTextureMode`/`EndTextureMode`) — confirmed still
+  open by the sync, then prototyped and fixed on `perf/fix-pixelDisplay-batch`
+  (commit pending).** `2d1abbc` added a cache fast path to `setPixel` that
+  skips the GPU bracket entirely — but only once `_pixCache` is non-null,
+  which only happens after a `pixel()` call. A plain loop of consecutive
+  `setPixel` calls (the plan's literal workload: "a loop of 10 000 `setPixel`
+  calls") never populates the cache, so it still took the full
+  `_beginDraw`/`_endDraw` bracket every call: measured **~0.098 ms/call**,
+  flat across N = 1/100/1 000/10 000 (no amortization) — for N = 10 000
+  that's **~1 second** of wall time for one `setPixel` loop. `fillRect`
+  (which has no cache path at all) measured identically, ~0.097–0.098
+  ms/call.
+
+  **Root cause was narrower than the plan's hypothesis.** A raw isolation
+  test (`rl.BeginTextureMode`/`rl.EndTextureMode` with nothing drawn in
+  between) measured **0.0011 ms/call** — cheap. `rl.DrawPixel` alone, with
+  no texture-mode bracket, measured **0.0006 ms/call** — also cheap.
+  Only the *combination* — a draw call issued between `BeginTextureMode`
+  and `EndTextureMode` — was expensive. Narrowing further: the blend-mode
+  bracket (`rl.BeginBlendMode`/`rl.EndBlendMode`, which every `PixelDisplay`
+  draw call also opens and closes around itself) produces the same effect
+  on its own, independent of texture mode. Both are session-ending GPU
+  state changes that force raylib's internal render batch to flush
+  immediately whenever a draw happened since the bracket opened; with
+  nothing drawn, there's nothing to flush, so the bracket itself is cheap.
+  **Both brackets, not just the texture-mode one, needed batching.**
+
+  Fixed by adding `PixelDisplay.beginBatch([alphaBlend])` /
+  `PixelDisplay.endBatch()`: while a batch is open, `_beginDraw`/`_endDraw`
+  skip re-issuing `BeginTextureMode`/`EndTextureMode` *and*
+  `BeginBlendMode`/`EndBlendMode` (falls back to a normal, correctness-safe
+  per-call blend-mode switch if one call's `alphaBlend` doesn't match what
+  the batch set up — e.g. mixing `print` into a non-alpha batch). Calls
+  nest (only the outermost pair opens/closes the brackets). Verified
+  correct with a new regression test, `tests/qa_pixelDisplay_batch.ms`:
+  `PixelDisplay.runUnitTests` still passes, and a batched sequence of
+  `setPixel`/`fillRect`/`line` draws the identical pixels (compared via
+  `pixel()`) as the same calls unbatched, including a stray unmatched
+  `endBatch` (no-op) and nested `beginBatch`/`endBatch` pairs.
+
+  Measured: wrapping the same `setPixel`/`fillRect` loops in
+  `beginBatch`/`endBatch` dropped **~0.098 ms/call → ~0.0028 ms/call**, a
+  **~35×** speedup, flat across N — for N = 10 000, ~1 s → **~28 ms**.
+  Consistent across 3 runs. This was the top-priority target per §8 step
+  3's ordering (S-T1 → **S-P1** → ...); not yet merged into `Fixes` or
+  wired into any `lib/*.ms` caller (e.g. a future `TileDisplay`/
+  `SpriteDisplay` hot loop, or Soda user code) — that's a follow-up, not
+  part of this prototype.
 - **S-P2 (`drawImage`/`patternFill` upload-per-call) — still open,
   unchanged by the sync.** Measured **~0.08–0.10 ms/call for 16×16**,
   **~0.12–0.14 ms/call for 256×256**, flat across N = 1/10/100 (no
@@ -314,7 +345,12 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
   `autoUnload`-created render texture on resize, the non-960×640 resize
   default, `render`'s "NULL _renderTex!" dereference-after-print, and
   `setClip`/`clearClip` edge behavior.
-- S-P1 and S-P2 (still open, see above) are now the plan's top two
-  prototype-fix candidates for a future session, per §8 step 3's ordering.
+- S-P1 is prototyped and fixed on `perf/fix-pixelDisplay-batch`
+  (`beginBatch`/`endBatch`, ~35× speedup measured, see above) but not yet
+  merged into `Fixes`, and no `lib/*.ms` caller has been updated to use it
+  yet (it's an opt-in API addition, not a behavior change to any existing
+  method). S-P2 (`drawImage`/`patternFill` upload-per-call) is still open
+  and is now the plan's next prototype-fix candidate per §8 step 3's
+  ordering.
 - `perf/bug-sound-stopall` is merged into `Fixes` locally but not pushed,
   and not yet proposed upstream to JoeStrout's `main`.
