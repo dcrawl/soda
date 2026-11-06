@@ -609,3 +609,9 @@ Root cause: the glyph shader takes fore/back colors as uniforms, so it was bound
 - Measured (`perf_results/perf_text.afterSP-T1.csv`): full 68x26 screen 420 -> 28-33 ms/frame (~13-15x); 160x100 grid 4000 -> 250 ms (~16x). Remaining ~17 us/glyph is the MiniScript render loop (S-T2 color.toList per glyph, srcRect list, S-T4 no dirty flag) - next candidates.
 - Not pushed, no PR yet. Also on `Fixes2`: the `color.fromList` fix (1135063).
 
+### TextDisplay wrap-up (§4.5) — S-T2 fixed, S-T4 deliberately not done
+- **S-T2 fixed** (`Fixes2` c8e17a6): `ScreenFont.drawChar` cached `color.toList` results per color string (a string parse cost ~6 us, twice per glyph) and glyph source rects per code point; `TextDisplay.render` tests for blank/transparent cells first and hoists loop invariants. Output unchanged (`qa_screenfont_draw.ms` passes). Full 68x26 screen: 33 -> 8-12 ms; 160x100: 250 -> 63 ms; empty TextDisplay ~0.68 -> ~0.47 ms. Cumulative since baseline: ~420 -> ~8-12 ms (35-50x) and 4000 -> 63 ms (160x100). Data: `perf_text.afterSP-T1.csv`, `perf_text.afterSP-T2.csv`.
+- **S-T4 (dirty flag / offscreen cache) not done, on purpose:** a cache would take full-screen text from ~10 ms to ~0.1 ms, but cells are plain public maps that callers (e.g. the console) mutate directly (`c.color`, `c.inverse`), so any dirty tracking can miss writes and show stale text. Revisit only with an agreed API (e.g. cell mutators that mark dirty, plus a documented `markDirty`).
+- **S-T3** (no-shader fallback) was measured; it is now effectively the default path for opaque colors.
+- **Bug probes** (`tests/qa_textDisplay_edges.ms`, all pass, no bugs found): `delimiter=""`, default delimiter, `row=`/`column=` clamping, `scroll` at 1 row, scroll row aliasing, unicode outside the font, out-of-range `setCell`/`cell`, cursor show/hide restoring colors, tab/backspace. `lib/TextDisplay.ms` self-test passes. `tests/text.ms` is a visual demo and was not run.
+
