@@ -167,6 +167,78 @@ worth prioritizing early, but this is only one profiled run of the harness
 validation script, not a real baseline measurement; treat as a hint for
 ordering next session's work, not a confirmed finding.
 
+## Session 1 (continued) — unplanned upstream sync, and two §4.2/§4.9 bug checks
+
+### Unplanned upstream sync
+
+Partway through this session, `main` and `Fixes` were fast-forwarded by a
+`git pull` outside this session (most likely VS Code's or GitHub Desktop's
+background auto-sync, both of which were open against this project) —
+confirmed via `git reflog`, timestamped during this session
+(`main`: 19:59/20:42, `Fixes`: 21:25, all 2026-11-05). This was a clean
+fast-forward — no local commits were lost — but it pulled in a large batch
+of upstream (JoeStrout) commits that postdate the plan's reference commit
+`0d6276b`, including several that bear directly on this plan:
+
+- `4538499` "Add function notes to the lib modules" — besides docstrings,
+  this also fixed the exact `Display.install`/`mode=` bugs §4.2 predicted
+  (see below).
+- `fe30532` "Improve `pixel` speed by caching the read-back texture",
+  `67ba779`/`e24b598`/`2d1abbc` (pixel/color optimizations) — these look
+  like they already address plan suspects S-P3 (and maybe parts of S-P4) in
+  §4.3. **Not yet verified** — re-check these suspects against current code
+  before baselining PixelDisplay in a future session; don't assume the plan's
+  description of PixelDisplay's current behavior is accurate anymore.
+- `2cf0de1` "Fix scrolling and offset bugs in SpriteDisplay and TileDisplay".
+
+Decision (user): keep the fast-forward and continue against current code,
+rather than reverting `main`/`Fixes` to the plan's original commit. Per
+their direction, `perf/00-harness-setup` was merged with the (now-updated)
+`Fixes` branch (merge commit `d3d31bd`) so this session's harness work and
+all future sessions measure against current code. The merge was clean (no
+conflicts) and `tests/run_perf.sh`'s re-run after merging reproduced
+consistent `perf_soda` numbers (see Harness section above) — no regression
+from the merge itself.
+
+**Action for next session:** before trusting any §4 "Suspect" description
+against the live code, read the relevant `lib/*.ms` fresh rather than
+assuming the plan's prose (written against `0d6276b`) still matches.
+
+### §4.2 Display.install/mode= bugs — already fixed upstream
+
+Confirmed via a new regression test, `tests/qa_display_install.ms`:
+
+- **BUG-01** (plan's suspected `Display.install` line 101 bug: reading
+  `disps[slotNum].mode` instead of `disps[0].mode`) and
+- **BUG-02** (line 104's `disps[i].remove i` calling `.remove` on the
+  *display* instead of the list, leaving duplicates in a slot)
+
+are **both already fixed** in the upstream commit `4538499` that came in via
+the sync above. Verified: `tests/qa_display_install.ms` reproduced BUG-01 as
+an uncaught `Index Error` when run against the pre-merge code, and passes
+cleanly (`ALL PASSED`) after merging. No fix needed from this project; the
+regression test is committed (`227f09d`) to guard against a future
+regression.
+
+### §4.9 Sound.StopAll — confirmed and fixed (BUG-03)
+
+`Sound.StopAll` (`lib/Sound.ms`) iterated `for snd in _playingSounds` while
+each `snd.stop` call removed an element from that same list — classic
+skip-every-other-element bug. Confirmed with a new regression test,
+`tests/qa_sound_stopall.ms`: started 4 synthesized sounds, called
+`Sound.StopAll`, and checked each one's `isPlaying` afterward. Before the
+fix, `snd2` and `snd4` (every other sound, as predicted) still reported
+`isPlaying == true` — their raylib resources were never actually stopped,
+even though `_playingSounds` itself ends up `[]` regardless (`StopAll`
+unconditionally resets it at the end, which is why the *list* looks fine
+even though some sounds were skipped).
+
+Fixed on `perf/bug-sound-stopall` (commit `e4a8246`, branched from `Fixes`):
+iterate a snapshot (`_playingSounds[:]`) instead of the live list. Verified:
+`qa_sound_stopall.ms` now reports `ALL PASSED`. Not yet merged into
+`Fixes`/`main` — that's the user's call, this is a prototyped fix on its own
+branch per the plan's ground rules.
+
 ### Not yet done (left for next session)
 
 - §4.1's "idle display stack" cost and the `display(5).mode = displayMode.off`
@@ -176,3 +248,10 @@ ordering next session's work, not a confirmed finding.
 - Baselines for the rest of Tier A (§4.2–4.11) and the §5 integration
   scenarios: next session, per §8 step 2.
 - §9 binding overhead and §10 VM profiling: later sessions, per §8 steps 5–6.
+- Re-verify §4.3 PixelDisplay suspects (S-P1 through S-P5) against the
+  current code before baselining — `fe30532`/`67ba779`/`e24b598`/`2d1abbc`
+  (pulled in by the unplanned sync above) touch pixel/color code paths the
+  plan's suspects were written against commit `0d6276b`, before those
+  changes landed.
+- Decide whether to merge `perf/bug-sound-stopall` into `Fixes`/`main`
+  (not done this session — left for the user).
