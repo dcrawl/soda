@@ -486,17 +486,31 @@ investigated this session:
   throughout — stayed at exactly 1 (plus the 8 baseline render textures
   already in use) the whole time: no leak, no crash, no double-free.
 - **`clear(color)` with no size resets a non-960×640 display to 960×640 —
-  confirmed real bug.** `PixelDisplay.clear = function(color=null,
-  width=960, height=640)` hardcodes the Mini-Micro-screen-sized default
+  confirmed real bug, now fixed.** `PixelDisplay.clear = function(color=null,
+  width=960, height=640)` hardcoded the Mini-Micro-screen-sized default
   instead of defaulting to the display's *current* size. Reproduced: a
   `PixelDisplay.Make(100, 50)` instance, after a bare `d.clear` with no
-  arguments, reports `d.width`/`d.height` as `960`/`640` — silently
-  resizing (and blanking) any custom-sized display the moment code calls
-  `clear` to, say, just change the background color. This is very likely
-  unintended (nothing else in the API resizes as a side effect of an
-  unrelated call) and worth fixing: default `width`/`height` to `null` and
-  fall back to `self.width`/`self.height` when not given, matching how
-  every other optional-dimension method in this file already behaves.
+  arguments, reported `d.width`/`d.height` as `960`/`640` — silently
+  resizing (and blanking) any custom-sized display the moment code called
+  `clear` to, say, just change the background color.
+
+  Fixed by defaulting `width`/`height` to `null` and falling back to
+  `self.width`/`self.height` when not given, matching how every other
+  optional-dimension method in this file already behaves; an explicit
+  `width`/`height` still resizes exactly as before. Verified with a new
+  regression test, `tests/qa_pixelDisplay_clear.ms`: a bare `clear()` and a
+  `clear(color)` both preserve the display's current (non-default) size, an
+  explicit `clear(color, width, height)` still resizes, and `clear()` on an
+  already-960×640 display is unaffected.
+
+  Fixed directly on a branch off `Fixes` (`fix/pixelDisplay-clear-resize-
+  default`, commit `812d398`) and fast-forward-merged in — no cherry-pick
+  needed this time, since (unlike the PixelDisplay perf fixes) this branch
+  never carried any perf-harness files to leave behind. Also merged into
+  `perf/00-harness-setup` (a regular merge, since the two branches had
+  diverged — this also pulled in the earlier Sound.StopAll fix and its
+  `qa_sound_stopall.ms` test, which `perf/00-harness-setup` hadn't had
+  merged in before). Not pushed to `origin`, not proposed upstream.
 - **`render`'s "NULL `_renderTex`!" print-then-dereference — already
   fixed upstream, not reproducible.** The plan's note refers to a specific
   line in the pre-sync code snapshot; the current `render` (after the
@@ -529,9 +543,9 @@ investigated this session:
 - §9 binding overhead and §10 VM profiling: later sessions, per §8 steps 5–6.
 - §4.3's bug checks are done (see above): three closed (double-free isn't
   real, the NULL-dereference print was already fixed upstream, setClip/
-  clearClip edges don't crash), one confirmed real and not yet fixed —
-  `clear`'s hardcoded 960×640 default silently resizes any custom-sized
-  display.
+  clearClip edges don't crash), one confirmed real and now fixed —
+  `clear`'s hardcoded 960×640 default silently resizing any custom-sized
+  display, merged into `Fixes` (commit `812d398`). Not pushed to `origin`.
 - S-P1's fix (`beginBatch`/`endBatch`, ~35× speedup measured, see above) is
   merged into `Fixes` (commit `16e6ced`, cherry-picked from
   `perf/fix-pixelDisplay-batch`'s `8df7753`) and pushed to `origin/Fixes`.
