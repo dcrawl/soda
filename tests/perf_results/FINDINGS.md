@@ -116,7 +116,56 @@ plus once profiled for attribution, with a bounded SIGINT→SIGKILL timeout
 fallback reusing the mechanism confirmed in pre-flight item 4 (only relevant
 if a benchmark script has a bug and fails to call `exit`).
 
-<!-- Numbers from the actual tests/perf_soda.ms + run_perf.sh run go here once executed. -->
+**Three corrections to the plan doc's §3 sketch, found only by actually
+running it** (none are findings about Soda's performance — all are about how
+this MiniScript2 host's `import` and builtins actually behave):
+
+1. `import "X"` only binds a local named `X` in the *importing script's own
+   scope* — it does not transitively expose whatever `X.ms` itself imported.
+   So a benchmark script that does `import "perfHarness"` and then expects
+   bare `soda.updateCallbacks` to work (as the plan's sketch implies by
+   having `perfHarness.ms` do `import "soda"` once) gets
+   `Undefined Identifier: 'soda'`. Every `perf_<unit>.ms` benchmark script
+   must `import` whatever modules it directly references itself (e.g.
+   `perf_soda.ms` needs both `import "perfHarness"` and `import "soda"`).
+2. Likewise, `import "perfHarness"` only binds a local `perfHarness` (a map
+   of perfHarness.ms's top-level names) — it does **not** put `perf` in
+   scope as a bare name, the way the plan's `// Usage: import "perfHarness"`
+   comment implies. Fixed by adding `globals.perf = perf` at the end of
+   `perfHarness.ms`, matching the existing `lib/*.ms` convention for names
+   meant to be used without a module prefix (e.g. `Display.ms`'s
+   `globals.clear = @clear`).
+3. `min(a, b)` is not a builtin in this MiniScript2 host/dialect — it only
+   exists as a function defined inside `lib/mathUtil.ms`, which the harness
+   doesn't import. `perf.stats`'s p95 calculation
+   (`s[min(n-1, floor(n*0.95))]`) was rewritten as an explicit
+   `if p95idx > n-1 then p95idx = n-1` instead.
+
+The two runtime-only unknowns flagged during writing (`for k in ph.indexes`
+map-key iteration, and `range(1, n)` inclusive-both-ends semantics including
+`range(1, 0)` producing zero iterations for N=0) both turned out to work
+exactly as the plan's sketch assumed — no changes needed there.
+
+Verified end-to-end via `./run_perf.sh perf_soda.ms`: produced
+`perf_soda.run1.csv`, `run2.csv`, `run3.csv` (timing) and
+`perf_soda.runprofiled.csv` + `perf_soda_profile.{txt,speedscope.json,folded}`
+(attribution). Sample un-profiled numbers (N=0 extra callbacks, ms, from
+run1): user 0.0005 mean, render 0.636, endDrawing 0.378 (mean) /12.3 (max —
+one outlier frame, likely a one-off driver/vsync hiccup, not investigated
+further this session), callbacks 0.015, yieldGC 0.039, total 1.068. Numbers
+were effectively flat across N=0/10/100 (no-op callbacks are cheap, as
+expected). `RenderTexture` resource count dropped from 16 to 8 between
+`before-N0` and `after-N0` in every run — worth investigating next session,
+but not analyzed here (possibly orphaned render textures from the default
+7-slot display stack's initial setup being freed on first GC/frame; file
+this under "observed, not yet explained").
+
+The profiled run's top self-time was dominated by `TextDisplay.render`
+(48.3%) and `[raylib.EndDrawing]` (29.5%) even for a nominally "empty"
+scene — consistent with §4.5's S-T1 suspect (shader bracket per glyph) being
+worth prioritizing early, but this is only one profiled run of the harness
+validation script, not a real baseline measurement; treat as a hint for
+ordering next session's work, not a confirmed finding.
 
 ### Not yet done (left for next session)
 
