@@ -388,16 +388,73 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
   proposed upstream. No `lib/*.ms` caller has been updated to wrap its
   `drawImage`/`patternFill` calls in `beginBatch`/`endBatch` yet — same
   opt-in-API caveat as S-P1.
-- **S-P5 (`_triangulate` O(n²) or worse) — still open, confirmed
-  super-linear, unchanged by the sync.** Measured `fillPoly` on regular
-  convex polygons: 5 verts **0.090 ms**, 20 verts **0.267 ms**, 100 verts
-  **1.612 ms**, 500 verts **18.29 ms** per call. 5→100 verts (20×) costs
-  ~18×; 100→500 verts (5×) costs ~11× — consistent with worse-than-O(n²)
-  growth (the ear-finding inner loop is itself O(n) per candidate, scanning
-  all reflex vertices, inside an O(n) outer loop per ear removed). A single
-  500-vertex `fillPoly` call alone (18.29 ms) exceeds the entire 16.67 ms
-  frame budget. Now the next prototype-fix candidate per §8 step 3's
-  ordering, with both S-P1 and S-P2 fixed.
+- **S-P5 (`_triangulate` O(n²) or worse) — fixed and verified for
+  convex-heavy inputs.** Baseline (before this fix), regular convex
+  polygons: 5 verts **0.090–0.11 ms**, 20 verts **0.24–0.27 ms**, 100 verts
+  **1.0–1.6 ms**, 500 verts **4.8–18.4 ms**, 1000 verts **9.6–62.8 ms** per
+  call (two figures where the fixed-code and reverted-code benchmark runs
+  disagreed — see below; the reverted-code numbers match the original
+  session's ~18.29 ms-at-500-verts measurement closely).
+
+  **Root cause: a per-candidate-ear scan that's O(n) even when there's
+  nothing in it to find.** `_triangulate` is textbook ear-clipping: repeatedly
+  find a convex corner whose triangle contains no other vertex (an "ear"),
+  clip it, repeat. For each candidate convex corner, the code scanned *all*
+  n current vertices to see if any reflex one pokes into the candidate's
+  triangle — `for j in range(0, n - 1) ... if cross[j] > 0 ... then continue`.
+  For a convex polygon there are *zero* reflex vertices, so this scan always
+  finds nothing — but it still costs O(n) per candidate, because the loop
+  iterates over every vertex only to skip almost all of them via `continue`.
+  Since the very first candidate in a convex polygon is always an immediate
+  ear (no reflex vertex can ever disqualify it), this turns what should be
+  an O(1) check per removal into an O(n) one, for O(n²) total across all n
+  removals — explaining why even non-adversarial, perfectly ordinary convex
+  shapes paid a quadratic cost with nothing concave to blame it on.
+
+  Fixed by maintaining `reflexCount` — a running count of how many current
+  corners are reflex — incrementally alongside the existing `cross` array
+  (which already tracked each corner's convexity and was already updated
+  incrementally on each vertex removal; `reflexCount` just tracks net sign
+  flips in the same two neighbor updates `cross` already recomputes). When
+  `reflexCount == 0`, the entire per-candidate reflex-vertex scan is skipped
+  outright (behavior-preserving: with zero reflex vertices, that scan could
+  never have found one to block the ear anyway). For a convex polygon,
+  `reflexCount` is 0 from the start and for the whole triangulation, so this
+  turns the O(n) per-candidate scan into O(1), and the overall cost from
+  O(n²) into O(n). For a concave polygon, the fix only helps once enough
+  reflex corners have been resolved into convex ones that `reflexCount`
+  actually reaches 0 — a polygon whose reflex-vertex count scales with n
+  (e.g. a star shape, deliberately used as a control below) sees no
+  asymptotic improvement, by design: there's real reflex-vertex work left to
+  do there, not a redundant scan.
+
+  Verified correct by extending `PixelDisplay.runUnitTests`'s existing
+  area-covering check (the triangles' total area must exactly match the
+  polygon's) with new cases: convex 3/7/13-gons (`reflexCount` stays 0
+  throughout — the fast path is exercised for the whole run), star-shaped
+  polygons with 3/5/8 points (`reflexCount` stays well above 0 throughout —
+  confirms the fix doesn't change behavior on the un-sped-up path), and a
+  comb shape with several notches (`reflexCount` starts above 0 and drops to
+  0 partway through clipping — exercises the incremental bookkeeping across
+  that transition). All pass, alongside the pre-existing square/L-shape/
+  collinear-edge/2dVis-regression/degenerate-input cases.
+
+  Measured (3 repeat runs, consistent; also cross-checked by reverting the
+  fix and re-running the identical benchmark for a direct before/after on
+  the same machine state, not just against the earlier session's numbers):
+  convex regular polygons — 500 verts **18.4 ms → 4.8 ms** (**~3.9×**),
+  1000 verts **62.8 ms → 9.6 ms** (**~6.5×**, growing with n as expected
+  since the asymptotic complexity itself changed, not just a constant
+  factor). Star-shaped (concave, reflex-vertex count scales with n, used as
+  a control): 500 verts **40.8 ms → 41.0 ms**, 1000 verts **152.1 ms →
+  153.1 ms** — unchanged within noise, confirming the fix adds no overhead
+  on inputs it can't speed up and doesn't just look fast by triangulating
+  incorrectly.
+
+  Prototyped on `perf/fix-pixelDisplay-triangulate` (off
+  `perf/00-harness-setup`). Not yet merged into `Fixes`, not pushed, not
+  proposed upstream. With S-P1, S-P2, and S-P5 now all fixed, the only
+  §4.3 items still open are the bug checks noted below.
 
 ### Not yet done (left for next session)
 
@@ -422,9 +479,11 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
 - S-P2's fix (`drawImage`/`patternFill` now reuse `img.texture`, ~15–17×
   speedup measured when combined with `beginBatch(true)`, see above) is
   merged into `Fixes` (commit `58741fe`, cherry-picked from
-  `perf/fix-pixelDisplay-drawImage`'s `66d4ce9`). Not pushed to `origin`,
-  not yet proposed upstream. S-P5 (`_triangulate` superlinear scaling) is
-  still open and is now the plan's next prototype-fix candidate per §8
-  step 3's ordering.
+  `perf/fix-pixelDisplay-drawImage`'s `66d4ce9`) and pushed to
+  `origin/Fixes`. Not yet proposed upstream.
+- S-P5's fix (`_triangulate`'s incremental `reflexCount` fast path, ~4–6.5×
+  speedup measured on convex polygons, see above) is prototyped on
+  `perf/fix-pixelDisplay-triangulate` but not yet merged into `Fixes`, not
+  pushed, and not yet proposed upstream.
 - `perf/bug-sound-stopall` is merged into `Fixes` and pushed to
   `origin/Fixes`. Not yet proposed upstream to JoeStrout's `main`.

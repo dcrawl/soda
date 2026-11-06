@@ -140,9 +140,32 @@ makePoly = function(n, radius=50)
 	return pts
 end function
 
-for n in [5, 20, 100, 500]
+for n in [5, 20, 100, 500, 1000]
 	poly = makePoly(n)
 	perf.timeit "px_fillPoly", n, function()
+		d.fillPoly poly, "#0000FFFF"
+	end function, 100
+end for
+
+// --- S-P5 fix check: a concave, star-shaped polygon (half the vertices
+// reflex) as a control -- the fix skips the per-candidate reflex-vertex
+// scan only when there are zero reflex corners, so a shape that has them by
+// construction should see no speedup here, confirming the fix doesn't just
+// look fast because it got the triangulation wrong. ---
+makeStar = function(n, outerRadius=50, innerRadius=20)
+	pts = []
+	for i in range(0, 2*n-1)
+		a = pi * i / n
+		r = outerRadius
+		if i % 2 == 1 then r = innerRadius
+		pts.push [480 + r * cos(a), 320 + r * sin(a)]
+	end for
+	return pts
+end function
+
+for n in [5, 20, 100, 500, 1000]
+	poly = makeStar(n / 2)
+	perf.timeit "px_fillPoly_star", n, function()
 		d.fillPoly poly, "#0000FFFF"
 	end function, 100
 end for
