@@ -5,6 +5,7 @@ ensureImport ["Display", "color", "qa"]
 // would silently alter the `list` map, which the user may or
 // may not want.
 _list_init = function(size, initialValue)
+	"Return a new list of the given size, filled with initialValue."
 	if @initialValue isa funcRef then
 		result = []
 		for i in range(1, size)
@@ -21,6 +22,7 @@ end function
 // you would want for a 2D array of numbers; if you want to do matrix math,
 // use matrixUtil instead.)
 _list_init2d = function(rows, columns, initialValue)
+	"Return a new 2D array (list of row lists), filled with initialValue."
 	result = []
 	for a in range(1, rows)
 		result.push _list_init(columns, @initialValue)
@@ -48,6 +50,7 @@ TileDisplay._tint = null    // grid[row][col] -> color, or null (no tint)
 TileDisplay._xform = null   // grid[row][col] -> transform 0-7
 
 TileDisplay.Make = function
+	"Create and return a new TileDisplay with a 10x10 grid."
 	td = new self
 	td.extent = [10, 10]
 	return td
@@ -56,6 +59,7 @@ end function
 // Returned frozen: mutating it would not resize the grid.  To resize,
 // assign a new extent (see below).
 TileDisplay.extent = function
+	"Return the grid size as a frozen [columns, rows] list."
 	result = [self._cols, self._rows]
 	freeze result
 	return result
@@ -65,6 +69,7 @@ end function
 // Mini Micro, the value may be [columns, rows], an {"x","y"} map, or a
 // single number for a square grid; anything else is ignored.
 TileDisplay["extent="] = function(value)
+	"Resize the grid to [columns, rows] (or x/y map, or number), clearing it."
 	if value isa number then
 		columns = value
 		rows = value
@@ -90,8 +95,9 @@ TileDisplay["extent="] = function(value)
 end function
 
 TileDisplay.clear = function(toIndex=null)
-	for row in range(0, self._rows - 1)
-		for col in range(0, self._cols - 1)
+	"Set every cell to the given tile index, removing all tints and transforms."
+	for row in range(0, self._rows - 1, 1)
+		for col in range(0, self._cols - 1, 1)
 			self._idx[row][col] = toIndex
 			self._tint[row][col] = null
 			self._xform[row][col] = 0
@@ -100,64 +106,123 @@ TileDisplay.clear = function(toIndex=null)
 end function
 
 TileDisplay.cell = function(x, y)
-	return self._idx[y][x]
+	"Return the tile index at column x, row y (null if empty or out of range)."
+	if 0 <= x < self._cols and 0 <= y < self._rows then	return self._idx[y][x]
+	return null
 end function
 
 TileDisplay.setCell = function(x, y, idx)
-	self._idx[y][x] = idx
+	"Set the tile index at column x, row y (either may be a list)."
+	if x isa number and y isa number then
+		self._idx[y][x] = idx
+	else
+		if x isa number then cols = [x] else cols = x
+		if y isa number then rows = [y] else rows = y
+		for y in rows
+			for x in cols
+				self._idx[y][x] = idx
+			end for
+		end for
+	end if
 end function
 
 TileDisplay.cellTint = function(x, y)
-	return self._tint[y][x]
+	"Return the tint color at column x, row y (null if none)."
+	if 0 <= x < self._cols and 0 <= y < self._rows then	return self._tint[y][x]
+	return null
 end function
 
 TileDisplay.setCellTint = function(x, y, c)
-	self._tint[y][x] = c
+	"Set the tint color at column x, row y (either may be a list)."
+	if x isa number and y isa number then
+		self._tint[y][x] = c
+	else
+		if x isa number then cols = [x] else cols = x
+		if y isa number then rows = [y] else rows = y
+		for y in rows
+			for x in cols
+				self._tint[y][x] = c
+			end for
+		end for
+	end if
 end function
 
 TileDisplay.cellTransform = function(x, y)
-	return self._xform[y][x]
+	"Return the transform (0-7) at column x, row y."
+	if 0 <= x < self._cols and 0 <= y < self._rows then	return self._xform[y][x]
+	return null
 end function
 
 TileDisplay.setCellTransform = function(x, y, t)
-	self._xform[y][x] = t
+	"Set the transform at column x, row y: 0-3 rotate by 90s, 4-7 also flip."
+	if x isa number and y isa number then
+		self._xform[y][x] = t
+	else
+		if x isa number then cols = [x] else cols = x
+		if y isa number then rows = [y] else rows = y
+		for y in rows
+			for x in cols
+				self._xform[y][x] = t
+			end for
+		end for
+	end if
 end function
 
 // Internal: source rect into tileSet for a given tile index.
 // Tile-set indexing is top-left to bottom-right -- the one
 // documented exception to Mini Micro's usual bottom-up convention.
 TileDisplay._srcRectFor = function(idx)
-	tilesPerRow = floor(self.tileSet.width / self.tileSetTileSize)
+	"Return the source rect within the tile set for the given tile index."
+	s = self.tileSetTileSize
+	if s isa list then
+		tw = s[0]; th = s[1]
+	else
+		tw = s; th = tw
+	end if
+	tilesPerRow = floor(self.tileSet.width / tw)
 	col = idx % tilesPerRow
 	row = floor(idx / tilesPerRow)
-	s = self.tileSetTileSize
-	return [col * s, row * s, s, s]
+	return [col * tw, row * th, tw, th]
 end function
 
 TileDisplay._tileGeometry = function(x, y, idx)
+	"Return the source rect, dest rect, origin, and rotation for drawing one cell."
+	if idx == null then return null
 	srcRect = self._srcRectFor(idx)
 	t = self._xform[y][x]
 	flipH = t >= 4
 	rotation = (t % 4) * 90
 	if flipH then srcRect = [srcRect[0], srcRect[1], -srcRect[2], srcRect[3]]
 
-	spacing = self.cellSize - self.overlap
-	ox = self.oddColOffset * self.cellSize * (y % 2)
-	oy = self.oddRowOffset * self.cellSize * (x % 2)
-	worldX = x * spacing + ox - self.scrollX
-	worldY = y * spacing + oy - self.scrollY
+	if self.cellSize isa list then
+		xsize = self.cellSize[0]; ysize = self.cellSize[1]
+	else
+		xsize = self.cellSize; ysize = xsize
+	end if
+	if self.overlap isa list then
+		xover = self.overlap[0]; yover = self.overlap[1]
+	else
+		xover = self.overlap; yover = xover
+	end if
+	xspacing = xsize - xover
+	yspacing = ysize - yover
+	ox = self.oddRowOffset * xsize * (y % 2)
+	oy = self.oddColOffset * ysize * (x % 2)
+	worldX = x * xspacing + ox - self.scrollX
+	worldY = y * yspacing + oy - self.scrollY
 
-	screenX = worldX + self.cellSize * 0.5
-	screenY = Display.screenHeight - worldY - self.cellSize * 0.5
-	destRect = [screenX, screenY, self.cellSize, self.cellSize]
-	origin = [self.cellSize * 0.5, self.cellSize * 0.5]
+	screenX = worldX + xsize * 0.5
+	screenY = Display.screenHeight - worldY - ysize * 0.5
+	destRect = [screenX, screenY, xsize, ysize]
+	origin = [xsize * 0.5, ysize * 0.5]
 	return {"srcRect": srcRect, "destRect": destRect, "origin": origin, "rotation": rotation}
 end function
 
 TileDisplay.render = function
+	"Draw all non-empty cells to the screen."
 	if self.tileSet == null then return
-	for y in range(0, self._rows - 1)
-		for x in range(0, self._cols - 1)
+	for y in range(0, self._rows - 1, 1)
+		for x in range(0, self._cols - 1, 1)
 			idx = self._idx[y][x]
 			if idx == null then continue
 			g = self._tileGeometry(x, y, idx)
@@ -233,12 +298,14 @@ if locals == globals then
 	// screen bottom), so this converts once instead of hand-tuning
 	// scrollX/scrollY by trial and error for every panel below.
 	positionPanel = function(td, left, top)
+		"Scroll a TileDisplay so its top-left tile lands at the given screen position."
 		spacing = td.cellSize - td.overlap
 		td.scrollX = -left
 		td.scrollY = top + td.cellSize - Display.screenHeight + (td._rows - 1) * spacing
 	end function
 
 	caption = function(text, top)
+		"Print a caption on the text display at about the given pixel row."
 		TextDisplay.row = floor(top / (TextDisplay.charH + TextDisplay.padY))
 		TextDisplay.column = 0
 		TextDisplay.color = color.white
@@ -246,6 +313,7 @@ if locals == globals then
 		TextDisplay.print text, ""
 	end function
 
+	// ToDo: rework this test to use some image standard with the Soda distro
 	tileset = file.loadImage("assets/lib/tiles/GrassLand/Terrain/Grassland_Terrain_47Tiles.png")
 	tileSize = 16
 	tilesPerRow = floor(tileset.width / tileSize)          // 12
@@ -266,7 +334,7 @@ if locals == globals then
 	palette.tileSetTileSize = tileSize
 	palette.cellSize = 32
 	palette.extent = [tilesPerRow, tileRows]
-	for i in range(0, tileCount - 1)
+	for i in range(0, tileCount - 1, 1)
 		palette.setCell i % tilesPerRow, floor(i / tilesPerRow), i
 	end for
 	positionPanel palette, 0, 40
@@ -280,7 +348,7 @@ if locals == globals then
 	tintDemo.tileSetTileSize = tileSize
 	tintDemo.cellSize = 32
 	tintDemo.extent = [tintColors.len, 1]
-	for i in range(0, tintColors.len - 1)
+	for i in range(0, tintColors.len - 1, 1)
 		tintDemo.setCell i, 0, demoTile
 		tintDemo.setCellTint i, 0, tintColors[i]
 	end for
