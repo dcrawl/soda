@@ -452,9 +452,16 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
   incorrectly.
 
   Prototyped on `perf/fix-pixelDisplay-triangulate` (off
-  `perf/00-harness-setup`). Not yet merged into `Fixes`, not pushed, not
-  proposed upstream. With S-P1, S-P2, and S-P5 now all fixed, the only
-  §4.3 items still open are the bug checks noted below.
+  `perf/00-harness-setup`, commit `8727cf4`). The fix itself
+  (`lib/PixelDisplay.ms`'s `_triangulate` plus the new `runUnitTests` cases
+  it was verified against) was then cherry-picked onto a short-lived branch
+  off `Fixes` and fast-forward-merged in (commit `45005a1`), same pattern
+  as S-P1/S-P2 — no separate regression-test file was needed this time,
+  since `_triangulate` is module-private and its correctness tests live
+  inside `PixelDisplay.runUnitTests` itself, in the same file as the fix.
+  Not pushed to `origin`, not proposed upstream. With S-P1, S-P2, and S-P5
+  now all fixed, the only §4.3 items still open are the bug checks noted
+  below.
 
 ### Not yet done (left for next session)
 
@@ -482,8 +489,10 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
   `perf/fix-pixelDisplay-drawImage`'s `66d4ce9`) and pushed to
   `origin/Fixes`. Not yet proposed upstream.
 - S-P5's fix (`_triangulate`'s incremental `reflexCount` fast path, ~4–6.5×
-  speedup measured on convex polygons, see above) is prototyped on
-  `perf/fix-pixelDisplay-triangulate` but not yet merged into `Fixes`, not
-  pushed, and not yet proposed upstream.
+  speedup measured on convex polygons, see above) is merged into `Fixes`
+  (commit `45005a1`, cherry-picked from
+  `perf/fix-pixelDisplay-triangulate`'s `8727cf4`). Not pushed to `origin`,
+  not yet proposed upstream. All three of S-P1/S-P2/S-P5 are now merged
+  into `Fixes`.
 - `perf/bug-sound-stopall` is merged into `Fixes` and pushed to
   `origin/Fixes`. Not yet proposed upstream to JoeStrout's `main`.
