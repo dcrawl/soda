@@ -1,0 +1,129 @@
+# Soda Performance Test — Findings
+
+## Session 1 — Pre-flight and harness setup
+
+Date: 2026-11-05. Commit: e065041 (soda, branch perf/00-harness-setup). raylib-miniscript commit: 9429286 (branch profiler).
+
+### Pre-flight
+
+1. **Debug build.** Confirmed `raylib-miniscript/build/` is `CMAKE_BUILD_TYPE=Debug`,
+   generator Ninja, compiler `/usr/bin/clang` / `/usr/bin/clang++` (Apple clang
+   21.0.0). No raylib/platform-specific CMake *cache* variables exist (the
+   Darwin/Desktop backend is selected unconditionally in `CMakeLists.txt`), so
+   the new build dirs only needed to differ in `CMAKE_BUILD_TYPE`. Created:
+   - `build-release/` — `-DCMAKE_BUILD_TYPE=Release`
+   - `build-profile/` — `-DCMAKE_BUILD_TYPE=RelWithDebInfo`
+
+   Both configured with the same compiler and generator as `build/`, both
+   built clean (72 translation units). A cache diff against `build/` (ignoring
+   path and internal-advanced noise) showed only the build-dir path and one
+   cosmetic `CMAKE_EXPORT_COMPILE_COMMANDS` difference (set on `build/` for
+   clangd; irrelevant to timing) — no raylib/platform options diverge.
+
+   Added `build-release/` and `build-profile/` to `raylib-miniscript/.gitignore`
+   (previously only `build/` was ignored); committed there (9429286).
+
+2. **Host link.** Created
+   `soda/raylib-miniscript -> ../raylib-miniscript/build-release/raylib-miniscript`.
+   Already covered by `soda/.gitignore` (`/raylib-miniscript`), no gitignore
+   change needed in this repo.
+
+   Note for future sessions: this symlink points at a **file** (the
+   executable), not a directory — don't write paths like
+   `soda/raylib-miniscript/build-release/...` expecting it to resolve; call
+   the host binary directly by its real path, or invoke `./soda` from the
+   soda repo root, which resolves the symlink itself.
+
+3. **Fonts.** Confirmed `lib/*.png` contains only `ScreenFont.png`. The small/
+   medium/large PixelDisplay fonts are not present, so they fall back to the
+   normal font — future `PixelDisplay.print` benchmarks (§4.3) will only be
+   measuring that one font. No action needed, just noted per the plan.
+
+4. **Smoke test / reliable stop mechanism.** `tests/balls.ms` runs an
+   unbounded `while true` + `yield` loop and never calls `exit` on a normal
+   path.
+
+   **Correction to plan doc §2:** `balls.ms` must be run with the **soda repo
+   root** as the working directory, not `tests/` as §2's general instruction
+   suggests for path resolution (`cd tests ... perf_<unit>.ms`). `balls.ms`
+   loads from `file.child("assets", folderName)`, i.e. `assets/sounds` and
+   `assets/images` relative to cwd, and those live at the soda repo root
+   (`soda/assets/`), not under `tests/`. Running it from `tests/` makes it hit
+   `file.exists` failures and `exit` immediately (confirmed: a first attempt
+   from `tests/` produced a 0.41s profile dominated entirely by `soda.ms`
+   overhead, with the console printing `Folder "assets/sounds" not found.`
+   before the script exited on its own — not a SIGINT-stop at all). This is
+   specific to `balls.ms`'s own asset-loading code, not a harness or
+   `perfHarness.ms` concern — the actual `perf_*.ms` benchmark scripts built
+   in §3 are run from `tests/` as the plan intends and don't load `assets/`.
+
+   Confirmed from `raylib-miniscript/src/main.cpp` + `src/Profiler.cpp`: when
+   `--profile` is passed, a `SIGINT` handler is installed. The first `SIGINT`
+   breaks the main loop gracefully (profile files are still written via
+   `profiler::Finish()`); a second `SIGINT` within 0.5s restores the default
+   handler (force-kill). Without `--profile`, there's no custom handler, so a
+   default `SIGINT`/`SIGTERM` just kills the process — irrelevant in practice
+   since every `perf_<unit>.ms` script is required to call `perf.finish` →
+   `exit` itself.
+
+   Verified end-to-end, run from repo root:
+   ```
+   ./raylib-miniscript --profile tests/perf_results/smoke tests/balls.ms &
+   PID=$!; sleep 5; kill -INT $PID; wait $PID
+   ```
+   Ran for ~4.8s, exited cleanly on the first `SIGINT` (exit code 0), and
+   produced non-trivial `smoke.txt` (8.5 KB), `smoke.speedscope.json`
+   (25 KB), `smoke.folded` (12 KB). Top self-time in the profile:
+   `[raylib.EndDrawing]` 82.1%, `TextDisplay.render` 10.8% — expected, since
+   `EndDrawing` is uncapped-FPS idle/GPU-flush time here (no
+   `raylib.SetTargetFPS 0` was set for this ad hoc smoke run — the real
+   benchmarks via `perfHarness.ms` do set it per §1.3).
+
+   This SIGINT-first mechanism is `run_perf.sh`'s stop fallback for any
+   script that doesn't exit on its own (used only as a safety net — see
+   Harness section below).
+
+5. **Profiling tools.** `xcrun xctrace` 27.2 (27B52) available; `samply` and
+   `perf` are not installed on this Mac and are not needed (`xctrace` covers
+   native profiling for the later §10 VM work). No install requested.
+
+### Harness
+
+Built `tests/perfHarness.ms` per PERF_TEST_PLAN.md §3, essentially as
+specified in the plan's sketch. Validated against the actual host/lib source
+before writing it:
+- `soda.updateCallbacks` / implicit `soda.update` — confirmed as members of
+  the `soda` module map (top-level assignments in `lib/soda.ms`, exposed via
+  `import "soda"`).
+- `file.writeLines(path, lines)` — confirmed signature matches
+  `FileModule.cpp`'s `intrinsic_writeLines`.
+- `print` — confirmed it goes to process stdout via a flushed `printf`
+  (`main.cpp`'s `Print()`), not a Soda `TextDisplay`.
+- `resourceCounts`, `hostMemory` — confirmed as bare global intrinsics
+  (`MoreIntrinsics.cpp`), not module members.
+- `intrinsics.yield` (not bare `yield`) is required in `perf.frames`'s manual
+  per-phase loop, since `soda.ms` shadows global `yield` to also call
+  `update` — using bare `yield` would double-render.
+
+Built `tests/perf_soda.ms` (§4.1 empty-scene workload: `perf.frames` over
+N = 0, 10, 100 extra no-op `updateCallbacks`, restoring the callback list
+between N values so the three conditions don't compound).
+
+Built `tests/run_perf.sh`: runs each benchmark 3× un-profiled (one CSV per
+run index, via a `runIdx` argument threaded through `shellArgs`, so all three
+runs' raw samples survive for the median-of-medians reporting §1.4 asks for)
+plus once profiled for attribution, with a bounded SIGINT→SIGKILL timeout
+fallback reusing the mechanism confirmed in pre-flight item 4 (only relevant
+if a benchmark script has a bug and fails to call `exit`).
+
+<!-- Numbers from the actual tests/perf_soda.ms + run_perf.sh run go here once executed. -->
+
+### Not yet done (left for next session)
+
+- §4.1's "idle display stack" cost and the `display(5).mode = displayMode.off`
+  fill-rate-floor comparison, and the `wait` timing-accuracy checks (0.1s/1s/5s),
+  are additional 4.1 workloads not yet built — only the fixed per-frame engine
+  cost via `perf.frames` was covered this session.
+- Baselines for the rest of Tier A (§4.2–4.11) and the §5 integration
+  scenarios: next session, per §8 step 2.
+- §9 binding overhead and §10 VM profiling: later sessions, per §8 steps 5–6.
