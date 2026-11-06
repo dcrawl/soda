@@ -545,23 +545,21 @@ investigated this session:
   real, the NULL-dereference print was already fixed upstream, setClip/
   clearClip edges don't crash), one confirmed real and now fixed —
   `clear`'s hardcoded 960×640 default silently resizing any custom-sized
-  display, merged into `Fixes` (commit `812d398`). Not pushed to `origin`.
-- S-P1's fix (`beginBatch`/`endBatch`, ~35× speedup measured, see above) is
-  merged into `Fixes` (commit `16e6ced`, cherry-picked from
-  `perf/fix-pixelDisplay-batch`'s `8df7753`) and pushed to `origin/Fixes`.
-  Not yet proposed upstream to JoeStrout's `main`. No `lib/*.ms` caller has
-  been updated to use it yet (it's an opt-in API addition, not a behavior
-  change to any existing method).
-- S-P2's fix (`drawImage`/`patternFill` now reuse `img.texture`, ~15–17×
-  speedup measured when combined with `beginBatch(true)`, see above) is
-  merged into `Fixes` (commit `58741fe`, cherry-picked from
-  `perf/fix-pixelDisplay-drawImage`'s `66d4ce9`) and pushed to
-  `origin/Fixes`. Not yet proposed upstream.
-- S-P5's fix (`_triangulate`'s incremental `reflexCount` fast path, ~4–6.5×
-  speedup measured on convex polygons, see above) is merged into `Fixes`
-  (commit `45005a1`, cherry-picked from
-  `perf/fix-pixelDisplay-triangulate`'s `8727cf4`). Not pushed to `origin`,
-  not yet proposed upstream. All three of S-P1/S-P2/S-P5 are now merged
-  into `Fixes`.
-- `perf/bug-sound-stopall` is merged into `Fixes` and pushed to
-  `origin/Fixes`. Not yet proposed upstream to JoeStrout's `main`.
+  display, merged into `Fixes` (commit `812d398`).
+- All five fixes accumulated on `Fixes` this session (Sound.StopAll,
+  S-P1/S-P2/S-P5, and the `clear` resize-default bug) are now **proposed
+  upstream**, as a single batch rather than one PR apiece — easier for Joe
+  to review as one coherent chunk of work than five separate PRs or one
+  giant PR mixing them with everything else `Fixes` might later
+  accumulate. Built as a fresh branch,
+  `upstream-pr/pixelDisplay-perf-and-bugfixes`, cherry-picked straight onto
+  `upstream/main` (clean — no merge commits, no unrelated pre-existing
+  commits like the older `bmfFonts.ms` `hex2` fix that was also sitting on
+  `Fixes`), pushed to `origin`, and opened as
+  [JoeStrout/soda#27](https://github.com/JoeStrout/soda/pull/27).
+  All four regression tests re-verified passing on that clean branch
+  before pushing.
+- To avoid piling further work onto a branch that's now the base of an
+  open PR, future fixes merge into a new branch, **`Fixes2`** (branched
+  from `Fixes`'s tip, commit `812d398`, and pushed to `origin`), not
+  `Fixes` itself. `Fixes` stays as it is until PR #27 is resolved.
