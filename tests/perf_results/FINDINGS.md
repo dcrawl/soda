@@ -235,9 +235,9 @@ even though some sounds were skipped).
 
 Fixed on `perf/bug-sound-stopall` (commit `e4a8246`, branched from `Fixes`):
 iterate a snapshot (`_playingSounds[:]`) instead of the live list. Verified:
-`qa_sound_stopall.ms` now reports `ALL PASSED`. Not yet merged into
-`Fixes`/`main` — that's the user's call, this is a prototyped fix on its own
-branch per the plan's ground rules.
+`qa_sound_stopall.ms` now reports `ALL PASSED`. Merged (fast-forward) into
+`Fixes` at the user's request; `perf/bug-sound-stopall` deleted. Not pushed
+to `origin`, and not yet proposed upstream to `main`/JoeStrout.
 
 ### Not yet done (left for next session)
 
@@ -253,5 +253,5 @@ branch per the plan's ground rules.
   (pulled in by the unplanned sync above) touch pixel/color code paths the
   plan's suspects were written against commit `0d6276b`, before those
   changes landed.
-- Decide whether to merge `perf/bug-sound-stopall` into `Fixes`/`main`
-  (not done this session — left for the user).
+- `perf/bug-sound-stopall` is merged into `Fixes` locally but not pushed,
+  and not yet proposed upstream to JoeStrout's `main`.
