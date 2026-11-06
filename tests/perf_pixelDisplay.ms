@@ -80,6 +80,7 @@ end function, 1000
 // --- S-P2: drawImage upload-per-call, small and large images ---
 imgSmall = Image.create(16, 16, "#8080FFFF")
 imgLarge = Image.create(256, 256, "#8080FFFF")
+tileImg = Image.create(8, 8, "#FF80FFFF")
 
 for N in [1, 10, 100]
 	perf.timeit "px_drawImage_16x16", N, function()
@@ -91,6 +92,42 @@ for N in [1, 10, 100]
 	perf.timeit "px_drawImage_256x256", N, function()
 		d.drawImage imgLarge, 0, 0
 	end function, N
+end for
+
+// --- S-P2 fix: same drawImage/patternFill calls, but (a) the image's own
+// cached texture (Image.texture) is reused instead of a fresh
+// LoadTextureFromImage/UnloadTexture pair every call, and (b) wrapped in a
+// single beginBatch(true)/endBatch bracket spanning the whole measurement --
+// alphaBlend must be true to match drawImage/patternFill's own internal
+// _beginDraw(true) call, or every call still forces a blend-mode flush. ---
+for N in [1, 10, 100]
+	d.beginBatch true
+	perf.timeit "px_drawImage_16x16_batched", N, function()
+		d.drawImage imgSmall, 0, 0
+	end function, N
+	d.endBatch
+end for
+
+for N in [1, 10, 100]
+	d.beginBatch true
+	perf.timeit "px_drawImage_256x256_batched", N, function()
+		d.drawImage imgLarge, 0, 0
+	end function, N
+	d.endBatch
+end for
+
+for N in [1, 10, 100]
+	perf.timeit "px_patternFill_8x8", N, function()
+		d.patternFill tileImg, 0, 0, 64, 64
+	end function, N
+end for
+
+for N in [1, 10, 100]
+	d.beginBatch true
+	perf.timeit "px_patternFill_8x8_batched", N, function()
+		d.patternFill tileImg, 0, 0, 64, 64
+	end function, N
+	d.endBatch
 end for
 
 // --- S-P5: fillPoly scaling with vertex count (convex regular polygons) ---

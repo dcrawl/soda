@@ -316,20 +316,73 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
   regression test (`tests/qa_pixelDisplay_batch.ms`) were then cherry-picked
   — at the user's request, to keep `Fixes` free of the perf-testing
   harness/benchmarks/plan doc this branch also carries — onto a short-lived
-  branch off `Fixes` and fast-forward-merged in (commit `16e6ced`). Not
-  pushed to `origin`, and not yet proposed upstream to JoeStrout's `main`.
+  branch off `Fixes` and fast-forward-merged in (commit `16e6ced`). Pushed
+  to `origin/Fixes`. Not yet proposed upstream to JoeStrout's `main`.
   No `lib/*.ms` caller wired up to use it yet (e.g. a future `TileDisplay`/
   `SpriteDisplay` hot loop, or Soda user code) — that's a follow-up, not
   part of this prototype.
-- **S-P2 (`drawImage`/`patternFill` upload-per-call) — still open,
-  unchanged by the sync.** Measured **~0.08–0.10 ms/call for 16×16**,
+- **S-P2 (`drawImage`/`patternFill` upload-per-call) — fixed and verified.**
+  Baseline (before this fix): **~0.08–0.10 ms/call for 16×16**,
   **~0.12–0.14 ms/call for 256×256**, flat across N = 1/10/100 (no
-  amortization, as expected — nothing is cached). The 16×→256× size jump
-  (256× the pixel data) only costs ~30–40% more, confirming the fixed
-  `LoadTextureFromImage`/`UnloadTexture` churn dominates over the actual
-  upload size — a fix that caches the GPU texture on the `Image` (the plan's
-  suggestion: reuse `img.texture`) should erase nearly all of this cost
-  rather than just scaling better with image size.
+  amortization — nothing was cached).
+
+  **Root cause had two independent parts, both contributing.** An isolated
+  benchmark separated them: (1) `rl.LoadTextureFromImage` +
+  `rl.UnloadTexture` alone cost **~0.010 ms/call for 16×16** but
+  **~0.064 ms/call for 256×256** — this part *does* scale with upload size,
+  unlike what the pre-fix measurement's flatness suggested. (2) The
+  remaining ~0.085–0.09 ms, present even for a *pre-existing* cached texture
+  used once per call, is the same per-call GPU-bracket-flush cost S-P1
+  found (`_drawTexture` calls `_beginDraw true`/`_endDraw` around
+  `DrawTexturePro`, same as any other draw call) — confirmed by timing
+  `DrawTexturePro` on an already-loaded texture with the texture-mode/
+  blend-mode brackets opened once outside the loop vs. once per call:
+  ~0.0011 ms/call vs. ~0.097 ms/call, matching S-P1's ~0.098 ms bracket-flush
+  finding almost exactly.
+
+  Fixed both parts: `PixelDisplay.drawImage`/`patternFill` now call
+  `img.texture` (the `Image` class's own lazily-created, cached GPU
+  texture, invalidated automatically on `setPixel`/`flip`/`rotate`) instead
+  of `rl.LoadTextureFromImage`/`rl.UnloadTexture` on every call.
+  `patternFill` still sets `TEXTURE_WRAP_REPEAT` for the tiled draw, but now
+  resets it back to `TEXTURE_WRAP_CLAMP` afterward so a later `drawImage`
+  call reusing the same cached texture isn't left in REPEAT mode. This
+  alone removes the LoadTextureFromImage/UnloadTexture churn (part 1), but
+  callers still need `beginBatch(true)`/`endBatch()` around repeated calls
+  to amortize the bracket-flush cost (part 2) — `true` because
+  `drawImage`/`patternFill` always draw with alpha blending internally, so
+  the batch's `alphaBlend` must match or every call still falls back to a
+  per-call blend-mode switch (itself a flush).
+
+  Verified correct with a new regression test,
+  `tests/qa_pixelDisplay_drawImage.ms`: `drawImage` draws the right pixels
+  on a fresh `Image`, repeated `drawImage` calls on the same `Image` all
+  draw correctly (confirming the cached texture isn't stale), a `setPixel`
+  edit after a draw is correctly picked up by a later `drawImage` call
+  (confirming `Image`'s existing cache-invalidation path still works
+  through the new caller), `patternFill` tiles correctly and doesn't leak
+  `TEXTURE_WRAP_REPEAT` into a later plain `drawImage` call on the same
+  `Image`, and a manual old-style (`LoadTextureFromImage`+`DrawTexturePro`+
+  `UnloadTexture`) draw produces pixel-identical output to the new
+  `drawImage` call.
+
+  Measured (3 repeat runs, consistent):
+  - Unbatched (texture-caching fix only, no `beginBatch`): 16×16 roughly
+    unchanged (~0.10–0.14 ms/call — the avoided upload was only
+    ~0.01 ms out of a ~0.1 ms total, within run-to-run noise); 256×256
+    improved from ~0.13 ms to **~0.10–0.105 ms/call**, consistent with
+    removing the size-scaled upload cost. The bracket-flush cost (part 2)
+    still dominates either way without batching.
+  - Batched (`beginBatch true` around the whole measurement, both fix
+    parts in effect): `drawImage` **16×16: ~0.10 ms → ~0.0058 ms/call**
+    and **256×256: ~0.10–0.13 ms → ~0.0057 ms/call** — both a **~17×**
+    speedup, flat across N. `patternFill` (8×8 tile): **~0.06–0.10 ms →
+    ~0.0064 ms/call**, a **~15×** speedup.
+
+  Prototyped on `perf/fix-pixelDisplay-drawImage` (off `perf/00-harness-setup`).
+  Not yet merged into `Fixes`, not pushed, not proposed upstream. No
+  `lib/*.ms` caller has been updated to wrap its `drawImage`/`patternFill`
+  calls in `beginBatch`/`endBatch` yet — same opt-in-API caveat as S-P1.
 - **S-P5 (`_triangulate` O(n²) or worse) — still open, confirmed
   super-linear, unchanged by the sync.** Measured `fillPoly` on regular
   convex polygons: 5 verts **0.090 ms**, 20 verts **0.267 ms**, 100 verts
@@ -338,7 +391,8 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
   growth (the ear-finding inner loop is itself O(n) per candidate, scanning
   all reflex vertices, inside an O(n) outer loop per ear removed). A single
   500-vertex `fillPoly` call alone (18.29 ms) exceeds the entire 16.67 ms
-  frame budget. Second-priority fix candidate behind S-P1 per §8 step 3.
+  frame budget. Now the next prototype-fix candidate per §8 step 3's
+  ordering, with both S-P1 and S-P2 fixed.
 
 ### Not yet done (left for next session)
 
@@ -356,11 +410,15 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
   `setClip`/`clearClip` edge behavior.
 - S-P1's fix (`beginBatch`/`endBatch`, ~35× speedup measured, see above) is
   merged into `Fixes` (commit `16e6ced`, cherry-picked from
-  `perf/fix-pixelDisplay-batch`'s `8df7753`). Not pushed to `origin`, not
-  yet proposed upstream to JoeStrout's `main`, and no `lib/*.ms` caller has
+  `perf/fix-pixelDisplay-batch`'s `8df7753`) and pushed to `origin/Fixes`.
+  Not yet proposed upstream to JoeStrout's `main`. No `lib/*.ms` caller has
   been updated to use it yet (it's an opt-in API addition, not a behavior
-  change to any existing method). S-P2 (`drawImage`/`patternFill`
-  upload-per-call) is still open and is now the plan's next prototype-fix
-  candidate per §8 step 3's ordering.
-- `perf/bug-sound-stopall` is merged into `Fixes` locally but not pushed,
-  and not yet proposed upstream to JoeStrout's `main`.
+  change to any existing method).
+- S-P2's fix (`drawImage`/`patternFill` now reuse `img.texture`, ~15–17×
+  speedup measured when combined with `beginBatch(true)`, see above) is
+  prototyped on `perf/fix-pixelDisplay-drawImage` but not yet merged into
+  `Fixes`, not pushed, and not yet proposed upstream. S-P5 (`_triangulate`
+  superlinear scaling) is still open and is now the plan's next
+  prototype-fix candidate per §8 step 3's ordering.
+- `perf/bug-sound-stopall` is merged into `Fixes` and pushed to
+  `origin/Fixes`. Not yet proposed upstream to JoeStrout's `main`.
