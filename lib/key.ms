@@ -242,20 +242,13 @@ pressed = function(keyName)
 		return raylib.IsGamepadButtonDown(joyNum, rlButton)
 	end if
 	if not _nameToRaylib.hasIndex(keyName) then
-		// Warn (once per bad name, so a per-frame check doesn't flood the
-		// console) and report "not pressed" rather than killing the program.
-		if not _warnedNames.hasIndex(keyName) then
-			_warnedNames[keyName] = true
-			print "Invalid key name in key.pressed: " + keyName
-			print "Valid names: " + _nameToRaylib.indexes
-			print stackTrace
-		end if
-		return false
+		print "Invalid key name in key.pressed: " + keyName
+		print "Valid names: " + _nameToRaylib.indexes
+		print stackTrace
+		exit
 	end if
 	return raylib.IsKeyDown(_nameToRaylib[keyName])
 end function
-
-_warnedNames = {}
 
 keyQueue = []
 
