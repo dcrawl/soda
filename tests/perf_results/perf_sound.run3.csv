@@ -1,0 +1,12 @@
+RESULT,snd_synth,0.1,per-call,2.4934,2.4877,2.5551,2.5551
+RESULT,snd_synth,1,per-call,24.4044,24.4207,24.4975,24.4975
+RESULT,snd_synth,5,per-call,123.3302,122.8747,124.3668,124.3668
+RESULT,snd_synth_mix,2,per-call,49.3226,49.1944,49.9274,49.9274
+RESULT,snd_synth_mix,8,per-call,200.7857,201.1673,201.4688,201.4688
+RESULT,snd_firstPlay_1s,1,once,24.9732,0,0,0
+RESULT,snd_replay,1,per-call,0.0059,0.0059,0.006,0.006
+RESULT,snd_setter_freq,1,per-call,0.0008,0.0008,0.0008,0.0008
+RESULT,snd_updateAll,0,per-call,0.001,0.001,0.001,0.001
+RESULT,snd_updateAll,10,per-call,0.0086,0.0085,0.0094,0.0094
+RESULT,snd_updateAll,100,per-call,0.0786,0.0784,0.0833,0.0833
+RESULT,snd_retrigger,1,per-call,0.0024,0.0024,0.0025,0.0025

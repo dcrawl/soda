@@ -563,3 +563,42 @@ investigated this session:
   open PR, future fixes merge into a new branch, **`Fixes2`** (branched
   from `Fixes`'s tip, commit `812d398`, and pushed to `origin`), not
   `Fixes` itself. `Fixes` stays as it is until PR #27 is resolved.
+
+## Session 2 — Tier A baselines: §4.2, §4.4–§4.11
+
+Scripts: `tests/perf_{display,sprites,text,tile,image,sound,input}.ms` (input also covers §4.11 color). Each run 3x, CSVs in this folder; run-to-run spread under ~5%. Run from `tests/` with `../../raylib-miniscript/build-release/raylib-miniscript <script> <runIdx>`.
+
+### Headline numbers (median of 3 runs, ms)
+| Area | Workload | Result |
+|---|---|---|
+| §4.5 text | full 68x26 screen (1768 cells), shader path | ~415-435 ms/frame (~240 us/glyph), same for clear/opaque/alternating colors |
+| §4.5 text | same screen, forced no-shader fallback (S-T3) | ~32 ms/frame (**~13x faster**) |
+| §4.5 text | 160x100 full | ~4000+ ms/frame |
+| §4.6 tile | scrolled map 10 / 50 / 200 / 1000 square | 1.7 / 18.4 / 273 / 6830 ms/frame (S-L1 confirmed: ~6.7 us per cell, visible or not) |
+| §4.6 tile | half-empty 200x200 | ~140 ms (empties still cost iteration) |
+| §4.4 sprites | plain 1 / 100 / 1000 / 5000 | ~1 / 1.5 / 6.4 / 28.5 ms/frame (~5.5 us/sprite) |
+| §4.4 sprites | setUVs / setCorners quad path, 1000 | ~6.0 ms, same as plain: S-S2 not visible at these counts |
+| §4.4 Bounds | `overlaps` single call | ~31 us (all-pairs among 200 sprites: 432 ms) |
+| §4.2 display | 8 empty text displays RenderAll | ~5.5 ms/frame (each empty TextDisplay ~0.68 ms: render still walks every cell) |
+| §4.2 display | mode switch / display(n) | ~4 us / ~1 us |
+| §4.9 sound | synth cost | ~24 ms per second of audio (S-A1), lands on first `play`; 8-way mix of 1 s: ~200 ms |
+| §4.9 sound | UpdateAll 10 / 100 playing | 0.008 / 0.084 ms |
+| §4.8 image | pixel / setPixel | ~5 / ~6.7 us each; 512x512 full loop ~1.3 / 1.7 s |
+| §4.8 image | edit k pixels + re-upload (S-I1), 256x256 | 0.07 ms (k=1) ... 69 ms (k=10000), dominated by setPixel cost at large k |
+| §4.8 image | 10,000 getImage then GC | Image count back to 2: **no leak** |
+| §4.10/4.11 | key.pressed, axis, update, mouse, color.* | all 0.0002-0.009 ms per call, well under the 0.1 ms bar |
+
+### Bugs
+- **BUG: `color.fromList(list)` crashed** (`s.append`, lists have no append). Same on upstream/main. Fixed on `fix/color-fromList-list` (off `Fixes2`) with `tests/qa_color_fromList.ms`. Not pushed.
+- **BUG (confirmed, not fixed): `key.pressed("notAKey")` and `key.pressed("mouse ")` print an error and `exit`**, killing the program.
+- **Gotcha:** a user-script global named `list` shadows the type inside lib code (`sp isa list` in SpriteDisplay broke). Likely any lib relying on built-in type names is exposed.
+- `Display` edges (`display(-1)`, `display(8)`, `display("a")`) return non-displays, no crash: `tests/qa_display_edges.ms`.
+- Display.install bugs were already fixed upstream (Session 1).
+
+### Next fix candidates (ranked by impact)
+1. S-T1: ScreenFont.drawChar shader bracket per glyph (13x available just by using the fallback path; a single bracket around render or vertex-color approach should do better).
+2. S-L1: TileDisplay.render culling.
+3. S-S3/S-A1/S-T4: collision cost, first-play synthesis hitch, empty-text-display cost.
+
+### Not yet done
+Unrun: remaining §4.1 leftovers, §4.12-4.13, §5 integration scenarios, bug probes for sprites (zero/negative scale, mutation during iteration), §9, §10.

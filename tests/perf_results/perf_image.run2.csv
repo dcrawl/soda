@@ -1,0 +1,24 @@
+RESULT,img_pixel,64,per-call,0.005,0.005,0.0051,0.0051
+RESULT,img_setPixel,64,per-call,0.0067,0.0067,0.0068,0.0068
+RESULT,img_pixelLoop_full,4096,per-call,19.8088,19.7037,20.2257,20.2257
+RESULT,img_setPixelLoop_full,4096,per-call,26.7705,26.745,26.9078,26.9078
+RESULT,img_flip,64,per-call,0.0088,0.0088,0.0088,0.0088
+RESULT,img_rotate90,64,per-call,0.0098,0.0098,0.0099,0.0099
+RESULT,img_pixel,512,per-call,0.0049,0.0049,0.0049,0.0049
+RESULT,img_setPixel,512,per-call,0.0067,0.0067,0.0067,0.0067
+RESULT,img_pixelLoop_full,262144,per-call,1275.653,1276.3155,1279.8705,1279.8705
+RESULT,img_setPixelLoop_full,262144,per-call,1726.6832,1725.7708,1731.6171,1731.6171
+RESULT,img_flip,512,per-call,0.4981,0.4983,0.4995,0.4995
+RESULT,img_rotate90,512,per-call,0.5008,0.4999,0.5035,0.5035
+RESULT,img_getImage_256frames,256,per-call,1.0299,1.0334,1.077,1.077
+RESULT,img_getImage_single,1,per-call,0.004,0.004,0.0041,0.0041
+RESULT,img_texture_cached,256,per-call,0.0005,0.0005,0.0005,0.0005
+RESULT,img_texture_afterSetPixel,256,per-call,0.0722,0.0718,0.0737,0.0737
+RESULT,img_editK_thenTexture,1,per-call,0.0731,0.0731,0.0754,0.0754
+RESULT,img_editK_thenTexture,10,per-call,0.1338,0.1332,0.1354,0.1354
+RESULT,img_editK_thenTexture,100,per-call,0.7422,0.7423,0.7457,0.7457
+RESULT,img_editK_thenTexture,1000,per-call,6.8357,6.8386,6.8453,6.8453
+RESULT,img_editK_thenTexture,10000,per-call,69.4432,68.6952,71.8647,71.8647
+RESOURCES,after10000getImage,{"Image": 10002, "Texture": 2, "Font": 0, "Wave": 0, "Music": 0, "Sound": 0, "AudioStream": 0, "RenderTexture": 8, "Shader": 0, "Mesh": 0, "Material": 0, "Model": 0, "ModelAnimation": 0, "total": 10012},hostMemory=45916864
+RESULT,img_gc_flush,1,per-call,0.1047,0.031,0.3759,0.3759
+RESOURCES,after-gc,{"Image": 2, "Texture": 2, "Font": 0, "Wave": 0, "Music": 0, "Sound": 0, "AudioStream": 0, "RenderTexture": 8, "Shader": 0, "Mesh": 0, "Material": 0, "Model": 0, "ModelAnimation": 0, "total": 12},hostMemory=33276896
