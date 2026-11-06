@@ -308,8 +308,17 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
   `beginBatch`/`endBatch` dropped **~0.098 ms/call → ~0.0028 ms/call**, a
   **~35×** speedup, flat across N — for N = 10 000, ~1 s → **~28 ms**.
   Consistent across 3 runs. This was the top-priority target per §8 step
-  3's ordering (S-T1 → **S-P1** → ...); not yet merged into `Fixes` or
-  wired into any `lib/*.ms` caller (e.g. a future `TileDisplay`/
+  3's ordering (S-T1 → **S-P1** → ...).
+
+  Prototyped on `perf/fix-pixelDisplay-batch` (off `perf/00-harness-setup`,
+  commit `8df7753`), together with the benchmark and this writeup. The fix
+  itself (`lib/PixelDisplay.ms`'s `beginBatch`/`endBatch`) plus its
+  regression test (`tests/qa_pixelDisplay_batch.ms`) were then cherry-picked
+  — at the user's request, to keep `Fixes` free of the perf-testing
+  harness/benchmarks/plan doc this branch also carries — onto a short-lived
+  branch off `Fixes` and fast-forward-merged in (commit `16e6ced`). Not
+  pushed to `origin`, and not yet proposed upstream to JoeStrout's `main`.
+  No `lib/*.ms` caller wired up to use it yet (e.g. a future `TileDisplay`/
   `SpriteDisplay` hot loop, or Soda user code) — that's a follow-up, not
   part of this prototype.
 - **S-P2 (`drawImage`/`patternFill` upload-per-call) — still open,
@@ -345,12 +354,13 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
   `autoUnload`-created render texture on resize, the non-960×640 resize
   default, `render`'s "NULL _renderTex!" dereference-after-print, and
   `setClip`/`clearClip` edge behavior.
-- S-P1 is prototyped and fixed on `perf/fix-pixelDisplay-batch`
-  (`beginBatch`/`endBatch`, ~35× speedup measured, see above) but not yet
-  merged into `Fixes`, and no `lib/*.ms` caller has been updated to use it
-  yet (it's an opt-in API addition, not a behavior change to any existing
-  method). S-P2 (`drawImage`/`patternFill` upload-per-call) is still open
-  and is now the plan's next prototype-fix candidate per §8 step 3's
-  ordering.
+- S-P1's fix (`beginBatch`/`endBatch`, ~35× speedup measured, see above) is
+  merged into `Fixes` (commit `16e6ced`, cherry-picked from
+  `perf/fix-pixelDisplay-batch`'s `8df7753`). Not pushed to `origin`, not
+  yet proposed upstream to JoeStrout's `main`, and no `lib/*.ms` caller has
+  been updated to use it yet (it's an opt-in API addition, not a behavior
+  change to any existing method). S-P2 (`drawImage`/`patternFill`
+  upload-per-call) is still open and is now the plan's next prototype-fix
+  candidate per §8 step 3's ordering.
 - `perf/bug-sound-stopall` is merged into `Fixes` locally but not pushed,
   and not yet proposed upstream to JoeStrout's `main`.
