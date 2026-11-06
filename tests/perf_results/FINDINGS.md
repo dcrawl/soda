@@ -642,3 +642,7 @@ Next: S-L2 (remove per-tile geometry allocation) would take the visible-tile cos
 | half-empty | ~3.4 ms | ~1.1 ms |
 
 Total frame at 1000x1000: 6788 ms originally -> ~4.6 ms. Data: `perf_tile.afterSL2.csv`. Regression test `tests/qa_tile_args.ms` checks every draw argument against `_tileGeometry` across stagger, overlap, non-square cells, all 8 transforms and tints.
+
+### S-A1 fix: Sound synthesis loop inlined; key.pressed no longer exits
+- **S-A1:** `Sound._addSamples` inlines the waveform/envelope look-ups (`_lookupLUT` was 2 calls per sample) and hoists invariants. Synthesis 24.7 -> 12.2 ms per second of audio (8-way mix of 1 s: 200 -> 101 ms); a 1 s first `play` is now 13 ms, under one 16.7 ms frame. Remaining ~1.2 us/sample is the interpreter loop itself; a faster result would need synthesis chunked across frames or moved to the host. Data: `perf_sound.afterSA1.csv`. Test `tests/qa_sound_synth.ms` compares against the original loop over 210 waveform x envelope x freq combinations (tolerance 1e-9) plus a mix.
+- **key.pressed bad name:** warns once per distinct bad name (so a per-frame check doesn't flood the console) and returns false instead of `exit`. Test `tests/qa_key_badname.ms`. Judgement call: this changes a deliberate fail-loudly into warn-and-continue; easy to revert if upstream prefers.
