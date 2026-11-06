@@ -615,3 +615,5 @@ Root cause: the glyph shader takes fore/back colors as uniforms, so it was bound
 - **S-T3** (no-shader fallback) was measured; it is now effectively the default path for opaque colors.
 - **Bug probes** (`tests/qa_textDisplay_edges.ms`, all pass, no bugs found): `delimiter=""`, default delimiter, `row=`/`column=` clamping, `scroll` at 1 row, scroll row aliasing, unicode outside the font, out-of-range `setCell`/`cell`, cursor show/hide restoring colors, tab/backspace. `lib/TextDisplay.ms` self-test passes. `tests/text.ms` is a visual demo and was not run.
 
+### Upstream PR #28
+S-T1, S-T2 and the `color.fromList` fix are proposed as [JoeStrout/soda#28](https://github.com/JoeStrout/soda/pull/28), a clean 3-commit branch (`upstream-pr/text-perf-and-color-fix`) off `upstream/main`, independent of #27.
