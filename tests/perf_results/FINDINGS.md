@@ -590,7 +590,7 @@ Scripts: `tests/perf_{display,sprites,text,tile,image,sound,input}.ms` (input al
 
 ### Bugs
 - **BUG: `color.fromList(list)` crashed** (`s.append`, lists have no append). Same on upstream/main. Fixed on `fix/color-fromList-list` (off `Fixes2`) with `tests/qa_color_fromList.ms`. Not pushed.
-- **BUG (confirmed, not fixed): `key.pressed("notAKey")` and `key.pressed("mouse ")` print an error and `exit`**, killing the program.
+- **NOTE (intentional, not a bug): `key.pressed("notAKey")` and `key.pressed("mouse ")` print an error and `exit`**, killing the program.
 - **Gotcha:** a user-script global named `list` shadows the type inside lib code (`sp isa list` in SpriteDisplay broke). Likely any lib relying on built-in type names is exposed.
 - `Display` edges (`display(-1)`, `display(8)`, `display("a")`) return non-displays, no crash: `tests/qa_display_edges.ms`.
 - Display.install bugs were already fixed upstream (Session 1).
@@ -643,6 +643,6 @@ Next: S-L2 (remove per-tile geometry allocation) would take the visible-tile cos
 
 Total frame at 1000x1000: 6788 ms originally -> ~4.6 ms. Data: `perf_tile.afterSL2.csv`. Regression test `tests/qa_tile_args.ms` checks every draw argument against `_tileGeometry` across stagger, overlap, non-square cells, all 8 transforms and tints.
 
-### S-A1 fix: Sound synthesis loop inlined; key.pressed no longer exits
+### S-A1 fix: Sound synthesis loop inlined; key.pressed exit documented
 - **S-A1:** `Sound._addSamples` inlines the waveform/envelope look-ups (`_lookupLUT` was 2 calls per sample) and hoists invariants. Synthesis 24.7 -> 12.2 ms per second of audio (8-way mix of 1 s: 200 -> 101 ms); a 1 s first `play` is now 13 ms, under one 16.7 ms frame. Remaining ~1.2 us/sample is the interpreter loop itself; a faster result would need synthesis chunked across frames or moved to the host. Data: `perf_sound.afterSA1.csv`. Test `tests/qa_sound_synth.ms` compares against the original loop over 210 waveform x envelope x freq combinations (tolerance 1e-9) plus a mix.
-- **key.pressed bad name:** warns once per distinct bad name (so a per-frame check doesn't flood the console) and returns false instead of `exit`. Test `tests/qa_key_badname.ms`. Judgement call: this changes a deliberate fail-loudly into warn-and-continue; easy to revert if upstream prefers.
+- **key.pressed bad name: left as is.** `key.pressed("notAKey")` prints the valid names and a stack trace, then calls `exit`. That is deliberate fail-loudly behavior, not a bug, so a warn-and-return-false change was tried and reverted (not in `Fixes2`). Worth knowing: a typo in a key name kills the program, including `"mouse "` style names. The probe that found it is retained in the earlier baseline notes.
