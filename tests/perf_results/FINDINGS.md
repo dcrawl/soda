@@ -602,3 +602,10 @@ Scripts: `tests/perf_{display,sprites,text,tile,image,sound,input}.ms` (input al
 
 ### Not yet done
 Unrun: remaining §4.1 leftovers, §4.12-4.13, §5 integration scenarios, bug probes for sprites (zero/negative scale, mutation during iteration), §9, §10.
+
+### S-T1 fix: ScreenFont.drawChar batchable path (on `Fixes2`, commit 0f142c0)
+Root cause: the glyph shader takes fore/back colors as uniforms, so it was bound (BeginShaderMode/EndShaderMode = batch flush) around every glyph. Fix: when fore is opaque and back is fully opaque or fully transparent, draw `DrawRectangle(back)` + `DrawTexturePro` tinted with fore, which is pixel-identical to `mix(back, fore, mask)` for the binary-alpha font sheet and batches normally. Translucent fore or partly transparent back still use the shader.
+- Verified: `tests/qa_screenfont_draw.ms` compares drawn pixels with the font mask for all four color cases; passes on both old and new code, so the output is unchanged.
+- Measured (`perf_results/perf_text.afterSP-T1.csv`): full 68x26 screen 420 -> 28-33 ms/frame (~13-15x); 160x100 grid 4000 -> 250 ms (~16x). Remaining ~17 us/glyph is the MiniScript render loop (S-T2 color.toList per glyph, srcRect list, S-T4 no dirty flag) - next candidates.
+- Not pushed, no PR yet. Also on `Fixes2`: the `color.fromList` fix (1135063).
+
