@@ -632,3 +632,13 @@ Frame cost is now bounded by the visible tile count (~6.5 ms for ~600-700 tiles,
 Regression test: `tests/qa_tile_cull.ms` (counts `DrawTexturePro` calls against a brute-force visible-cell bound across scrolls, stagger, non-square cells, overlap, rotation, and the overlap==size fallback).
 Note: MiniScript has no global `max`/`min`; the first draft failed on that.
 Next: S-L2 (remove per-tile geometry allocation) would take the visible-tile cost down further.
+
+### S-L2 fix: TileDisplay.render inlines tile geometry
+`render` hoists every loop invariant (tile-set size, origin, offsets, grids, screen height) and computes src/dest rects inline, instead of calling `_tileGeometry` (a map + several lists per tile). `_tileGeometry` is kept for callers/tests.
+
+| Scrolled map | After S-L1 (render) | After S-L2 (render) |
+|---|---|---|
+| ~600 visible tiles (50/200/1000 maps) | ~6.4 ms | ~1.7 ms |
+| half-empty | ~3.4 ms | ~1.1 ms |
+
+Total frame at 1000x1000: 6788 ms originally -> ~4.6 ms. Data: `perf_tile.afterSL2.csv`. Regression test `tests/qa_tile_args.ms` checks every draw argument against `_tileGeometry` across stagger, overlap, non-square cells, all 8 transforms and tints.
