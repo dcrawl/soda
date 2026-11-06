@@ -379,10 +379,15 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
     speedup, flat across N. `patternFill` (8×8 tile): **~0.06–0.10 ms →
     ~0.0064 ms/call**, a **~15×** speedup.
 
-  Prototyped on `perf/fix-pixelDisplay-drawImage` (off `perf/00-harness-setup`).
-  Not yet merged into `Fixes`, not pushed, not proposed upstream. No
-  `lib/*.ms` caller has been updated to wrap its `drawImage`/`patternFill`
-  calls in `beginBatch`/`endBatch` yet — same opt-in-API caveat as S-P1.
+  Prototyped on `perf/fix-pixelDisplay-drawImage` (off `perf/00-harness-setup`,
+  commit `66d4ce9`), together with the benchmark and this writeup. The fix
+  itself (`lib/PixelDisplay.ms`'s `drawImage`/`patternFill`) plus its
+  regression test (`tests/qa_pixelDisplay_drawImage.ms`) were then
+  cherry-picked onto a short-lived branch off `Fixes` and fast-forward-merged
+  in (commit `58741fe`), same pattern as S-P1. Not pushed to `origin`, not
+  proposed upstream. No `lib/*.ms` caller has been updated to wrap its
+  `drawImage`/`patternFill` calls in `beginBatch`/`endBatch` yet — same
+  opt-in-API caveat as S-P1.
 - **S-P5 (`_triangulate` O(n²) or worse) — still open, confirmed
   super-linear, unchanged by the sync.** Measured `fillPoly` on regular
   convex polygons: 5 verts **0.090 ms**, 20 verts **0.267 ms**, 100 verts
@@ -416,9 +421,10 @@ benchmark, `tests/perf_pixelDisplay.ms` (`perf.timeit`, `soda` host,
   change to any existing method).
 - S-P2's fix (`drawImage`/`patternFill` now reuse `img.texture`, ~15–17×
   speedup measured when combined with `beginBatch(true)`, see above) is
-  prototyped on `perf/fix-pixelDisplay-drawImage` but not yet merged into
-  `Fixes`, not pushed, and not yet proposed upstream. S-P5 (`_triangulate`
-  superlinear scaling) is still open and is now the plan's next
-  prototype-fix candidate per §8 step 3's ordering.
+  merged into `Fixes` (commit `58741fe`, cherry-picked from
+  `perf/fix-pixelDisplay-drawImage`'s `66d4ce9`). Not pushed to `origin`,
+  not yet proposed upstream. S-P5 (`_triangulate` superlinear scaling) is
+  still open and is now the plan's next prototype-fix candidate per §8
+  step 3's ordering.
 - `perf/bug-sound-stopall` is merged into `Fixes` and pushed to
   `origin/Fixes`. Not yet proposed upstream to JoeStrout's `main`.
