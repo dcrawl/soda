@@ -617,3 +617,18 @@ Root cause: the glyph shader takes fore/back colors as uniforms, so it was bound
 
 ### Upstream PR #28
 S-T1, S-T2 and the `color.fromList` fix are proposed as [JoeStrout/soda#28](https://github.com/JoeStrout/soda/pull/28), a clean 3-commit branch (`upstream-pr/text-perf-and-color-fix`) off `upstream/main`, independent of #27.
+
+### S-L1 fix: TileDisplay.render culls off-screen cells (on `Fixes2`, commit 226e3dc)
+`render` now computes the column/row window that can touch the screen (padded for rotation, stagger offsets, non-square cells) and loops only over that. Falls back to the full grid when the per-axis spacing is <= 0 (overlap >= cell size).
+
+| Map (scrolled, 32px cells, 960x640) | Before | After |
+|---|---|---|
+| 10x10 | 1.7 ms | ~1.2 ms render |
+| 50x50 | 18.4 ms | ~7 ms |
+| 200x200 | 267 ms | ~7 ms |
+| 1000x1000 | 6788 ms | ~9 ms total |
+
+Frame cost is now bounded by the visible tile count (~6.5 ms for ~600-700 tiles, i.e. ~10 us/tile), which is the S-L2 per-tile allocation cost (`_tileGeometry` builds a map and rects per cell). Raw data: `perf_tile.afterSL1.csv`.
+Regression test: `tests/qa_tile_cull.ms` (counts `DrawTexturePro` calls against a brute-force visible-cell bound across scrolls, stagger, non-square cells, overlap, rotation, and the overlap==size fallback).
+Note: MiniScript has no global `max`/`min`; the first draft failed on that.
+Next: S-L2 (remove per-tile geometry allocation) would take the visible-tile cost down further.
