@@ -984,3 +984,47 @@ Render ms/frame, 3 runs each, release host:
 | spr_10images 5000 | n/a | 25.0 |
 
 qa_sprite_render, qa_sprite_edges, qa_display_edges, qa_display_install, qa_bounds_overlaps all pass.
+
+## §10.1 Native profile of the host: scenario 1 (5000 bouncing balls)
+
+Method: `xcrun xctrace record --template 'Time Profiler'` on the `build-profile/` (RelWithDebInfo) host running
+`perf_sprite_profile.ms`; time-profile table exported to XML and bucketed by `tests/analyze_trace.py`
+(summary: `perf_results/xctrace/scn1_summary.txt`; the 8.8 MB .trace bundle is not kept). 9,511 samples at 1 ms.
+miniscript2 at a5a546a. Read-only; nothing in miniscript2 was changed.
+
+| Bucket (self time) | % |
+|---|---|
+| Refcounting / struct copies (shared_ptr copy+release, GCMap/Context copies) | 24.0 |
+| Map lookup (findEntry, GCMap::TryGet, LookupWithOrigin, RecursiveEqual) | 16.3 |
+| VM dispatch (`VMStorage::RunInner`) | 14.1 |
+| String/value hashing | 11.4 |
+| Value inline wrappers (`Boolean::operator bool`, `IsMap`, ...) | 7.7 |
+| malloc/free | 5.9 |
+| raylib / GL | 1.4 |
+| GC | 1.1 |
+| List access | 0.4 |
+| Binding conversion | 0.2 |
+| other (unclassified) | 17.5 |
+
+Inclusive: `LookupMember` 27.7% (of which `LookupWithOrigin` 24.2%, `GCMap::TryGet` 22.6%, `findEntry` 18.3%);
+`Hash(Value)` 12.7%; native intrinsic callbacks (`InvokeNativeCallback`) 17.4%.
+
+Confirmed suspects:
+- **S-V1 (refcount / struct copies on every lookup): confirmed, the largest bucket at ~24% of native time.**
+  `__release_shared` is the #3 self symbol (5.2%), with `shared_ptr<vector<Value>>` copy/get/dtor,
+  `shared_ptr<GlobalsStorage>`, `shared_ptr<VarMapBackingStorage>`, `shared_ptr<FuncDefStorage>`,
+  `GCMap::GCMap(const GCMap&)`, `GCMap::~GCMap` and `Context::Context` copies all in the top 40.
+  Map access is ~28% inclusive, so member lookup (`self.x`, method lookup along `__isa`) is the dominant script cost.
+- **New suspect S-V4: tiny strings are re-hashed on every lookup.** `get_string_hash` is 6.2% self and
+  `string_hash` 4.1% (about 10% together, 12.3% inclusive). Heap strings cache their hash (`ss_hash`), but
+  strings up to 5 bytes (`x`, `y`, `scale`, `image`, `vx`, ...) are inline Values: `get_string_hash` unpacks them to a buffer and hashes
+  each time. Most Soda property names are tiny, so almost every field access pays it. Candidate fix: hash tiny strings straight from
+  the `bits` word (no unpack, no loop), or precompute. Needs a micro-benchmark first.
+- **Not a problem:** GC (1.1%), list access (0.4%), argument conversion (0.2%) and raylib/GL (1.4%).
+
+Implication: with ~95% of frame time in the VM and ~50% of that in lookup + refcount + hashing, the biggest remaining
+speedup for Soda is in miniscript2 (return `const GCMap&` on hot paths; cheaper tiny-string hashing), not in `lib/*.ms`.
+
+Not done: the same profile for the other scenarios and the §9 binding benchmark; micro-benchmarks for S-V1..S-V4
+(`x = obj.field` at isa depth 1-3, setter cost); `tools/benchmark.sh` baselines; any VM change (needs the user's
+go-ahead per miniscript2/CLAUDE.md).

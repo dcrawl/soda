@@ -1,0 +1,100 @@
+samples 9511
+--- self
+ 14.1% MiniScript::VMStorage::RunInner(unsigned int)
+  6.2% MiniScript::get_string_hash(MiniScript::Value)
+  5.2% std::__1::__shared_count::__release_shared[abi:nqe220106]()
+  4.1% MiniScript::string_hash(char const*, int)
+  4.0% MiniScript::DictionaryStorage<MiniScript::Value, MiniScript::Value>::findEntry(MiniScript::Value const&) const
+  3.7% MiniScript::Value::RecursiveEqual(MiniScript::Value) const
+  3.5% MiniScript::Boolean::operator bool() const
+  3.2% MiniScript::GCMap::TryGet(MiniScript::Value, MiniScript::Value*)
+  2.2% std::__1::shared_ptr<std::__1::vector<MiniScript::Value, std::__1::allocator<MiniScript::Value>>>::shared_ptr[
+  1.9% std::__1::shared_ptr<std::__1::vector<MiniScript::Value, std::__1::allocator<MiniScript::Value>>>::get[abi:nqe
+  1.8% _xzm_free
+  1.5% _xzm_xzone_malloc_tiny
+  1.5% MiniScript::Value::LookupWithOrigin(MiniScript::Value, MiniScript::Value*, MiniScript::Value*) const
+  1.3% long std::__1::__libcpp_atomic_refcount_increment[abi:nqe220106]<long>(long&)
+  1.2% std::__1::shared_ptr<MiniScript::GlobalsStorage>::get[abi:nqe220106]() const
+  1.2% MiniScript::VMStorage::LookupMember(MiniScript::Value, MiniScript::Value, MiniScript::Value*, MiniScript::Valu
+  1.1% std::__1::shared_ptr<MiniScript::FuncDefStorage>::shared_ptr[abi:nqe220106](std::__1::shared_ptr<MiniScript::F
+  1.1% MiniScript::Context::Context(MiniScript::Context&&)
+  0.9% rlVertex3f
+  0.9% MiniScript::GCManager::GetString(MiniScript::Value)
+  0.9% MiniScript::BytecodeUtil::Au(unsigned int)
+  0.8% MiniScript::Value::TryGet(MiniScript::Value, MiniScript::Value*) const
+  0.8% std::__1::shared_ptr<std::__1::vector<MiniScript::Value, std::__1::allocator<MiniScript::Value>>>::~shared_ptr
+  0.8% _free
+  0.8% MiniScript::Globals::TryGet(MiniScript::Value, MiniScript::Value*)
+  0.7% MiniScript::Context::Context(MiniScript::Context const&)
+  0.7% std::__1::shared_ptr<MiniScript::DictionaryStorage<MiniScript::Value, int>>::shared_ptr[abi:nqe220106](std::__
+  0.7% std::__1::shared_ptr<MiniScript::GlobalsStorage>::shared_ptr[abi:nqe220106](std::__1::shared_ptr<MiniScript::G
+  0.6% std::__1::shared_ptr<MiniScript::VarMapBackingStorage>::shared_ptr[abi:nqe220106](std::__1::shared_ptr<MiniScr
+  0.6% MiniScript::FuncDef::MaxRegs()
+  0.6% MiniScript::value_hash(MiniScript::Value, int)
+  0.5% <deduplicated_symbol>
+  0.5% MiniScript::VMStorage::AutoInvokeFuncRef(MiniScript::Value, int, int, int, MiniScript::FuncDef, MiniScript::Fu
+  0.5% _tlv_get_addr
+  0.5% std::__1::shared_ptr<MiniScript::VarMapBackingStorage>::~shared_ptr[abi:nqe220106]()
+  0.5% MiniScript::VMStorage::InvokeNativeCallback(std::__1::function<MiniScript::IntrinsicResult (MiniScript::Contex
+  0.5% std::__1::shared_ptr<MiniScript::VarMapBackingStorage>::get[abi:nqe220106]() const
+  0.5% MiniScript::Value::IsMap() const
+  0.5% MiniScript::GCMap::~GCMap()
+  0.5% _xzm_xzone_malloc
+  0.5% 0x104b88551
+  0.5% MiniScript::GCMap::GCMap(MiniScript::GCMap const&)
+  0.5% MiniScript::VMStorage::SetupCallFrame(int, int, int, MiniScript::FuncDef)
+  0.5% MiniScript::CoreIntrinsics::Init()::$_47::operator()(MiniScript::Context, MiniScript::IntrinsicResult) const
+  0.5% std::__1::shared_ptr<MiniScript::DictionaryStorage<MiniScript::Value, MiniScript::Value>>::shared_ptr[abi:nqe2
+  0.4% std::__1::vector<int, std::__1::allocator<int>>::empty[abi:nqe220106]() const
+  0.4% mach_msg2_trap
+  0.4% MiniScript::Value::IsNull() const
+  0.4% MiniScript::Value::RefEquals(MiniScript::Value const&) const
+  0.4% std::__1::shared_ptr<std::__1::vector<MiniScript::GCMap, std::__1::allocator<MiniScript::GCMap>>>::get[abi:nqe
+  0.4% malloc_type_malloc
+  0.4% MiniScript::Value::Value()
+  0.4% std::__1::shared_ptr<std::__1::vector<MiniScript::Value, std::__1::allocator<MiniScript::Value>>>::operator*[a
+  0.4% MiniScript::GlobalsStorage::TryGet(MiniScript::Value, MiniScript::Value*)
+  0.4% MiniScript::VMStorage::ProcessArguments(int, int, int, int, int, MiniScript::FuncDef, MiniScript::List<unsigne
+  0.4% MiniScript::VMStorage::LookupVariable(MiniScript::Value)
+  0.4% MiniScript::CallInfo::CallInfo(MiniScript::CallInfo const&)
+  0.3% std::__1::shared_ptr<MiniScript::DictionaryStorage<MiniScript::Value, int>>::~shared_ptr[abi:nqe220106]()
+  0.3% long std::__1::__libcpp_atomic_refcount_decrement[abi:nqe220106]<long>(long&)
+  0.3% _platform_memset
+--- inclusive
+ 98.9% start
+ 98.7% main
+ 98.4% MainLoop()
+ 98.3% MiniScript::VM::Run(unsigned int)
+ 98.3% MiniScript::Interpreter::RunUntilDone(double, bool)
+ 98.3% MiniScript::InterpreterStorage::RunUntilDone(double, bool)
+ 98.3% MiniScript::VMStorage::Run(unsigned int)
+ 96.5% MiniScript::VMStorage::RunInner(unsigned int)
+ 27.7% MiniScript::VMStorage::LookupMember(MiniScript::Value, MiniScript::Value, MiniScript::Value*, MiniScript::Valu
+ 24.2% MiniScript::Value::LookupWithOrigin(MiniScript::Value, MiniScript::Value*, MiniScript::Value*) const
+ 22.6% MiniScript::GCMap::TryGet(MiniScript::Value, MiniScript::Value*)
+ 18.3% MiniScript::DictionaryStorage<MiniScript::Value, MiniScript::Value>::findEntry(MiniScript::Value const&) const
+ 17.6% MiniScript::Dictionary<MiniScript::Value, MiniScript::Value>::TryGetValue(MiniScript::Value const&, MiniScript
+ 17.4% MiniScript::VMStorage::InvokeNativeCallback(std::__1::function<MiniScript::IntrinsicResult (MiniScript::Contex
+ 12.7% MiniScript::Hash(MiniScript::Value)
+ 12.3% MiniScript::get_string_hash(MiniScript::Value)
+ 12.1% std::__1::__function::__value_func<MiniScript::IntrinsicResult (MiniScript::Context, MiniScript::IntrinsicResu
+ 12.1% std::__1::function<MiniScript::IntrinsicResult (MiniScript::Context, MiniScript::IntrinsicResult)>::operator()
+  9.5% MiniScript::VMStorage::AutoInvokeFuncRef(MiniScript::Value, int, int, int, MiniScript::FuncDef, MiniScript::Fu
+  7.6% MiniScript::VMStorage::LookupVariable(MiniScript::Value)
+  7.4% MiniScript::Value::TryGet(MiniScript::Value, MiniScript::Value*) const
+  6.9% std::__1::__shared_weak_count::__release_shared[abi:nqe220106]()
+  6.3% std::__1::__shared_count::__release_shared[abi:nqe220106]()
+  5.9% MiniScript::Value::RecursiveEqual(MiniScript::Value) const
+  4.3% std::__1::shared_ptr<std::__1::vector<MiniScript::Value, std::__1::allocator<MiniScript::Value>>>::~shared_ptr
+--- buckets
+ 24.0% Refcounting / struct copies
+ 17.5% other
+ 16.3% Map lookup
+ 14.1% VM dispatch
+ 11.4% String/value hashing
+  7.7% Value helpers (inline wrappers)
+  5.9% malloc/free
+  1.4% raylib / GL
+  1.1% GC
+  0.4% List access
+  0.2% Binding conversion
