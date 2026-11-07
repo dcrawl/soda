@@ -675,10 +675,10 @@ Sample BMF fonts come from the Mini Micro system disk checkout (`study/minimicro
 - `width` 0.12-0.19 ms per 100 chars; `lenToFit` of a 1000-char string 2.6-3.9 ms (binary search, each probe O(n)).
 - TrueType (`ttFonts`): load 0.5 ms, print 100 chars 1.3 ms and 1000 chars 1.4 ms/frame, `width` 5 us per 100 chars. No problem.
 - Bug probes, all pass (`qa_bmfFonts.ms`): lowercase falls back to the uppercase glyph; kerning (the font's own pairs plus `setKern`) applies in `width`; missing glyphs have zero width; `lenToFit` edge cases; `save`/`load` round-trip keeps glyph count, line height and widths. `printJustified` with one word or empty text does not crash. `Font` is reached as `bmfFonts.Font` (not a global). **NOTE:** `TTFont.Load` prints an error and `exit`s on a bad path (like `key.pressed`; assumed intentional).
-- Not run: `bmfFonts` and `ttFonts` interactive demo blocks (need a user at the keyboard).
+- Demo blocks (run later via wrapper scripts that `import "soda"` first; they fail if run bare): `ttFonts`, `bmfFonts` and the `textUtil` dialog demo all run to completion with no runtime errors.
 
 ### §4.13 Tier C utilities (`perf_utils.ms`) — report only, nothing patched
-- Built-in `runUnitTests` pass for json, grfon, tsv, stringUtil, listUtil, mapUtil, mathUtil, matrixUtil, base64 and qa. textUtil has no unit tests, only an interactive dialog demo (not run).
+- Built-in `runUnitTests` pass for json, grfon, tsv, stringUtil, listUtil, mapUtil, mathUtil, matrixUtil, base64 and qa. textUtil had no unit tests; `tests/qa_textUtil.ms` now covers its helpers (ALL PASSED). **Finding (not patched):** textUtil uses bare `print`, which in Soda is the stdout intrinsic, so `printAt`/`printCenteredAt`/`printWrap`/`drawButton`/`Dialog`/`FileDialog` write to the terminal, not the text display; only the cell-level helpers (`clear*`, `getContent`/`setContent`, `button`) act on the screen. Hard-codes 68x26.
 - Everything scales linearly; no accidental O(n^2) found. One-shot ms (`perf_utils.run1.csv`):
   | Op | Small | Medium | Large |
   |---|---|---|---|
