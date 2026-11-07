@@ -1,0 +1,12 @@
+BATCH,perSprite,100,0.111
+BATCH,batchPrebuilt,100,0.009
+BATCH,batchBuilt,100,0.234
+BATCH,loopOnlyNoDraw,100,0.048
+BATCH,perSprite,1000,1.035
+BATCH,batchPrebuilt,1000,0.07
+BATCH,batchBuilt,1000,2.234
+BATCH,loopOnlyNoDraw,1000,0.444
+BATCH,perSprite,5000,5.238
+BATCH,batchPrebuilt,5000,0.348
+BATCH,batchBuilt,5000,11.369
+BATCH,loopOnlyNoDraw,5000,1.982

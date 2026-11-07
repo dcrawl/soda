@@ -907,3 +907,27 @@ Map args are now ~1.1x the list form instead of ~2x, so lib code no longer pays 
 ### BUG-HOST-01 fix
 `Image.create` now returns null with a message for non-numeric, negative or over-1-GiB sizes
 instead of crashing the host (Fixes2 c817862; `tests/qa_image_create.ms`).
+
+### BIND-03 — spritebatch plugin prototype (batch DrawTexturePro): NOT worthwhile as a flat-list call
+
+Prototype: raylib-miniscript branch `perf/batch-draw-plugin` (local), `plugins/spritebatch/plugin.cpp`,
+`spritebatch.drawTextures texture, flatList, tint` (9 numbers per sprite). Bench: `tests/perf_spritebatch.ms`
+(ms per frame, median of 7, 32x32 sprite, rotation varying).
+
+| N | per-sprite DrawTexturePro | batch, prebuilt list | batch, list built in MS each frame | MS loop floor (no draw) |
+|---|---|---|---|---|
+| 100 | 0.111 | 0.009 | 0.234 | 0.048 |
+| 1000 | 1.035 | 0.070 | 2.234 | 0.444 |
+| 5000 | 5.238 | 0.348 | 11.369 | 1.982 |
+
+Findings:
+- The native call itself is nearly free (0.35 ms for 5000). But a batch API must be fed a list, and building it
+  in MiniScript (9 pushes/sprite) costs MORE than the three small lists + DrawTexturePro call it replaces
+  (11.4 vs 5.2 ms at 5000). A flat-list batch only wins if the data is persistent between frames (sprites that never move).
+- The whole `Sprite.draw` render phase is ~26 ms at 5000 sprites (`perf_sprites` spr_plain); the DrawTexturePro
+  loop is only ~5 ms of that. The other ~20 ms is Sprite.draw's MiniScript logic (inherited-field lookups via
+  the __isa chain, srcRect/scale branching, arithmetic). A draw-call batch cannot touch it.
+- Only a plugin that walks the sprite maps natively (reading x, y, rotation, scale, tint, image, srcRect, with
+  isa-chain defaults) could remove that ~20 ms. That couples the host to Soda's Sprite field semantics, so it is
+  a bigger, more contentious design than "batch draw". Not prototyped.
+Decision: do not propose spritebatch.drawTextures. Revisit only if a native sprite-walker is wanted.
