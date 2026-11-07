@@ -1,0 +1,47 @@
+RESOURCES,before-N0,{"Image": 0, "Texture": 1, "Font": 0, "Wave": 0, "Music": 0, "Sound": 0, "AudioStream": 0, "RenderTexture": 16, "Shader": 0, "Mesh": 0, "Material": 0, "Model": 0, "ModelAnimation": 0, "total": 17},hostMemory=13397216
+RESULT,soda_emptyScene,0,user,0.0006,0.0005,0.001,0.0028
+RESULT,soda_emptyScene,0,render,0.5401,0.5296,0.5734,1.7172
+RESULT,soda_emptyScene,0,endDrawing,0.3942,0.217,1.3398,13.732
+RESULT,soda_emptyScene,0,callbacks,0.0175,0.0144,0.0327,0.1036
+RESULT,soda_emptyScene,0,yieldGC,0.042,0.0018,0.3597,0.4957
+RESULT,soda_emptyScene,0,total,0.9944,0.7891,2.2447,14.2872
+RESOURCES,after-N0,{"Image": 0, "Texture": 1, "Font": 0, "Wave": 0, "Music": 0, "Sound": 0, "AudioStream": 0, "RenderTexture": 8, "Shader": 0, "Mesh": 0, "Material": 0, "Model": 0, "ModelAnimation": 0, "total": 9},hostMemory=14009488
+RESOURCES,before-N10,{"Image": 0, "Texture": 1, "Font": 0, "Wave": 0, "Music": 0, "Sound": 0, "AudioStream": 0, "RenderTexture": 8, "Shader": 0, "Mesh": 0, "Material": 0, "Model": 0, "ModelAnimation": 0, "total": 9},hostMemory=14066496
+RESULT,soda_emptyScene,10,user,0.0004,0.0004,0.0005,0.0007
+RESULT,soda_emptyScene,10,render,0.5165,0.5172,0.5433,0.5632
+RESULT,soda_emptyScene,10,endDrawing,0.3157,0.1785,1.2613,3.4219
+RESULT,soda_emptyScene,10,callbacks,0.0127,0.0118,0.0184,0.0477
+RESULT,soda_emptyScene,10,yieldGC,0.0386,0.0011,0.3441,0.4
+RESULT,soda_emptyScene,10,total,0.884,0.7244,1.811,3.9613
+RESOURCES,after-N10,{"Image": 0, "Texture": 1, "Font": 0, "Wave": 0, "Music": 0, "Sound": 0, "AudioStream": 0, "RenderTexture": 8, "Shader": 0, "Mesh": 0, "Material": 0, "Model": 0, "ModelAnimation": 0, "total": 9},hostMemory=14131248
+RESOURCES,before-N100,{"Image": 0, "Texture": 1, "Font": 0, "Wave": 0, "Music": 0, "Sound": 0, "AudioStream": 0, "RenderTexture": 8, "Shader": 0, "Mesh": 0, "Material": 0, "Model": 0, "ModelAnimation": 0, "total": 9},hostMemory=14187216
+RESULT,soda_emptyScene,100,user,0.0005,0.0004,0.0005,0.0114
+RESULT,soda_emptyScene,100,render,0.5155,0.5151,0.5428,0.5702
+RESULT,soda_emptyScene,100,endDrawing,0.2593,0.1612,1.2338,3.2048
+RESULT,soda_emptyScene,100,callbacks,0.0123,0.0117,0.0144,0.0503
+RESULT,soda_emptyScene,100,yieldGC,0.0392,0.0011,0.3384,0.4785
+RESULT,soda_emptyScene,100,total,0.8267,0.704,1.7924,3.7109
+RESOURCES,after-N100,{"Image": 0, "Texture": 1, "Font": 0, "Wave": 0, "Music": 0, "Sound": 0, "AudioStream": 0, "RenderTexture": 8, "Shader": 0, "Mesh": 0, "Material": 0, "Model": 0, "ModelAnimation": 0, "total": 9},hostMemory=14124672
+RESULT,soda_idle_default,0,user,0.0004,0.0004,0.0005,0.0008
+RESULT,soda_idle_default,0,render,0.5139,0.5133,0.541,0.5701
+RESULT,soda_idle_default,0,endDrawing,0.2616,0.1643,0.9014,2.6491
+RESULT,soda_idle_default,0,callbacks,0.0125,0.0117,0.019,0.0337
+RESULT,soda_idle_default,0,yieldGC,0.0387,0.0011,0.3408,0.4398
+RESULT,soda_idle_default,0,total,0.8272,0.7011,1.4268,3.1556
+RESULT,soda_idle_pixelOff,0,user,0.0004,0.0004,0.0005,0.0006
+RESULT,soda_idle_pixelOff,0,render,0.5077,0.5066,0.5285,0.5575
+RESULT,soda_idle_pixelOff,0,endDrawing,0.2352,0.1568,0.7767,2.6337
+RESULT,soda_idle_pixelOff,0,callbacks,0.0124,0.0117,0.0155,0.0419
+RESULT,soda_idle_pixelOff,0,yieldGC,0.0358,0.0011,0.3143,0.4082
+RESULT,soda_idle_pixelOff,0,total,0.7915,0.6845,1.3029,3.1629
+RESULT,soda_idle_allOff,0,user,0.0005,0.0004,0.0005,0.0143
+RESULT,soda_idle_allOff,0,render,0.0039,0.0037,0.0045,0.013
+RESULT,soda_idle_allOff,0,endDrawing,0.1439,0.1206,0.1923,1.7513
+RESULT,soda_idle_allOff,0,callbacks,0.0131,0.0117,0.0209,0.0602
+RESULT,soda_idle_allOff,0,yieldGC,0.0306,0.001,0.266,0.337
+RESULT,soda_idle_allOff,0,total,0.192,0.1415,0.4241,1.7687
+RESULT,soda_wait,0,elapsed_s_and_frames,0,0,,
+RESULT,soda_wait,0.001,elapsed_s_and_frames,0.0151,1,,
+RESULT,soda_wait,0.1,elapsed_s_and_frames,0.1014,6,,
+RESULT,soda_wait,1,elapsed_s_and_frames,1.0022,59,,
+RESULT,soda_wait,5,elapsed_s_and_frames,5.0145,295,,

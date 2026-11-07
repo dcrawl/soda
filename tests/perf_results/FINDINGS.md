@@ -659,3 +659,38 @@ Total frame at 1000x1000: 6788 ms originally -> ~4.6 ms. Data: `perf_tile.afterS
 **Tests.** `tests/qa_sprite_render.ms` renders a fixed scene (plain, rotated, flipped, tinted, srcRect, warped sprites interleaved with plain ones, nested lists) offscreen and compares it with `tests/qa_sprite_render_ref.png`, recorded from the *old* code before any change. Warped quads sample on texel boundaries with slightly different float rounding (~127 single pixels differ), so it compares 8x8 block means; a swapped-UV mutation fails it with ~200 bad blocks. `tests/qa_bounds_overlaps.ms` checks the new `overlaps`/`contains` against the original SAT (kept as the reference) on edge cases plus 3000 random pairs. Both pass.
 
 **Sprite bug probes (done, no bugs found).** Scale 0 / `[0,2]` draw nothing; negative and list scales flip; `srcRect` outside or partly outside the image, `image = null`, `tint` null or garbage, degenerate UVs/corners, `setCorners` with scale 0, the same sprite twice in a list, a sprite in two displays, empty and nested-empty lists, and a non-Sprite object with its own `draw` all render without error and sensibly. Removing from a list while iterating it is plain MiniScript `for` semantics (one element skipped), not a display issue. A `null` entry in `display.sprites` raises "Can't index into null" in `_renderSprites`, same as before these changes; left alone as a user error. Pinned by `tests/qa_sprite_edges.ms`.
+
+## Session 3 — §4.1 leftovers, §4.12 fonts, §4.13 Tier C utilities
+
+### §4.1 soda.ms frame loop (`perf_soda.ms`, `qa_window.ms`): no bugs
+- Idle display stack (default): render ~0.51 ms/frame; with slot 5 (PixelDisplay) off: 0.51 (no saving — PixelDisplay is not the cost; the empty TextDisplay is, see S-T4); all displays off: 0.004 ms. So the floor is cheap; ~0.5 ms is the default stack.
+- `wait()`: accuracy fine (0.1 s -> 0.101, 1 s -> 1.002, 5 s -> 5.015 at 60 fps, frames rendered ~60/s). **NOTE:** `wait 0` renders zero frames (the loop condition is false immediately) and `wait 0.001` renders one; `wait` also calls `intrinsics.yield` before `update`, the reverse of `yield`. Harmless, not changed.
+- `window.width/height/title` round-trip, `fullScreen = 1` twice does not toggle back (checked with raylib's toggle stubbed), and a second `import "soda"` does not break the `version` shadow. Pinned by `tests/qa_window.ms`.
+
+### §4.12 Fonts (`perf_fonts.ms`, `qa_bmfFonts.ms`)
+Sample BMF fonts come from the Mini Micro system disk checkout (`study/minimicro-sysdisk/sys/fonts`); the TrueType test uses `raylib-miniscript/assets/Merkin.ttf`.
+- **BUG (fixed): 24 of the 34 sample fonts crashed on load**, e.g. `NotoSansBold-24.bmf`: "list index 1020 out of range" in `color.rgb`. The loader builds palette colors as `byte*4`; these fonts have palette bytes above 63, so channels exceeded 255. Mini Micro's `color.rgb`/`rgba` clamp to 0-255; Soda indexed a 256-entry hex table with the raw value, crashing above 255 and **silently wrapping below 0** (`color.rgb(-1,0,0)` gave `#FF0000`). Fixed in `color.ms` (`rgb`, `rgba`, `fromList` list and map forms) with a fast in-range check, ~0.1 us per call; `tests/qa_color_clamp.ms`. All 34 fonts now load (8-126 ms each, 1.1-format fonts fastest).
+- **S-F1 (fixed): `Font.print` drew every glyph with its own `gfx.drawImage`**, paying the PixelDisplay per-call GPU bracket each time: warm print of 1000 characters 77 ms/frame (77 us/char). It now holds one `gfx.beginBatch true`/`endBatch` across the string (only when `version.hostName == "Soda"`, since Mini Micro's gfx has none): 1000 chars 8.4-9.4 ms (**~8x**), 100 chars 8.5 -> 2.1 ms, `printJustified` 7.7 -> 2.2 ms. `qa_bmfFonts.ms` checks the batched output is pixel-identical to a per-glyph `printChar` loop.
+- Glyph images are cached after the first print (`getCharImage`/`printChar`): first print of a string costs ~0.1-0.45 ms per distinct glyph (the pixel-by-pixel `renderChar`, ~1 ms for Arial14 'W', ~2.7 ms for a 24 pt glyph), then nothing. The first print of a 1000-character paragraph is 75 ms cold.
+- `width` 0.12-0.19 ms per 100 chars; `lenToFit` of a 1000-char string 2.6-3.9 ms (binary search, each probe O(n)).
+- TrueType (`ttFonts`): load 0.5 ms, print 100 chars 1.3 ms and 1000 chars 1.4 ms/frame, `width` 5 us per 100 chars. No problem.
+- Bug probes, all pass (`qa_bmfFonts.ms`): lowercase falls back to the uppercase glyph; kerning (the font's own pairs plus `setKern`) applies in `width`; missing glyphs have zero width; `lenToFit` edge cases; `save`/`load` round-trip keeps glyph count, line height and widths. `printJustified` with one word or empty text does not crash. `Font` is reached as `bmfFonts.Font` (not a global). **NOTE:** `TTFont.Load` prints an error and `exit`s on a bad path (like `key.pressed`; assumed intentional).
+- Not run: `bmfFonts` and `ttFonts` interactive demo blocks (need a user at the keyboard).
+
+### §4.13 Tier C utilities (`perf_utils.ms`) — report only, nothing patched
+- Built-in `runUnitTests` pass for json, grfon, tsv, stringUtil, listUtil, mapUtil, mathUtil, matrixUtil, base64 and qa. textUtil has no unit tests, only an interactive dialog demo (not run).
+- Everything scales linearly; no accidental O(n^2) found. One-shot ms (`perf_utils.run1.csv`):
+  | Op | Small | Medium | Large |
+  |---|---|---|---|
+  | json toJSON / parse | 1.8 KB: 1.0 / 1.7 | 169 KB: 90 / 159 | 1.7 MB: 910 / 1615 |
+  | grfon toGRFON / parse | 1.2 KB: 1.2 / 2.1 | 115 KB: 116 / 201 | 1.2 MB: 1170 / 2042 |
+  | tsv parse (rows) | 100: 0.6 | 1000: 6.1 | 10,000: 64 (keyed: 46) |
+  | base64 toRaw / toString | 1.3 KB: 1.2 | 133 KB: 122 | 1.3 MB: 1225 |
+  | list distinct / counts / filtered / applied | 1e4: 3.6 / 3.4 / 3.1 / 2.8 | 1e5: 34 / 34 / 31 / 28 | |
+  | list sort / shuffle (native) | 1e4: 0.6 / 0.06 | 1e5: 5.1 / 0.5 | |
+  | string wrap(67) | 10 KB: 0.35 | 100 KB: 11 | 400 KB: 138 |
+  | matrix times | 10x10: 0.005 | 100x100: 0.105 | |
+  Rule of thumb: json parse ~1 us/byte, grfon ~1.7 us/byte, base64 ~0.9 us/char, so a 1 MB document costs 1-2 s: fine at load time, far too slow per frame.
+- `string.wrap` is mildly superlinear (4x more text costs 12x, from `s = s[i+1:]` re-slicing the remainder each line); fine up to a few hundred KB. `editDistance` is O(n^2) as expected (1000 chars: 276 ms). Matrix operations are native and fast. `list.distinct`/`counts` cost ~0.34 us per element, 5-10x `sort`.
+- Nothing here blocks a game; the useful finding for users is the 1-2 s/MB figure for json/grfon/base64.
+
