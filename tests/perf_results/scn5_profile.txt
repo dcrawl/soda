@@ -1,0 +1,128 @@
+MiniScript profile (raylib-miniscript)
+
+Time recorded:               5.149 s
+  MiniScript code:           3.750 s  ( 72.8%)
+  timed raylib calls:        1.318 s  ( 25.6%)
+  garbage collection:        0.081 s  (  1.6%)  76 collections, 1.06 ms each
+  host, between slices:      0.000 s  (  0.0%)
+Samples:   820934  (about every 250 instructions)
+Yields:    610
+Frames:    610 (EndDrawing calls), 8.44 ms each
+
+Timed raylib calls (exact; charged to the line that made them)
+
+    total ms     %      calls   ms each  call
+      653.70  12.7%        610     1.072  [raylib.EndDrawing]
+      648.37  12.6%      12830     0.051  [raylib.EndBlendMode]
+        5.19   0.1%      12830     0.000  [raylib.EndTextureMode]
+        4.19   0.1%      12830     0.000  [raylib.BeginTextureMode]
+        3.35   0.1%      12830     0.000  [raylib.BeginBlendMode]
+        2.70   0.1%        608     0.004  [raylib.UpdateMusicStream]
+
+[raylib.EndDrawing] includes the wait for SetTargetFPS, so most of it is
+usually idle time.  The others are mostly raylib submitting batched drawing.
+
+Self time is spent in a function's own code (including intrinsics it calls);
+total time also includes the MiniScript functions it calls.  [Bracketed]
+entries are timed raylib calls, and (garbage collection) is collection that
+MiniScript ran inside the line above it, usually a yield.  A yield always
+ends a sample, so a yield's line also gets the work done since the previous
+sample (up to about 1.5x the interval, in instructions).
+
+Functions by self time
+
+   self ms   self%   total ms  total%  function
+    993.41   19.3%     993.41   19.3%  Sprite.draw (SpriteDisplay.ms line 452)
+    675.08   13.1%     675.66   13.1%  TileDisplay.render (TileDisplay.ms line 222)
+    653.70   12.7%     653.70   12.7%  [raylib.EndDrawing]
+    648.37   12.6%     648.37   12.6%  [raylib.EndBlendMode]
+    419.95    8.2%     731.00   14.2%  TextDisplay.render (TextDisplay.ms line 489)
+    412.43    8.0%     419.28    8.1%  Ball.update (line 24)
+    399.08    7.8%    1392.49   27.0%  SpriteDisplay._renderSprites (SpriteDisplay.ms line 538)
+    321.48    6.2%     321.96    6.3%  ScreenFont.drawChar (ScreenFont.ms line 266)
+    190.53    3.7%     281.85    5.5%  soda.ms (soda.ms)
+     80.85    1.6%      80.85    1.6%  (garbage collection)
+     55.76    1.1%    1271.02   24.7%  f (line 241)
+     32.94    0.6%      53.71    1.0%  PixelDisplay._beginDraw (PixelDisplay.ms line 84)
+     26.54    0.5%    4858.62   94.4%  perf.frames (perfHarness.ms line 48)
+     25.09    0.5%      25.09    0.5%  TextDisplay.fillRow (TextDisplay.ms line 262)
+     23.71    0.5%     651.06   12.6%  PixelDisplay.line (PixelDisplay.ms line 302)
+     21.86    0.4%     675.42   13.1%  PixelDisplay._endDraw (PixelDisplay.ms line 148)
+     14.54    0.3%      15.06    0.3%  TextDisplay.ms (TextDisplay.ms)
+     13.86    0.3%      19.25    0.4%  PixelDisplay.ms (PixelDisplay.ms)
+      9.50    0.2%       9.50    0.2%  SpriteDisplay.ms (SpriteDisplay.ms)
+      8.15    0.2%      10.12    0.2%  TileDisplay.ms (TileDisplay.ms)
+      7.76    0.2%      11.11    0.2%  PixelDisplay._setBlendMode (PixelDisplay.ms line 58)
+      6.38    0.1%       6.45    0.1%  key.ms (key.ms)
+      6.27    0.1%       6.27    0.1%  Sound.ms (Sound.ms)
+      5.66    0.1%       5.66    0.1%  PixelDisplay._closeOpen (PixelDisplay.ms line 75)
+      5.38    0.1%       5.38    0.1%  ScreenFont.ms (ScreenFont.ms)
+      5.29    0.1%       5.29    0.1%  hexDigitVal (color.ms line 25)
+      5.20    0.1%       6.85    0.1%  Sound.play (Sound.ms line 62)
+      5.19    0.1%       5.19    0.1%  [raylib.EndTextureMode]
+      4.74    0.1%       4.74    0.1%  update (key.ms line 348)
+      4.19    0.1%       4.19    0.1%  [raylib.BeginTextureMode]
+      4.13    0.1%      33.28    0.6%  TextDisplay.put (TextDisplay.ms line 320)
+      3.47    0.1%     110.52    2.1%  PixelDisplay.print (PixelDisplay.ms line 618)
+      3.38    0.1%       6.20    0.1%  TextDisplay._set (TextDisplay.ms line 241)
+      3.37    0.1%       3.37    0.1%  TextDisplayCell.Make (TextDisplay.ms line 51)
+      3.35    0.1%       3.35    0.1%  [raylib.BeginBlendMode]
+      3.32    0.1%      75.01    1.5%  globals.ensureImport (importUtil.ms line 18)
+      2.82    0.1%       2.82    0.1%  TextDisplay._cellAt (TextDisplay.ms line 168)
+      2.70    0.1%       2.70    0.1%  [raylib.UpdateMusicStream]
+      2.61    0.1%      21.08    0.4%  TextDisplay.scroll (TextDisplay.ms line 381)
+      2.56    0.0%       7.85    0.2%  toList (color.ms line 36)
+      2.45    0.0%       5.15    0.1%  Sound.update (Sound.ms line 113)
+      2.30    0.0%       5.70    0.1%  TextDisplay.setSize (TextDisplay.ms line 110)
+      2.25    0.0%       2.25    0.0%  Display.ms (Display.ms)
+      2.02    0.0%       2.02    0.0%  _makeHexBytes (color.ms line 53)
+      1.97    0.0%       1.97    0.0%  addNamedMap (qa.ms line 94)
+      1.88    0.0%       7.03    0.1%  Sound.UpdateAll (Sound.ms line 124)
+      1.73    0.0%    2812.46   54.6%  Display.RenderAll (Display.ms line 161)
+      1.65    0.0%       1.65    0.0%  Sound._ensureSound (Sound.ms line 478)
+      1.54    0.0%       1.54    0.0%  TextDisplay.advance (TextDisplay.ms line 347)
+      1.51    0.0%       1.51    0.0%  TileDisplay.clear (TileDisplay.ms line 98)
+
+Hottest lines
+
+   self ms   self%  line  in function
+    648.37   12.6%  PixelDisplay.ms line 155  in PixelDisplay._endDraw (PixelDisplay.ms line 148)  [raylib.EndBlendMode]
+    597.68   11.6%  perfHarness.ms line 59  in perf.frames (perfHarness.ms line 48)  [raylib.EndDrawing]
+    348.79    6.8%  SpriteDisplay.ms line 481  in Sprite.draw (SpriteDisplay.ms line 452)
+    222.37    4.3%  TileDisplay.ms line 300  in TileDisplay.render (TileDisplay.ms line 222)
+    202.71    3.9%  SpriteDisplay.ms line 547  in SpriteDisplay._renderSprites (SpriteDisplay.ms line 538)
+    190.53    3.7%  soda.ms line 24  in soda.ms (soda.ms)
+    142.91    2.8%  TileDisplay.ms line 295  in TileDisplay.render (TileDisplay.ms line 222)
+    110.85    2.2%  SpriteDisplay.ms line 552  in SpriteDisplay._renderSprites (SpriteDisplay.ms line 538)
+     95.72    1.9%  line 28  in Ball.update (line 24)
+     92.98    1.8%  TextDisplay.ms line 509  in TextDisplay.render (TextDisplay.ms line 489)
+     91.09    1.8%  SpriteDisplay.ms line 465  in Sprite.draw (SpriteDisplay.ms line 452)
+     87.52    1.7%  TextDisplay.ms line 510  in TextDisplay.render (TextDisplay.ms line 489)
+     86.15    1.7%  SpriteDisplay.ms line 456  in Sprite.draw (SpriteDisplay.ms line 452)
+     84.36    1.6%  line 29  in Ball.update (line 24)
+     80.02    1.6%  perfHarness.ms line 63  in perf.frames (perfHarness.ms line 48)  (garbage collection)
+     63.88    1.2%  ScreenFont.ms line 272  in ScreenFont.drawChar (ScreenFont.ms line 266)
+     63.87    1.2%  line 26  in Ball.update (line 24)
+     62.71    1.2%  line 27  in Ball.update (line 24)
+     60.92    1.2%  ScreenFont.ms line 288  in ScreenFont.drawChar (ScreenFont.ms line 266)
+     56.02    1.1%  soda.ms line 94  in update (soda.ms line 89)  [raylib.EndDrawing]
+     55.54    1.1%  line 25  in Ball.update (line 24)
+     55.26    1.1%  TextDisplay.ms line 504  in TextDisplay.render (TextDisplay.ms line 489)
+     44.65    0.9%  TileDisplay.ms line 290  in TileDisplay.render (TileDisplay.ms line 222)
+     43.81    0.9%  TileDisplay.ms line 296  in TileDisplay.render (TileDisplay.ms line 222)
+     43.27    0.8%  TextDisplay.ms line 503  in TextDisplay.render (TextDisplay.ms line 489)
+     41.78    0.8%  line 30  in Ball.update (line 24)
+     39.60    0.8%  SpriteDisplay.ms line 474  in Sprite.draw (SpriteDisplay.ms line 452)
+     38.81    0.8%  ScreenFont.ms line 290  in ScreenFont.drawChar (ScreenFont.ms line 266)
+     38.76    0.8%  SpriteDisplay.ms line 473  in Sprite.draw (SpriteDisplay.ms line 452)
+     35.91    0.7%  line 243  in f (line 241)
+     35.72    0.7%  TileDisplay.ms line 299  in TileDisplay.render (TileDisplay.ms line 222)
+     35.35    0.7%  TextDisplay.ms line 502  in TextDisplay.render (TextDisplay.ms line 489)
+     34.86    0.7%  TextDisplay.ms line 511  in TextDisplay.render (TextDisplay.ms line 489)
+     34.23    0.7%  TextDisplay.ms line 521  in TextDisplay.render (TextDisplay.ms line 489)
+     33.92    0.7%  ScreenFont.ms line 276  in ScreenFont.drawChar (ScreenFont.ms line 266)
+     33.00    0.6%  SpriteDisplay.ms line 454  in Sprite.draw (SpriteDisplay.ms line 452)
+     32.98    0.6%  SpriteDisplay.ms line 477  in Sprite.draw (SpriteDisplay.ms line 452)
+     32.90    0.6%  SpriteDisplay.ms line 548  in SpriteDisplay._renderSprites (SpriteDisplay.ms line 538)
+     32.65    0.6%  SpriteDisplay.ms line 479  in Sprite.draw (SpriteDisplay.ms line 452)
+     32.55    0.6%  SpriteDisplay.ms line 461  in Sprite.draw (SpriteDisplay.ms line 452)

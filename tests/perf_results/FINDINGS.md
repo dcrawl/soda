@@ -1123,3 +1123,38 @@ Caveats / why this is not a finished fix:
 - A reference into `_items` is invalidated if the list grows. The changed paths allocate nothing, but a C# version must keep that invariant.
 - `map["a"]` got slower (26 -> 32 ns) for a reason I did not find; worth a look before proposing.
 Recommended next step: open a miniscript2 issue with the patch and these numbers, and let Joe decide how to express it in C#.
+
+## Profiles for scenarios 2, 3 and 5 (MiniScript profiler + native xctrace)
+
+Both profiles per scenario via `tests/run_scn_profiles.sh 2 3 5` (build-profile host, 600 frames, one process at a time).
+Files: `scn{2,3,5}_profile.{txt,speedscope.json,folded}` and `xctrace/scn{2,3,5}_summary.txt`. Frame times below are under the profiler.
+
+| | scn2 text adventure | scn3 platformer | scn5 everything |
+|---|---|---|---|
+| ms/frame (profiled) | 4.5 | 3.4 | 8.4 |
+| MiniScript code | 80% | 75% | 73% |
+| timed raylib calls | 18% (mostly EndDrawing wait) | 23% | 26% |
+| GC | 1.1% | 2.2% | 1.6% |
+
+### scn2 text adventure (printing 1-2 lines per frame)
+- `ScreenFont.drawChar` is 39.6% self, `TextDisplay.render` 23.7% self (63% total): text drawing is the frame.
+- drawChar hot lines: the per-character source-rect validity test (:272, 7.8%), the alpha/shader test with `fore[3]`/`back[3]` list reads (:288, 7.5%), and the `rl.DrawTexturePro` call itself (:290, 4.8%). Every character does a list build, 4-6 list reads and a binding call even though the font's source rects never change.
+- Candidate (Soda side, safe): cache the per-glyph `src` rect and per-colour state in `drawChar`, and skip cells whose back colour is transparent and char is blank (verify S-T2 already does the blank skip).
+- Native: refcounting 21%, VM dispatch 14%, map lookup 10%, hashing 6%.
+
+### scn3 platformer (tiles + 51 sprites + pixel HUD)
+- `TileDisplay.render` is 30.4% self: :295 builds a `src` list per visible tile (6%) and :300 builds `dest` and calls `DrawTexturePro` (10% of the frame in raylib time alone). It is the biggest item, at 3.4 ms/frame for a 200x50 map with scrolling.
+- `TextDisplay.render` is still 14.9% (0.5 ms/frame) although the platformer prints no text: a mostly blank text display is not free. Worth checking that blank cells are skipped before any per-cell work.
+- `PixelDisplay` HUD (`clear`+2 `print` per frame): 4.2% in `EndBlendMode`, small here.
+- Native: refcounting 14%, VM dispatch 12%; 40% "other" is mostly the main-thread wait in the display driver (`mach_msg2_trap`, `start_wqthread`).
+
+### scn5 everything (500 balls + tiles + text + pixel lines/print + music)
+- `Sprite.draw` 19.3% + `_renderSprites` 8.0% = 27% for 500 sprites, matching the scn1 analysis (these numbers already include PR #37's fast path).
+- `PixelDisplay` per-call blend brackets: `raylib.EndBlendMode` is 12.6% (648 ms) from ~21 unbatched `line`/`print` calls per frame, the same S-P1 cost found in the paint scenario. `PixelDisplay.autoBatch = true` (PR #34, opt-in) addresses it; this scenario was not re-run with the flag.
+- `TileDisplay.render` 13.1%, `TextDisplay.render` 8.2% (14.2% total), `ScreenFont.drawChar` 6.2%, `Ball.update` 8.0% (user code).
+- Native: refcounting 18%, map lookup 10%, VM dispatch 12%, hashing 7%.
+
+### Cross-scenario conclusions
+1. Across all four scenarios the VM's refcounting/copy overhead is 14-24% and map lookup + hashing another 12-17%; this is the common ceiling and it is being handled upstream (miniscript2#30).
+2. The remaining Soda-side hot spots are all "one DrawTexturePro per cell/glyph/sprite with fresh lists": text (`drawChar`), tiles (`TileDisplay.render`) and sprites. The biggest unclaimed Soda-side wins are probably in `ScreenFont.drawChar`/`TextDisplay.render` (scn2, and idle text cost in scn3) and `TileDisplay.render`.
+3. Re-run scn5 with `PixelDisplay.autoBatch = true` to quantify the 12.6% EndBlendMode cost.

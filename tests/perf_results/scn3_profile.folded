@@ -1,0 +1,181 @@
+(garbage collection) 16
+(host, between script slices) 247
+@main 4104
+@main;Display.install (Display.ms line 104) 6
+@main;Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64) 9
+@main;Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);TileDisplay.Make (TileDisplay.ms line 52);TileDisplay["extent="] (TileDisplay.ms line 72) 5
+@main;Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);TileDisplay.Make (TileDisplay.ms line 52);TileDisplay["extent="] (TileDisplay.ms line 72);_list_init2d (TileDisplay.ms line 24) 13
+@main;Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);TileDisplay.Make (TileDisplay.ms line 52);TileDisplay["extent="] (TileDisplay.ms line 72);_list_init2d (TileDisplay.ms line 24);_list_init (TileDisplay.ms line 7) 13
+@main;Image.create (Image.ms line 65);colorToRGBA (Image.ms line 26) 12
+@main;Image.create (Image.ms line 65);colorToRGBA (Image.ms line 26);hexDigitVal (Image.ms line 17) 20
+@main;Image.setPixel (Image.ms line 123) 55
+@main;Image.setPixel (Image.ms line 123);colorToRGBA (Image.ms line 26) 215
+@main;Image.setPixel (Image.ms line 123);colorToRGBA (Image.ms line 26);hexDigitVal (Image.ms line 17) 655
+@main;TileDisplay.setCell (TileDisplay.ms line 115) 3009
+@main;TileDisplay["extent="] (TileDisplay.ms line 72);_list_init2d (TileDisplay.ms line 24) 47
+@main;TileDisplay["extent="] (TileDisplay.ms line 72);_list_init2d (TileDisplay.ms line 24);_list_init (TileDisplay.ms line 7) 108
+@main;clear (Display.ms line 145) 5
+@main;clear (Display.ms line 145);Display["mode="] (Display.ms line 82) 37
+@main;clear (Display.ms line 145);Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64) 21
+@main;clear (Display.ms line 145);PixelDisplay.clear (PixelDisplay.ms line 223) 12
+@main;clear (Display.ms line 145);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._setBlendMode (PixelDisplay.ms line 58) 10
+@main;clear (Display.ms line 145);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._setBlendMode (PixelDisplay.ms line 58);[raylib.BeginBlendMode] 1
+@main;clear (Display.ms line 145);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);[raylib.BeginTextureMode] 1
+@main;clear (Display.ms line 145);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148);[raylib.EndBlendMode] 97
+@main;clear (Display.ms line 145);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148);[raylib.EndTextureMode] 1
+@main;clear (Display.ms line 145);SpriteDisplay.clear (SpriteDisplay.ms line 531) 10
+@main;clear (Display.ms line 145);TextDisplay.clear (TextDisplay.ms line 292);TextDisplay.fill (TextDisplay.ms line 283) 21
+@main;clear (Display.ms line 145);TextDisplay.clear (TextDisplay.ms line 292);TextDisplay.fill (TextDisplay.ms line 283);TextDisplay.fillRow (TextDisplay.ms line 262) 3287
+@main;clear (Display.ms line 145);globals.display (Display.ms line 125) 35
+@main;mk (line 98) 91
+@main;perf.finish (perfHarness.ms line 76) 232
+@main;perf.frames (perfHarness.ms line 48) 26224
+@main;perf.frames (perfHarness.ms line 48);(garbage collection) 44307
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161) 1414
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);PixelDisplay.render (PixelDisplay.ms line 719) 1307
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);PixelDisplay.render (PixelDisplay.ms line 719);Display.screenHeight (Display.ms line 42) 60
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);PixelDisplay.render (PixelDisplay.ms line 719);PixelDisplay._closeOpen (PixelDisplay.ms line 75) 109
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);SolidColorDisplay.render (SolidColorDisplay.ms line 15) 724
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);SolidColorDisplay.render (SolidColorDisplay.ms line 15);Display.screenHeight (Display.ms line 42) 100
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);SolidColorDisplay.render (SolidColorDisplay.ms line 15);Display.screenWidth (Display.ms line 37) 87
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);SolidColorDisplay.render (SolidColorDisplay.ms line 15);toList (color.ms line 36) 2472
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);SolidColorDisplay.render (SolidColorDisplay.ms line 15);toList (color.ms line 36);hexDigitVal (color.ms line 25) 4556
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);SpriteDisplay.render (SpriteDisplay.ms line 556) 469
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);SpriteDisplay.render (SpriteDisplay.ms line 556);Display.screenHeight (Display.ms line 42) 69
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);SpriteDisplay.render (SpriteDisplay.ms line 556);Sprite._endQuadBatch (SpriteDisplay.ms line 374) 201
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);SpriteDisplay.render (SpriteDisplay.ms line 556);SpriteDisplay._renderSprites (SpriteDisplay.ms line 538) 36444
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);SpriteDisplay.render (SpriteDisplay.ms line 556);SpriteDisplay._renderSprites (SpriteDisplay.ms line 538);Sprite.draw (SpriteDisplay.ms line 452) 90198
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);TextDisplay.render (TextDisplay.ms line 489) 303740
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);TextDisplay.render (TextDisplay.ms line 489);ScreenFont.isLoaded (ScreenFont.ms line 167) 104
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);TileDisplay.render (TileDisplay.ms line 222) 618194
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);TileDisplay.render (TileDisplay.ms line 222);Display.screenHeight (Display.ms line 42) 180
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);TileDisplay.render (TileDisplay.ms line 222);Display.screenWidth (Display.ms line 37) 59
+@main;perf.frames (perfHarness.ms line 48);Display.RenderAll (Display.ms line 161);TileDisplay.render (TileDisplay.ms line 222);Image.texture (Image.ms line 106) 218
+@main;perf.frames (perfHarness.ms line 48);PixelDisplay._closeOpen (PixelDisplay.ms line 75) 186
+@main;perf.frames (perfHarness.ms line 48);Sound.UpdateAll (Sound.ms line 124) 369
+@main;perf.frames (perfHarness.ms line 48);[raylib.EndDrawing] 334675
+@main;perf.frames (perfHarness.ms line 48);f (line 114) 8509
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.clear (PixelDisplay.ms line 223) 1271
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329) 764
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84) 1395
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._closeOpen (PixelDisplay.ms line 75) 228
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._setBlendMode (PixelDisplay.ms line 58) 438
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._setBlendMode (PixelDisplay.ms line 58);[raylib.BeginBlendMode] 262
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);[raylib.BeginTextureMode] 523
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148) 1487
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148);[raylib.EndBlendMode] 14353
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148);[raylib.EndTextureMode] 282
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618) 8268
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);PixelDisplay._beginDraw (PixelDisplay.ms line 84) 3891
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._closeOpen (PixelDisplay.ms line 75) 638
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._setBlendMode (PixelDisplay.ms line 58) 1122
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._setBlendMode (PixelDisplay.ms line 58);[raylib.BeginBlendMode] 385
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);PixelDisplay._beginDraw (PixelDisplay.ms line 84);[raylib.BeginTextureMode] 375
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);PixelDisplay._endDraw (PixelDisplay.ms line 148) 1524
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);PixelDisplay._endDraw (PixelDisplay.ms line 148);[raylib.EndBlendMode] 65651
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);PixelDisplay._endDraw (PixelDisplay.ms line 148);[raylib.EndTextureMode] 509
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);PixelDisplay._loadFont (PixelDisplay.ms line 598) 1922
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);ScreenFont.drawChar (ScreenFont.ms line 266) 33778
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);ScreenFont.drawChar (ScreenFont.ms line 266);ScreenFont.loadShader (ScreenFont.ms line 104) 14
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);ScreenFont.drawChar (ScreenFont.ms line 266);ScreenFont.srcRect (ScreenFont.ms line 226) 37
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);ScreenFont.drawChar (ScreenFont.ms line 266);ScreenFont.srcRect (ScreenFont.ms line 226);ScreenFont.fontPosition (ScreenFont.ms line 217) 4
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);ScreenFont.drawChar (ScreenFont.ms line 266);_cacheColor (ScreenFont.ms line 249);toList (color.ms line 36) 9
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);ScreenFont.drawChar (ScreenFont.ms line 266);_cacheColor (ScreenFont.ms line 249);toList (color.ms line 36);hexDigitVal (color.ms line 25) 403
+@main;perf.frames (perfHarness.ms line 48);f (line 114);PixelDisplay.print (PixelDisplay.ms line 618);ScreenFont.isLoaded (ScreenFont.ms line 167) 386
+@main;perf.frames (perfHarness.ms line 48);f (line 114);Sprite.overlaps (SpriteDisplay.ms line 512) 5255
+@main;perf.frames (perfHarness.ms line 48);f (line 114);Sprite.overlaps (SpriteDisplay.ms line 512);Bounds.overlaps (SpriteDisplay.ms line 47) 20540
+@main;perf.frames (perfHarness.ms line 48);f (line 114);Sprite.overlaps (SpriteDisplay.ms line 512);Sprite.worldBounds (SpriteDisplay.ms line 486) 53524
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102) 285
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);(garbage collection) 468
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161) 18
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);PixelDisplay.render (PixelDisplay.ms line 719) 11
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);SolidColorDisplay.render (SolidColorDisplay.ms line 15) 12
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);SolidColorDisplay.render (SolidColorDisplay.ms line 15);Display.screenHeight (Display.ms line 42) 28
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);SolidColorDisplay.render (SolidColorDisplay.ms line 15);toList (color.ms line 36) 10
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);SolidColorDisplay.render (SolidColorDisplay.ms line 15);toList (color.ms line 36);hexDigitVal (color.ms line 25) 119
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);SpriteDisplay.render (SpriteDisplay.ms line 556) 23
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);SpriteDisplay.render (SpriteDisplay.ms line 556);Display.screenHeight (Display.ms line 42) 9
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);SpriteDisplay.render (SpriteDisplay.ms line 556);SpriteDisplay._renderSprites (SpriteDisplay.ms line 538) 702
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);SpriteDisplay.render (SpriteDisplay.ms line 556);SpriteDisplay._renderSprites (SpriteDisplay.ms line 538);Sprite.draw (SpriteDisplay.ms line 452) 1444
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);TextDisplay.render (TextDisplay.ms line 489) 5050
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);TextDisplay.render (TextDisplay.ms line 489);ScreenFont.isLoaded (ScreenFont.ms line 167) 7
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);TileDisplay.render (TileDisplay.ms line 222) 9991
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);TileDisplay.render (TileDisplay.ms line 222);Display.screenHeight (Display.ms line 42) 70
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);Display.RenderAll (Display.ms line 161);TileDisplay.render (TileDisplay.ms line 222);Display.screenWidth (Display.ms line 37) 11
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);[raylib.EndDrawing] 56086
+@main;perf.frames (perfHarness.ms line 48);globals.yield (soda.ms line 102);update (soda.ms line 89);update (key.ms line 348) 159
+@main;perf.frames (perfHarness.ms line 48);perf.emit (perfHarness.ms line 18) 3
+@main;perf.frames (perfHarness.ms line 48);perf.stats (perfHarness.ms line 9) 433
+@main;perf.frames (perfHarness.ms line 48);update (key.ms line 348) 3890
+@main;perf.frames (perfHarness.ms line 48);update (mouse.ms line 54) 639
+@main;perf.frames (perfHarness.ms line 48);update (mouse.ms line 54);Display.screenHeight (Display.ms line 42) 84
+@main;perfHarness.ms (perfHarness.ms) 13
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms) 187981
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134) 9
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64) 89
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53) 4
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212) 104
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329) 5
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84) 128
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._ensureTex (PixelDisplay.ms line 39) 84
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._ensureTex (PixelDisplay.ms line 39);PixelDisplay._closeOpen (PixelDisplay.ms line 75) 20
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._setBlendMode (PixelDisplay.ms line 58);[raylib.BeginBlendMode] 3
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);[raylib.BeginTextureMode] 7
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148) 6
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148);[raylib.EndBlendMode] 3217
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148);[raylib.EndTextureMode] 4
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);Display["mode="] (Display.ms line 82) 23
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64) 34
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53) 3
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);TextDisplay.Make (TextDisplay.ms line 100);TextDisplay.setSize (TextDisplay.ms line 110) 981
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);TextDisplay.Make (TextDisplay.ms line 100);TextDisplay.setSize (TextDisplay.ms line 110);TextDisplayCell.Make (TextDisplay.ms line 51) 1643
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);TextDisplay.Make (TextDisplay.ms line 100);TextDisplay.setSize (TextDisplay.ms line 110);_list_init (TextDisplay.ms line 17) 16
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._closeOpen (PixelDisplay.ms line 75) 6
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148);[raylib.EndBlendMode] 328
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);TextDisplay.clear (TextDisplay.ms line 292);TextDisplay.fill (TextDisplay.ms line 283) 5
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);TextDisplay.clear (TextDisplay.ms line 292);TextDisplay.fill (TextDisplay.ms line 283);TextDisplay.fillRow (TextDisplay.ms line 262) 1580
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);globals.display (Display.ms line 125) 30
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18) 3251
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);Display.ms (Display.ms) 2441
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);PixelDisplay.ms (PixelDisplay.ms) 13532
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);PixelDisplay.ms (PixelDisplay.ms);globals.ensureImport (importUtil.ms line 18) 15
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);PixelDisplay.ms (PixelDisplay.ms);globals.ensureImport (importUtil.ms line 18);ScreenFont.ms (ScreenFont.ms) 5331
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);Sound.ms (Sound.ms) 6323
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);SpriteDisplay.ms (SpriteDisplay.ms) 9284
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);TextDisplay.ms (TextDisplay.ms) 14306
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);TextDisplay.ms (TextDisplay.ms);ScreenFont.Make (ScreenFont.ms line 136);ScreenFont.load (ScreenFont.ms line 146) 536
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);TileDisplay.ms (TileDisplay.ms) 8247
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);TileDisplay.ms (TileDisplay.ms);globals.ensureImport (importUtil.ms line 18) 8
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);TileDisplay.ms (TileDisplay.ms);globals.ensureImport (importUtil.ms line 18);qa.ms (qa.ms);addNamedMap (qa.ms line 94) 1960
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);color.ms (color.ms);_makeHexBytes (color.ms line 53) 1998
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);key.ms (key.ms) 6359
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);key.ms (key.ms);applyKeyboardLayout (key.ms line 124) 59
+@main;perfHarness.ms (perfHarness.ms);soda.ms (soda.ms);globals.ensureImport (importUtil.ms line 18);mouse.ms (mouse.ms) 772
+@main;soda.ms (soda.ms) 1294
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134) 53
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64) 29
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53) 9
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329) 46
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84) 97
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._closeOpen (PixelDisplay.ms line 75) 29
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._ensureTex (PixelDisplay.ms line 39) 32
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);PixelDisplay._setBlendMode (PixelDisplay.ms line 58);[raylib.BeginBlendMode] 2
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);[raylib.BeginTextureMode] 4
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148) 35
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148);[raylib.EndBlendMode] 1894
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);PixelDisplay.Make (PixelDisplay.ms line 212);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148);[raylib.EndTextureMode] 3
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145) 30
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);Display["mode="] (Display.ms line 82) 24
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64) 19
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);TextDisplay.Make (TextDisplay.ms line 100);TextDisplay.setSize (TextDisplay.ms line 110) 1183
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);TextDisplay.Make (TextDisplay.ms line 100);TextDisplay.setSize (TextDisplay.ms line 110);TextDisplayCell.Make (TextDisplay.ms line 51) 1595
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);Display["mode="] (Display.ms line 82);Display.FindOrMakeDisplay (Display.ms line 64);Display.NewDisplayOfMode (Display.ms line 53);TextDisplay.Make (TextDisplay.ms line 100);TextDisplay.setSize (TextDisplay.ms line 110);_list_init (TextDisplay.ms line 17) 7
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);PixelDisplay.clear (PixelDisplay.ms line 223) 12
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329) 11
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._beginDraw (PixelDisplay.ms line 84);[raylib.BeginTextureMode] 1
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148);[raylib.EndBlendMode] 277
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);PixelDisplay.clear (PixelDisplay.ms line 223);PixelDisplay.fillRect (PixelDisplay.ms line 329);PixelDisplay._endDraw (PixelDisplay.ms line 148);[raylib.EndTextureMode] 1
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);TextDisplay.clear (TextDisplay.ms line 292);TextDisplay.fill (TextDisplay.ms line 283) 21
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);TextDisplay.clear (TextDisplay.ms line 292);TextDisplay.fill (TextDisplay.ms line 283);TextDisplay.fillRow (TextDisplay.ms line 262) 1561
+@main;soda.ms (soda.ms);Display.Initialize (Display.ms line 134);clear (Display.ms line 145);globals.display (Display.ms line 125) 13
+@main;want (line 13) 909

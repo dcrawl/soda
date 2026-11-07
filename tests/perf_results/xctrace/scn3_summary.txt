@@ -1,0 +1,80 @@
+samples 1818
+--- self
+ 11.8% MiniScript::VMStorage::RunInner(unsigned int)
+  5.8% mach_msg2_trap
+  4.0% MiniScript::Boolean::operator bool() const
+  2.5% _xzm_xzone_malloc_tiny
+  2.4% start_wqthread
+  2.3% MiniScript::GCMap::TryGet(MiniScript::Value, MiniScript::Value*)
+  2.3% std::__1::__shared_count::__release_shared[abi:nqe220106]()
+  1.9% std::__1::shared_ptr<std::__1::vector<MiniScript::Value, std::__1::allocator<MiniScript::Value>>>::shared_ptr[
+  1.9% _xzm_free
+  1.9% MiniScript::string_hash(char const*, int)
+  1.7% MiniScript::get_string_hash(MiniScript::Value)
+  1.7% MiniScript::Value::RecursiveEqual(MiniScript::Value) const
+  1.2% std::__1::vector<MiniScript::DictEntry<MiniScript::Value, MiniScript::Value>, std::__1::allocator<MiniScript::
+  1.1% std::__1::shared_ptr<std::__1::vector<MiniScript::Value, std::__1::allocator<MiniScript::Value>>>::get[abi:nqe
+  1.0% _platform_memmove
+  1.0% long std::__1::__libcpp_atomic_refcount_increment[abi:nqe220106]<long>(long&)
+  1.0% std::__1::shared_ptr<MiniScript::FuncDefStorage>::shared_ptr[abi:nqe220106](std::__1::shared_ptr<MiniScript::F
+  0.9% MiniScript::DictionaryStorage<MiniScript::Value, MiniScript::Value>::findEntry(MiniScript::Value const&) const
+  0.9% rlVertex3f
+  0.8% iokit_user_client_trap
+  0.8% _free
+  0.8% <deduplicated_symbol>
+  0.8% MiniScript::Value::IsNull() const
+  0.8% MiniScript::Value::RefEquals(MiniScript::Value const&) const
+  0.8% MiniScript::Value::LookupWithOrigin(MiniScript::Value, MiniScript::Value*, MiniScript::Value*) const
+  0.7% MiniScript::Globals::TryGet(MiniScript::Value, MiniScript::Value*)
+  0.7% MiniScript::Context::Context(MiniScript::Context&&)
+  0.6% MiniScript::GCManager::GetString(MiniScript::Value)
+  0.6% MiniScript::value_hash(MiniScript::Value, int)
+  0.6% std::__1::shared_ptr<std::__1::vector<MiniScript::Value, std::__1::allocator<MiniScript::Value>>>::operator*[a
+  0.6% fmod
+  0.6% getMethodNoSuper_nolock(objc_class*, objc_selector*)
+  0.6% std::__1::shared_ptr<MiniScript::StringStorage>::get[abi:nqe220106]() const
+  0.6% 0x10427c551
+  0.6% _tlv_get_addr
+  0.6% MiniScript::Value::IsNumber() const
+  0.6% MiniScript::VMStorage::LookupMember(MiniScript::Value, MiniScript::Value, MiniScript::Value*, MiniScript::Valu
+  0.5% _platform_memset
+  0.5% _xzm_xzone_malloc
+  0.5% MiniScript::GCList::GCList(MiniScript::GCList const&)
+--- inclusive
+ 94.5% start
+ 94.2% main
+ 92.7% MainLoop()
+ 92.4% MiniScript::VMStorage::Run(unsigned int)
+ 92.4% MiniScript::InterpreterStorage::RunUntilDone(double, bool)
+ 92.4% MiniScript::Interpreter::RunUntilDone(double, bool)
+ 92.4% MiniScript::VM::Run(unsigned int)
+ 90.9% MiniScript::VMStorage::RunInner(unsigned int)
+ 41.3% MiniScript::VMStorage::InvokeNativeCallback(std::__1::function<MiniScript::IntrinsicResult (MiniScript::Contex
+ 37.2% std::__1::__function::__value_func<MiniScript::IntrinsicResult (MiniScript::Context, MiniScript::IntrinsicResu
+ 37.2% std::__1::function<MiniScript::IntrinsicResult (MiniScript::Context, MiniScript::IntrinsicResult)>::operator()
+ 19.3% MiniScript::VMStorage::AutoInvokeFuncRef(MiniScript::Value, int, int, int, MiniScript::FuncDef, MiniScript::Fu
+ 10.6% MiniScript::GCMap::TryGet(MiniScript::Value, MiniScript::Value*)
+  9.2% std::__1::__function::__func<AddRTexturesMethods(MiniScript::Dictionary<MiniScript::Value, MiniScript::Value>&
+  9.1% std::__1::__invoke_result_impl<void, AddRTexturesMethods(MiniScript::Dictionary<MiniScript::Value, MiniScript:
+  9.1% MiniScript::IntrinsicResult std::__1::__invoke_r[abi:nqe220106]<MiniScript::IntrinsicResult, AddRTexturesMetho
+  9.1% MiniScript::IntrinsicResult std::__1::__invoke_void_return_wrapper<MiniScript::IntrinsicResult, false>::__call
+  8.8% MiniScript::VMStorage::LookupMember(MiniScript::Value, MiniScript::Value, MiniScript::Value*, MiniScript::Valu
+  8.6% EndDrawing
+  8.6% MiniScript::IntrinsicResult std::__1::__invoke_void_return_wrapper<MiniScript::IntrinsicResult, false>::__call
+  8.6% std::__1::__function::__func<AddRCoreMethods(MiniScript::Dictionary<MiniScript::Value, MiniScript::Value>&)::$
+  8.6% AddRCoreMethods(MiniScript::Dictionary<MiniScript::Value, MiniScript::Value>&)::$_1::operator()(MiniScript::Co
+  8.6% std::__1::__invoke_result_impl<void, AddRCoreMethods(MiniScript::Dictionary<MiniScript::Value, MiniScript::Val
+  8.6% MiniScript::IntrinsicResult std::__1::__invoke_r[abi:nqe220106]<MiniScript::IntrinsicResult, AddRCoreMethods(M
+  8.4% AddRTexturesMethods(MiniScript::Dictionary<MiniScript::Value, MiniScript::Value>&)::$_10::operator()(MiniScrip
+--- buckets
+ 40.6% other
+ 14.4% Refcounting / struct copies
+ 11.8% VM dispatch
+  8.5% Value helpers (inline wrappers)
+  7.6% malloc/free
+  7.3% Map lookup
+  4.4% String/value hashing
+  2.0% raylib / GL
+  1.9% GC
+  1.1% List access
+  0.4% Binding conversion

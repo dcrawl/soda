@@ -1,0 +1,34 @@
+INFO: TIMER: Target time per frame: 16.667 milliseconds
+INFO: AUDIO: Device initialized successfully
+INFO:     > Backend:       miniaudio | Core Audio
+INFO:     > Format:        32-bit IEEE Floating Point -> 32-bit IEEE Floating Point
+INFO:     > Channels:      2 -> 2
+INFO:     > Sample rate:   48000 -> 48000
+INFO:     > Periods size:  1440
+Profiling enabled: sampling about every 250 instructions; results go to /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn2_profile.txt, /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn2_profile.speedscope.json and /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn2_profile.folded
+MiniScript interpreter initialized with Raylib intrinsics
+Loading script from perf_scenarios.ms...
+INFO: FILEIO: [perf_scenarios.ms] Text file loaded successfully
+Successfully loaded script from perf_scenarios.ms
+Compiling script...
+Starting script execution...
+INFO: FILEIO: [./perfHarness.ms] Text file loaded successfully
+INFO: FILEIO: [./lib/soda.ms] Text file loaded successfully
+RESULT,scn2_textAdventure,1,user,0.2903,0.1959,0.6568,1.3168
+RESULT,scn2_textAdventure,1,render,3.1005,3.0799,3.633,5.372
+RESULT,scn2_textAdventure,1,endDrawing,0.73,0.3522,2.7521,15.4091
+RESULT,scn2_textAdventure,1,callbacks,0.0186,0.0151,0.0344,0.0715
+RESULT,scn2_textAdventure,1,yieldGC,0.0827,0.0021,0.6629,0.8021
+RESULT,scn2_textAdventure,1,total,4.2222,3.9674,6.244,18.7116
+
+Profile: 2.771 s recorded in 448160 samples.  Top functions by self time:
+    39.6%  ScreenFont.drawChar (ScreenFont.ms line 266)
+    23.7%  TextDisplay.render (TextDisplay.ms line 489)
+    18.1%  [raylib.EndDrawing]
+     6.2%  soda.ms (soda.ms)
+     2.1%  TextDisplay.fillRow (TextDisplay.ms line 262)
+     1.2%  TextDisplay.put (TextDisplay.ms line 320)
+     1.1%  (garbage collection)
+     1.0%  TextDisplay._set (TextDisplay.ms line 241)
+Full report: /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn2_profile.txt
+Flame graph: /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn2_profile.speedscope.json (open at https://www.speedscope.app), or /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn2_profile.folded

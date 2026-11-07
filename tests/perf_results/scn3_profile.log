@@ -1,0 +1,34 @@
+INFO: TIMER: Target time per frame: 16.667 milliseconds
+INFO: AUDIO: Device initialized successfully
+INFO:     > Backend:       miniaudio | Core Audio
+INFO:     > Format:        32-bit IEEE Floating Point -> 32-bit IEEE Floating Point
+INFO:     > Channels:      2 -> 2
+INFO:     > Sample rate:   48000 -> 48000
+INFO:     > Periods size:  1440
+Profiling enabled: sampling about every 250 instructions; results go to /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn3_profile.txt, /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn3_profile.speedscope.json and /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn3_profile.folded
+MiniScript interpreter initialized with Raylib intrinsics
+Loading script from perf_scenarios.ms...
+INFO: FILEIO: [perf_scenarios.ms] Text file loaded successfully
+Successfully loaded script from perf_scenarios.ms
+Compiling script...
+Starting script execution...
+INFO: FILEIO: [./perfHarness.ms] Text file loaded successfully
+INFO: FILEIO: [./lib/soda.ms] Text file loaded successfully
+RESULT,scn3_platformer,1,user,0.3845,0.371,0.4694,0.8003
+RESULT,scn3_platformer,1,render,1.9212,1.9154,2.0586,2.173
+RESULT,scn3_platformer,1,endDrawing,0.5603,0.2778,2.2247,11.1303
+RESULT,scn3_platformer,1,callbacks,0.0148,0.0131,0.0248,0.0379
+RESULT,scn3_platformer,1,yieldGC,0.1074,0.0015,0.7399,0.9675
+RESULT,scn3_platformer,1,total,2.9883,2.6213,4.752,13.691
+
+Profile: 2.066 s recorded in 382128 samples.  Top functions by self time:
+    30.4%  TileDisplay.render (TileDisplay.ms line 222)
+    18.9%  [raylib.EndDrawing]
+    14.9%  TextDisplay.render (TextDisplay.ms line 489)
+     9.2%  soda.ms (soda.ms)
+     4.4%  Sprite.draw (SpriteDisplay.ms line 452)
+     4.2%  [raylib.EndBlendMode]
+     2.6%  Sprite.worldBounds (SpriteDisplay.ms line 486)
+     2.2%  (garbage collection)
+Full report: /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn3_profile.txt
+Flame graph: /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn3_profile.speedscope.json (open at https://www.speedscope.app), or /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn3_profile.folded

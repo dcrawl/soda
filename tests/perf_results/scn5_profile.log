@@ -1,0 +1,35 @@
+INFO: TIMER: Target time per frame: 16.667 milliseconds
+INFO: AUDIO: Device initialized successfully
+INFO:     > Backend:       miniaudio | Core Audio
+INFO:     > Format:        32-bit IEEE Floating Point -> 32-bit IEEE Floating Point
+INFO:     > Channels:      2 -> 2
+INFO:     > Sample rate:   48000 -> 48000
+INFO:     > Periods size:  1440
+Profiling enabled: sampling about every 250 instructions; results go to /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn5_profile.txt, /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn5_profile.speedscope.json and /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn5_profile.folded
+MiniScript interpreter initialized with Raylib intrinsics
+Loading script from perf_scenarios.ms...
+INFO: FILEIO: [perf_scenarios.ms] Text file loaded successfully
+Successfully loaded script from perf_scenarios.ms
+Compiling script...
+Starting script execution...
+INFO: FILEIO: [./perfHarness.ms] Text file loaded successfully
+INFO: FILEIO: [./lib/soda.ms] Text file loaded successfully
+RESULT,scn5_everything,1,user,2.1441,2.1463,2.3856,3.2068
+RESULT,scn5_everything,1,render,4.9997,5.0063,5.1293,5.3618
+RESULT,scn5_everything,1,endDrawing,0.9997,0.489,2.5616,13.5804
+RESULT,scn5_everything,1,callbacks,0.029,0.0243,0.0421,0.169
+RESULT,scn5_everything,1,yieldGC,0.1651,0.0024,1.3135,1.3994
+RESULT,scn5_everything,1,total,8.3377,8.2864,9.721,20.5105
+RESOURCES,scn5-end,{"Image": 2, "Texture": 4, "Font": 0, "Wave": 0, "Music": 1, "Sound": 1, "AudioStream": 0, "RenderTexture": 8, "Shader": 1, "Mesh": 0, "Material": 0, "Model": 0, "ModelAnimation": 0, "total": 17},hostMemory=20880944
+
+Profile: 5.149 s recorded in 820934 samples.  Top functions by self time:
+    19.3%  Sprite.draw (SpriteDisplay.ms line 452)
+    13.1%  TileDisplay.render (TileDisplay.ms line 222)
+    12.7%  [raylib.EndDrawing]
+    12.6%  [raylib.EndBlendMode]
+     8.2%  TextDisplay.render (TextDisplay.ms line 489)
+     8.0%  Ball.update (line 24)
+     7.8%  SpriteDisplay._renderSprites (SpriteDisplay.ms line 538)
+     6.2%  ScreenFont.drawChar (ScreenFont.ms line 266)
+Full report: /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn5_profile.txt
+Flame graph: /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn5_profile.speedscope.json (open at https://www.speedscope.app), or /Users/redspark/Documents/GitHub/forks/soda/tests/perf_results/scn5_profile.folded
