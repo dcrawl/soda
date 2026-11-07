@@ -22,7 +22,7 @@ Ball.update = function()
 	if self.x < 30 or self.x > 930 then self.vx = -self.vx
 	if self.y < 30 and self.vy < 0 then
 		self.y = 30; self.vy = -self.vy
-		if off != "sound" then bongo.play 0.2, (self.x - 480)/480, 0.9 + 0.2*rnd
+		if (off.indexOf("sound") == null) then bongo.play 0.2, (self.x - 480)/480, 0.9 + 0.2*rnd
 	end if
 end function
 balls = []
@@ -33,24 +33,24 @@ for i in range(1, 500)
 end for
 music = file.loadSound("../assets/sounds/airRegLoop.mp3")
 music.loop = true
-if off != "sound" then music.play 0.1
+if (off.indexOf("sound") == null) then music.play 0.1
 sheet = Image.create(128, 128, "#80C0FFFF")
 td = new TileDisplay
 td.tileSet = sheet; td.tileSetTileSize = 32; td.cellSize = 32; td.extent = [100, 40]
 display(6).mode = displayMode.tile
 td.clear 5; td.install 6
-if off != "sprites" then display(4).sprites = balls
+if (off.indexOf("sprites") == null) then display(4).sprites = balls
 px = display(5); text = display(3)
 perf.resources "t=0"
 start = time; nextLog = start + 30; n = 0
 while time - start < D
 	n = n + 1
-	if off != "sprites" then
+	if (off.indexOf("sprites") == null) then
 		for b in balls; b.update; end for
 	end if
-	if off != "tiles" then td.scrollX = n * 2 % 1000
-	if n % 2 == 0 and off != "text" then text.print "frame " + n
-	if off != "pixel" then
+	if (off.indexOf("tiles") == null) then td.scrollX = n * 2 % 1000
+	if n % 2 == 0 and (off.indexOf("text") == null) then text.print "frame " + n
+	if (off.indexOf("pixel") == null) then
 		for i in range(1, 20)
 			px.line (i*47+n)%900, (i*31)%600, (i*47+n)%900 + 30, (i*31)%600 + 15, "#FF8000FF", 2
 		end for

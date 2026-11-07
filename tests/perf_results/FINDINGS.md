@@ -828,3 +828,29 @@ sound ~0. Resource counts stayed flat in all runs. All runs also show a ~6 MB st
 draw calls (colour-string/map conversions in the host or temp lists in PixelDisplay.ms) that the
 collector reclaims lazily, not a proven leak. To confirm: a pixel-only soak for >=30 min; if it
 still has no plateau, profile allocations in `PixelDisplay.line`/`print`.
+
+### VM-01  Unique short strings leak host memory (found via the 30-min soak)
+**Soak:** pixel-only scenario, 30 min / 553,070 frames: `hostMemory` 14.7 MB -> 179 MB, no
+plateau (steps at heap growth), resource counts flat. So the earlier "sawtooth" reading was wrong.
+**Bisect** (4 min runs, one op per frame; MB over the run): empty loop, `px.line`, `px.clear`,
+batched line: flat (+1 MB warm-up). `px.print "N " + n`: +25 MB / 124k frames. `px.print`
+with a constant string: flat. A bare `t = "N " + n` with no drawing: +12 MB / 77k frames.
+Cause is **not** PixelDisplay or ScreenFont: it is creating a new short string every frame.
+**Minimal repro (no Soda):** `perf_stringleak.ms`, 200,000 unique strings (`"N " + n`):
+| mode | growth per string | after final full GC |
+|---|---|---|
+| none | 240 B | 49 MB retained (no change) |
+| `gc.collect` every 2000 | 240 B | 51 MB retained |
+| `gc.collect true` every 2000 | 84 B | 18 MB retained |
+**Mechanism (miniscript2/generated/GCManager.g.cpp):** heap strings shorter than
+`InternThreshold` (128) go through `GCManager::InternString` into `InternedStrings` plus the
+`_internTable` dictionary. "Interned strings are semi-immortal": the automatic and plain
+`gc.collect` never sweep them; only a *full* collection does, and nothing triggers a full
+collection automatically. Even after a full GC the memory stays high (final full GC
+did not shrink anything), so the intern set / dictionary capacity is also never released.
+**Impact:** any program that builds changing strings every frame (score text, "frame N",
+FPS counters, coordinates) leaks ~240 B per distinct string: ~120 MB per 500k strings.
+Soda-level workaround is not clean (periodic `gc.collect true` cuts it by ~65%).
+**Fix belongs in miniscript2:** (a) have MaybeCollect do an occasional full collection,
+(b) free/shrink the table after a full sweep, and/or (c) don't intern strings created by
+concatenation (only literals), or intern only on hash-key use.
