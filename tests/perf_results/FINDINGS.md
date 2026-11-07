@@ -808,3 +808,23 @@ disabled in turn to bisect the source.
 - Note: after a runtime error in a script run this way the host stays alive rather than
   exiting; the driver kills it when it sees "Runtime Error".
 Raw results: `perf_hostile.csv` (`hostile.csv`).
+
+### Soak bisect (180 s each, five runs concurrently, one component disabled per run)
+`hostMemory` growth over the run (MB, frames, MB per 1000 frames):
+
+| disabled | start -> end | frames | MB/1000 fr |
+|---|---|---|---|
+| none (baseline) | 14.8 -> 24.3 | 15504 | 0.61 |
+| sprites | 14.8 -> 25.3 | 23530 | 0.45 |
+| sound | 14.6 -> 23.9 | 15512 | 0.60 |
+| text | 14.6 -> 22.4 | 16663 | 0.47 |
+| pixel | 14.6 -> 19.5 | 21906 | 0.22 |
+
+Disabling pixel drawing (20 `px.line` + 1 `px.print` per frame) cuts growth by ~60% and, unlike
+every other configuration, the series stops climbing: 17.6, 17.7, 19.2, 18.7, 17.3, 19.2 MB
+(a sawtooth, i.e. garbage collected). Text accounts for a smaller share (~25%); sprites ~25%;
+sound ~0. Resource counts stayed flat in all runs. All runs also show a ~6 MB step in the first
+30 s (warm-up). Interpretation: the monotone growth is mainly allocation churn from PixelDisplay
+draw calls (colour-string/map conversions in the host or temp lists in PixelDisplay.ms) that the
+collector reclaims lazily, not a proven leak. To confirm: a pixel-only soak for >=30 min; if it
+still has no plateau, profile allocations in `PixelDisplay.line`/`print`.
