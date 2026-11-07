@@ -1028,3 +1028,36 @@ speedup for Soda is in miniscript2 (return `const GCMap&` on hot paths; cheaper 
 Not done: the same profile for the other scenarios and the §9 binding benchmark; micro-benchmarks for S-V1..S-V4
 (`x = obj.field` at isa depth 1-3, setter cost); `tools/benchmark.sh` baselines; any VM change (needs the user's
 go-ahead per miniscript2/CLAUDE.md).
+
+### §10.2 VM micro-benchmarks (`tests/perf_vm.ms`, release host, ns/op, empty loop subtracted, two runs agree within 1-2%)
+
+| Op | ns |
+|---|---|
+| field read, own map | 34 |
+| field read, found 1 / 2 / 3 / 5 `__isa` levels up | 66 / 100 / 154 / 216 |
+| tiny-key (`xx`, 4-5 bytes) read at depth 1 | 66-68 |
+| 10 / 15 byte key read at depth 1 | 75-76 |
+| `list[2]` | 45 |
+| `map["a"]` | 27 |
+| assign existing tiny key (`o.val = 1`), plain class instance | 46 |
+| same, instance of class with a setter in the chain | 134 (2.9x) |
+| assign long key (`o.someLongName = 1`), plain map or plain class instance | 137 |
+| same, class with a setter in the chain | 494 (3.6x) |
+| method call at depth 1 / 3 / 5 | 192 / 280 / 324 |
+| plain function call | 130 |
+
+- **S-V3 (isa-chain misses): confirmed.** Each extra `__isa` level costs ~33-45 ns per field read (a Soda `TextDisplay` instance
+  reading a `Display` field pays two or three levels), and method calls grow 192 -> 324 ns from depth 1 to 5.
+- **S-V2 (setters): confirmed, large.** Having ANY `name=` function in the chain makes every plain assignment on such an
+  object 3-3.6x slower (+88 ns for a tiny key, +357 ns for a long one). Every Soda Display/TextDisplay/TileDisplay instance
+  is in that situation. Separately, assigning a long key costs ~90 ns more than a tiny key even with no setter anywhere
+  (137 vs 46); cause not verified, likely the `key + "="` string `SetterKey()` builds for keys over 4 bytes.
+- **S-V4 (tiny strings re-hashed): not isolated.** Tiny keys are not slower than heap keys (66 vs 76 ns), so the re-hash is not
+  visibly costly relative to heap-key compare cost; the 10% hashing in the native profile is spread over all lookups, not a
+  tiny-string penalty. Downgraded from "suspect" to "unconfirmed, low priority".
+- **S-V1 (refcount copies): not separable from MiniScript.** It is part of the 34 ns base field read; it needs the C++
+  prototype (`const GCMap&` on the read paths) to measure, which requires the user's go-ahead on a scratch branch.
+
+Soda-side implications (no VM change needed): avoid assigning to long-named fields on setter-bearing objects in hot paths
+(use `super.x =` or write on a helper map), and keep hot instances shallow. Recommended VM-side fix to propose to Joe: cache
+the setter key / skip `SetterKey()` string building (S-V2), which also helps all non-Soda scripts with property setters.
