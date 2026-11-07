@@ -931,3 +931,12 @@ Findings:
   isa-chain defaults) could remove that ~20 ms. That couples the host to Soda's Sprite field semantics, so it is
   a bigger, more contentious design than "batch draw". Not prototyped.
 Decision: do not propose spritebatch.drawTextures. Revisit only if a native sprite-walker is wanted.
+
+### BUG-HANG-01 fix: size caps for TextDisplay.setSize, TileDisplay.extent=, Sound.noiseWave
+
+The three hostile-input TIMEOUTs (1e9 columns/rows/samples looped for minutes) now return immediately:
+`TextDisplay.MAX_CELLS` (250000; setSize prints a message and returns, like Image.create), `TileDisplay.MAX_CELLS`
+(4000000; `.extent=` ignores it, per its existing "anything else is ignored" contract), `Sound.MAX_NOISE_SAMPLES`
+(4194304; returns an empty list). Non-numeric/negative sizes are rejected too. Test: `tests/qa_hostile_sizes.ms`.
+Re-ran all six hostile cases (all-args and mixed): HOSTILE_OK. The remaining null/typed-argument cases in
+hostile.csv are ordinary MiniScript runtime errors (script ends, host survives), not crashes or hangs; left as is.
