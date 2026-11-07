@@ -731,3 +731,47 @@ Unbatched PixelDisplay calls now leave the BeginTextureMode/BlendMode bracket op
 Hazard: any code that uses raw raylib framebuffer/texture calls (`BeginTextureMode`, `UnloadTexture` of a texture a PixelDisplay just drew, its own `BeginDrawing`) must call `PixelDisplay._closeOpen` first, else its output lands in the display or draws are lost. Three existing qa tests that do this needed a one-line `_closeOpen`. All qa_* tests pass, plus new `qa_pixelDisplay_autobatch.ms`.
 
 Update: auto-batching is now **opt-in** (`PixelDisplay.autoBatch = true`, default false; still Soda-host only). Default numbers are therefore back to baseline (paint unbatched 18.3 ms); with the flag on, `scn4_paint_auto` = 1.05 ms. `qa_pixelDisplay_autobatch.ms` runs both ways (`off` arg) and asserts the default is off; all other qa tests pass with the flag off.
+
+## Session 5 — §9 binding overhead (`perf_binding.ms` vs `raylib-miniscript/tools/bench_native.c`)
+
+ns per call (median of 5 reps × 2000 calls, Release host, closure-call cost subtracted; native = same raylib build, same args, in a C loop). Raw: `perf_binding.run1.csv`, `perf_binding.native.csv`.
+
+| Call | arg form | native | MiniScript | overhead | ×native |
+|---|---|---|---|---|---|
+| (dispatch floor) GetScreenWidth / GetMouseX / IsKeyDown | – | 1 | 216 / 233 / 250 | ~215–250 | 220× |
+| rlTexCoord2f / rlColor4ub / rlVertex2f | numbers | 1 / 1 / 12 | 259 / 290 / 283 | ~260–290 | – |
+| DrawTexturePro | lists, tint list | 55 | 683 | 628 | 12× |
+| DrawTexturePro | lists, tint string | 55 | 672 | 617 | 12× |
+| DrawTexturePro | lists, tint `raylib.WHITE` (map) | 55 | 857 | 802 | 16× |
+| DrawTexturePro | maps (rect, rect, vec), tint list | 55 | 1502 | 1447 | 27× |
+| DrawTexturePro | maps, tint map | 55 | 1670 | 1615 | 30× |
+| DrawTexturePro | lists built inline each call | 55 | 923 | 868 | – |
+| DrawTexture | tint list / str / map | 56 | 542 / 516 / 723 | ~460–670 | 10–13× |
+| DrawPixel | color str / list / map | 54 | 457 / 455 / 927 | 400 / 400 / 870 | – |
+| DrawLineEx | lists / maps | 75 | 669 / 1318 | 594 / 1243 | 9× / 18× |
+| DrawRectangle | ints, str / list | 55 | 463 / 477 | ~410 | 8× |
+| DrawRectangleRec | rect list / map | 55 | 526 / 1218 | 471 / 1163 | – |
+| SetShaderValue | vec4 list (preallocated / inline) | 156 | 648 / 740 | 492 / 584 | 4× |
+| Begin/EndShaderMode (nothing drawn) | – | 439 | 915 | 476 | 2× |
+| GetImageColor | returns a map | 3.8 | 914 | 910 | 240× |
+
+Findings:
+- **Dispatch floor is ~220 ns per intrinsic call**; argument conversion adds ~200–400 ns for list forms. Binding overhead is 8–30× the native cost of cheap calls but only ~0.4–0.9 µs absolute.
+- **Map-form arguments are ~2× a list form** (each rect/vector map ≈ +270 ns; a color map ≈ +175 ns): consistent with the key-name `String`s being rebuilt per call (§9.1). Color *strings* cost the same as lists (no parse penalty).
+- **Reusing vs building lists inline** costs ~240 ns for three lists — the MiniScript allocation side, not the binding.
+- **`Sprite.tint` defaults to `raylib.WHITE` (a map)**: +175 ns per untinted sprite (≈0.17 ms per 1000 sprites, ~3% of sprite render). Candidate lib fix: default `[255,255,255,255]`.
+- `GetImageColor` allocates a map per call (~0.9 µs) — only matters for per-pixel `Image.pixel` loops.
+
+Binding cost per frame at the §5 scenario call counts (calls × MiniScript ns):
+| Workload | calls/frame | binding ms/frame | share of frame |
+|---|---|---|---|
+| 1000 plain sprites (DrawTexturePro, map tint) | 1000 | 0.86 (0.63 floor-excluded) | ~13% of 6.8 ms |
+| 1000 warped sprites (~11 rl calls each) | 11000 | ~3.1 | ~9% of 36 ms |
+| 600-cell tile grid (DrawTexturePro) | 600 | ~0.4 | – |
+| paint, 200 draws (batched) | 200 | ~0.14 | ~14% of 1.0 ms |
+| 5000 balls | 5000 | ~4.3 | ~12% of 37 ms |
+
+**BIND-01 (sprites ≥1000, borderline >0.5 ms):** the binding is ~12% of sprite render; the rest is MiniScript list building and property reads. Fixes by repo: (a) `lib/`: default tint to a list (−0.17 ms/1000); reuse lists (only when Sprite.draw can avoid allocating, −0.24 µs each); (b) `raylib-miniscript`: intern key `String`s in the map converters (would halve map-form cost, but Soda barely passes maps once the tint default is fixed); (c) a host batch intrinsic (`DrawTexturesPro` taking parallel lists) would remove ~0.6 µs × N dispatch+conversion, the largest remaining prize (~10% of 1000-sprite frames), but is an API addition and was not prototyped.
+Negligible: key/mouse queries (0.25 µs), rlgl immediate calls (0.28 µs each), DrawPixel/DrawRectangle/DrawLineEx with list or string args (≤0.7 µs), SetShaderValue.
+
+Native benchmark: `raylib-miniscript/tools/bench_native.c` + `bench_native` CMake target (EXCLUDE_FROM_ALL; branch `perf/bench-native`, not pushed).
