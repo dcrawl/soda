@@ -106,8 +106,16 @@ end function
 
 // Resize the character grid.  Discards the current contents and homes
 // the cursor.
+TextDisplay.MAX_CELLS = 250000	// largest grid setSize will build (e.g. 500 x 500)
 TextDisplay.setSize = function(newCols, newRows)
 	"Resize the grid to the given columns and rows, clearing it and homing the cursor."
+	if not (newCols isa number and newRows isa number) or newCols < 1 or newRows < 1 or
+	   newCols * newRows > TextDisplay.MAX_CELLS then
+		print "TextDisplay.setSize: invalid size " + newCols + " x " + newRows
+		return
+	end if
+	newCols = floor(newCols)
+	newRows = floor(newRows)
 	self.columns = newCols
 	self.rows = newRows
 	self._cells = _list_init(newRows, null)

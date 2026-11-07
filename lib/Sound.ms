@@ -181,9 +181,14 @@ freeze Sound.sawtoothWave
 // Sound.noiseWave: returns a list of random values, approximating white
 // noise.  Uses its own generator, so it does not disturb the sequence of
 // numbers produced by `rnd`.
+Sound.MAX_NOISE_SAMPLES = 4194304	// largest list noiseWave will build
 Sound.noiseWave = function(seed=42, samples=509)
 	"Return a waveform list of pseudo-random values, approximating white noise."
 	result = []
+	if not (seed isa number and samples isa number) or samples > Sound.MAX_NOISE_SAMPLES then
+		print "Sound.noiseWave: invalid arguments"
+		return result
+	end if
 	state = floor(abs(seed)) % 4294967296
 	for i in range(0, samples-1, 1)
 		// Numerical Recipes' "quick and dirty" 32-bit LCG.
