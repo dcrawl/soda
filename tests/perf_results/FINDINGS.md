@@ -1174,3 +1174,87 @@ Render time is unchanged (4.45 vs 4.51 in scn5, 1.71 vs 1.75 in scn3): the savin
 `BeginBlendMode`/`EndBlendMode` brackets) plus a smaller `endDrawing` time. Runs are stable to ~1%. `qa_pixelDisplay_autobatch.ms` passes with
 the flag on and off. So autoBatch does what #34 promises on a mixed scene, not just the paint-only case (18x there); the gain scales with how many unbatched
 pixel-display calls a frame makes (about 21 in scn5, 3 in scn3). The 12.6% `EndBlendMode` share from the scenario-5 profile shows up as the 1.1 ms user drop.
+
+## Map replacement question, then the `__isa` chain and write costs (miniscript2)
+
+Question: is it worth finding a faster map than miniscript2's? Answer after measuring: no table swap, but the investigation found two
+concrete VM bugs that make writes and inheritance walks several times slower than they need to be. Scripts: `tests/perf_map.ms`
+(MiniScript, output `perf_map.csv`); a throwaway native harness linked against the VM sources (not kept in the repo).
+
+### What the map is
+`GCMap` wraps `Dictionary<Value,Value>` (cpp/core/CS_Dictionary.h): chained buckets (`std::vector<int>`) plus an append-only entries
+vector, plus a separate `_order` list for iteration order. Number keys are hashed with FNV over 8 bytes; bucket index is `%` capacity;
+key equality is the generic `RecursiveEqual`; an insert of a new key runs `findEntry` twice. Nothing unusual, nothing quadratic.
+
+### Reads do not depend on table size or key kind (so a better table has little to win)
+MiniScript `m[k]`, ns per op, loop overhead subtracted: tiny-string keys 26-31, heap-string keys 30-37, number keys 29-41, flat from 1 to
+4096 keys. `perf_vm.ms` for reference: `list[2]` 44, `map["a"]` 26. `hasIndex` hit and miss cost the same.
+
+Native (O3, same sources), per lookup: full path 17 ns (tiny) / 24 ns (heap); the same with no per-lookup `GCMap` struct copy 11-12 ns;
+the struct copy alone 16 ns; hash 2-3 ns (tiny) / 9 ns (heap); so after the #30 fix the table itself is ~10 ns. A perfect table could save
+~5-8 ns, under 1% of a 5000-ball frame.
+
+### GetString copy (same bug class as #30, but no end-to-end gain)
+`heap_string_storage` calls `GCManager::GetString(v)`, which returns `GCString` by value. A `GetStringRef` prototype cut a native heap-string
+lookup 24 to 17 ns and hash 9 to 5 ns, but scenario 1 user time stayed 7.10 vs 7.04 ms: the VM's compiled field access mostly does not take
+that path. Kept inside the combined patch below because `IsSetterKey()` on heap names does use it; not a separate proposal.
+
+### FOUND: `IsIsaKey` allocates a string on every map write with a long field name
+`VMStorage::IsIsaKey(key)` (generated/VM.g.h, cs/VM.cs:2767) ends in `return key == Value::magicIsA;`. For any heap-string key that is
+`string_equals`, which does `ss_createWithLength` (malloc) and a free. It runs on every `IDXSET` to a map and on `NoteKeyRemoved`.
+Names of 5+ bytes are heap strings, so `self.rotation = ...`, `self.localBounds = ...` etc. all pay a malloc/free per assignment; 1-4 byte
+names (`x`, `vx`) return before it. Found by `sample` on a write-only loop: ~90% of the loop's time was in `IsIsaKey` -> `string_equals` -> malloc/free.
+
+Fix prototyped: compare the byte length to 5 first, then the five bytes.
+
+### FOUND: inheritance walks hash the same two keys at every level
+`Value::Lookup` / `LookupWithOrigin` call `GCMap::TryGet(key)` and then `TryGet(__isa)` per level; each call recomputes `Hash(key)`.
+`__isa` is a tiny string, so it is FNV-hashed from scratch each time; a heap-string key goes through `GetString` each time. A native sample
+of a depth-4 field read: 45% in `GCMap::TryGet`, ~23% in hashing. Fix prototyped: hash the key and `__isa` once per lookup and pass the hash
+down (`Dictionary::TryGetValueH`, `GCMap::TryGetH`; falls back to plain `TryGet` for VarMap-backed and globals maps).
+
+### Results (ns/op; MiniScript benchmarks; "base" is the unmodified release host)
+| Operation | base | #30 const-ref only | + IsIsaKey, GetString, IsFrozen/MapSet refs | + hash-once chain walk |
+|---|---|---|---|---|
+| write existing key, 10-byte name | 149 | 130 | 52 | 52 |
+| write existing key, `perf_vm` plain class | 123 | | | 49 |
+| write tiny key (class instance) | 30 | | | 36 (noise-level, within 1-2 runs) |
+| fresh `{}` + 8 inserts, per insert | 217 | 192 | 103 | 103 |
+| insert + remove one key | 726 | 668 | 485 | 485 |
+| field read, own map | 50 | 30 | 30 | 24 |
+| field read, 1 / 2 / 4 / 6 isa levels | 78 / 113 / 204 / 272 | 55 / 74 / 149 / 194 | 54 / 73 / 147 / 190 | 34 / 49 / 78 / 107 |
+| `perf_vm` field_isa5 / method_call_depth5 | 203 / 315 | | | 97 / 222 |
+| `m[k]` heap key, 16 keys | 30 | 25 | | 19 |
+
+Cost per inheritance level: 34 ns -> 27 -> 14 ns.
+
+Soda scenarios, release host, user phase and total ms/frame, base vs all four changes together (each pair measured alternately, 2 runs agree to ~1%):
+| Scenario | user base | user patched | total base | total patched |
+|---|---|---|---|---|
+| scn1 5000 balls | 7.19 | 5.14 (-28%) | 33.0 | 25.1 (-24%) |
+| scn3 platformer | 0.391 | 0.331 (-15%) | 2.89 | 2.52 (-13%) |
+| scn5 everything | 2.02 | 1.74 (-14%) | 7.82 | 6.58 (-16%) |
+
+Attribution (scn1 5000, user ms): `IsIsaKey` fix alone 7.13 -> 6.98 (-2%); the #30 const-ref alone was 5-12% of total frame earlier. The rest
+comes from the combination (borrowing in `IsFrozen`/`MapSet`/`GetString`, the hash-once walk). I did not run every subset, so the split between
+the last three changes is not measured.
+
+### What is in the patch (`perf_results/map_write_combined.patch`, 12 files, +64/-21, on top of unmodified miniscript2 main)
+1. #30 const-ref reads (`GetRef` on `GCMapSet`/`GCListSet`, used in `MapGet`/`TryGet`/`Lookup*`/`HasKey`/`ListGet`/`ChainHasSetter`).
+2. `GCStringSet::GetRef` + `GCManager::GetStringRef`, used by `heap_string_storage`.
+3. `Value::IsFrozen` and `Value::MapSet` borrow the `GCMap` instead of copying it.
+4. `IsIsaKey`: length check plus byte compare instead of `==` (needs `value_string.h` included in VM.g.h).
+5. `Dictionary::TryGetValueH`, `GCMap::TryGetH`; `Lookup` and `LookupWithOrigin` compute the key hash and the `__isa` hash once.
+
+Correctness: miniscript2's own suite on the patched C++ build (`miniscript --test`): 914 integration tests passed, 0 failed. NOT run on the
+patched build: raylib-miniscript `interp_tests` and `handle_tests`, and the Soda `tests/qa_*.ms` suite (they passed on the earlier #30-only
+prototype). miniscript2 was reverted to a clean tree afterwards.
+
+Caveats:
+- Edits are in `generated/` (transpiler output) and `cpp/core`; the real fix must be written in C# (`cs/VM.cs`, `cs/GCSet.cs`, `cs/Value.cs`)
+  and transpile. The `IsIsaKey` fix is the easy one: it is plain C# (`key.Length`/byte test). The `ref`-return and hashed-lookup changes need
+  Joe's input on what the transpiler supports.
+- `static const int ih` in the Lookup functions relies on `magicIsA` being initialized before first use (it is, at VM startup).
+- The remaining write cost (52 ns) is mostly `SETRFIND` + `IDXSET` dispatch, `ChainHasSetter` and the dictionary store; remove is still
+  485 ns (the `_pos` index is built on a map's first removal, and removal tombstones `_order`) and was not investigated further.
+- The tiny-key class-instance assign (30 -> 36 ns) was within the noise of two runs; it was not isolated.

@@ -1,0 +1,318 @@
+diff --git a/cpp/core/CS_Dictionary.h b/cpp/core/CS_Dictionary.h
+index 7ff6ee4..c6d0275 100644
+--- a/cpp/core/CS_Dictionary.h
++++ b/cpp/core/CS_Dictionary.h
+@@ -121,6 +121,16 @@ class DictionaryStorage {
+ 		freeCount = 0;
+ 	}
+ 
++	int findEntryH(const TKey& key, int hashCode) const {   // PROTOTYPE: caller-supplied hash
++		if (buckets.empty()) return -1;
++		int capacity = static_cast<int>(buckets.size());
++		int bucket = hashCode % capacity;
++		for (int i = buckets[bucket]; i >= 0; i = entries[i].next) {
++			if (entries[i].hashCode == hashCode && DictKeyEqual(entries[i].key, key)) return i;
++		}
++		return -1;
++	}
++
+ 	int findEntry(const TKey& key) const {
+ 		if (buckets.empty()) return -1;
+ 
+@@ -268,6 +278,13 @@ public:
+ 		return data && data->findEntry(key) >= 0;
+ 	}
+ 
++	bool TryGetValueH(const TKey& key, int hashCode, TValue* value) const {   // PROTOTYPE
++		if (!data) return false;
++		int index = data->findEntryH(key, hashCode);
++		if (index >= 0) { *value = data->entries[index].value; return true; }
++		return false;
++	}
++
+ 	// TryGetValue - C# style
+ 	bool TryGetValue(const TKey& key, TValue* value) const {
+ 		if (!data) return false;
+diff --git a/cpp/core/value.cpp b/cpp/core/value.cpp
+index e7e5a30..45b9cc5 100644
+--- a/cpp/core/value.cpp
++++ b/cpp/core/value.cpp
+@@ -641,7 +641,7 @@ uint32_t value_hash(Value v, int depth) {
+ bool Value::IsFrozen() const {
+     Value v = *this;
+     if (v.IsList()) return GCManager::Lists.Get(v.ItemIndex()).Frozen;
+-    if (v.IsMap())  return GCManager::Maps.Get(v.ItemIndex()).Frozen;
++    if (v.IsMap())  return GCManager::Maps.GetRef(v.ItemIndex()).Frozen;
+     return false;
+ }
+ 
+diff --git a/cpp/core/value_list.cpp b/cpp/core/value_list.cpp
+index 0c87e50..99401f2 100644
+--- a/cpp/core/value_list.cpp
++++ b/cpp/core/value_list.cpp
+@@ -43,7 +43,7 @@ int list_capacity(Value list_val) {
+ Value Value::ListGet(int index) const {
+     Value list_val = *this;
+     if (!list_val.IsList()) return Value::null;
+-    GCList l = GCManager::Lists.Get(list_val.ItemIndex());
++    GCList& l = GCManager::Lists.GetRef(list_val.ItemIndex());
+     return l.Get(index);
+ }
+ 
+diff --git a/cpp/core/value_map.cpp b/cpp/core/value_map.cpp
+index 2ef6194..d2133f4 100644
+--- a/cpp/core/value_map.cpp
++++ b/cpp/core/value_map.cpp
+@@ -46,7 +46,7 @@ int map_capacity(Value map_val) {
+ Value Value::MapGet(Value key) const {
+     Value map_val = *this;
+     if (!map_val.IsMap()) return Value::null;
+-    GCMap m = GCManager::Maps.Get(map_val.ItemIndex());
++    GCMap& m = GCManager::Maps.GetRef(map_val.ItemIndex());
+     Value out;
+     if (m.TryGet(key, &out)) return out;
+     return Value::null;
+@@ -55,24 +55,26 @@ Value Value::MapGet(Value key) const {
+ bool Value::TryGet(Value key, Value* out_value) const {
+     Value map_val = *this;
+     if (!map_val.IsMap()) { if (out_value) *out_value = Value::null; return false; }
+-    GCMap m = GCManager::Maps.Get(map_val.ItemIndex());
++    GCMap& m = GCManager::Maps.GetRef(map_val.ItemIndex());
+     Value out;
+     bool ok = m.TryGet(key, &out);
+     if (out_value) *out_value = ok ? out : Value::null;
+     return ok;
+ }
+ 
+-// Walks the __isa chain.
++// Walks the __isa chain.  PROTOTYPE: the key hash and the __isa hash are
++// computed once per call instead of once per level.
+ bool Value::Lookup(Value key, Value* out_value) const {
+-    Value map_val = *this;
+-    Value current = map_val;
++    Value current = *this;
++    const int kh = MiniScript::Hash(key);
++    static const int ih = MiniScript::Hash(Value::magicIsA);
+     for (int depth = 0; depth < 256; depth++) {
+         if (!current.IsMap()) { if (out_value) *out_value = Value::null; return false; }
+-        GCMap m = GCManager::Maps.Get(current.ItemIndex());
++        GCMap& m = GCManager::Maps.GetRef(current.ItemIndex());
+         Value v;
+-        if (m.TryGet(key, &v)) { if (out_value) *out_value = v; return true; }
++        if (m.TryGetH(key, kh, &v)) { if (out_value) *out_value = v; return true; }
+         Value isa;
+-        if (!m.TryGet(Value::magicIsA, &isa)) { if (out_value) *out_value = Value::null; return false; }
++        if (!m.TryGetH(Value::magicIsA, ih, &isa)) { if (out_value) *out_value = Value::null; return false; }
+         current = isa;
+     }
+     if (out_value) *out_value = Value::null;
+@@ -80,25 +82,26 @@ bool Value::Lookup(Value key, Value* out_value) const {
+ }
+ 
+ bool Value::LookupWithOrigin(Value key, Value* out_value, Value* out_super) const {
+-    Value map_val = *this;
+-    Value current = map_val;
++    Value current = *this;
++    const int kh = MiniScript::Hash(key);
++    static const int ih = MiniScript::Hash(Value::magicIsA);
+     for (int depth = 0; depth < 256; depth++) {
+         if (!current.IsMap()) {
+             if (out_value) *out_value = Value::null;
+             if (out_super) *out_super = Value::null;
+             return false;
+         }
+-        GCMap m = GCManager::Maps.Get(current.ItemIndex());
++        GCMap& m = GCManager::Maps.GetRef(current.ItemIndex());
+         Value v;
+-        if (m.TryGet(key, &v)) {
++        if (m.TryGetH(key, kh, &v)) {
+             Value isa;
+-            m.TryGet(Value::magicIsA, &isa);
++            m.TryGetH(Value::magicIsA, ih, &isa);
+             if (out_value) *out_value = v;
+             if (out_super) *out_super = isa;
+             return true;
+         }
+         Value isa;
+-        if (!m.TryGet(Value::magicIsA, &isa)) {
++        if (!m.TryGetH(Value::magicIsA, ih, &isa)) {
+             if (out_value) *out_value = Value::null;
+             if (out_super) *out_super = Value::null;
+             return false;
+@@ -113,7 +116,7 @@ bool Value::LookupWithOrigin(Value key, Value* out_value, Value* out_super) cons
+ bool Value::MapSet(Value key, Value value) const {
+     Value map_val = *this;
+     if (!map_val.IsMap()) return false;
+-    GCMap m = GCManager::Maps.Get(map_val.ItemIndex());
++    GCMap& m = GCManager::Maps.GetRef(map_val.ItemIndex());
+     if (m.Frozen) { vm_raise_runtime_error("Attempt to modify a frozen map"); return false; }
+     // A list or map key is stored as a frozen copy (or as itself, if already
+     // frozen), so it can't be mutated while in the map; see FROZEN_VALUES.md.
+@@ -147,7 +150,7 @@ bool Value::MapRemove(Value key) const {
+ bool Value::HasKey(Value key) const {
+     Value map_val = *this;
+     if (!map_val.IsMap()) return false;
+-    GCMap m = GCManager::Maps.Get(map_val.ItemIndex());
++    GCMap& m = GCManager::Maps.GetRef(map_val.ItemIndex());
+     Value v;
+     return m.TryGet(key, &v);
+ }
+diff --git a/cpp/core/value_string.cpp b/cpp/core/value_string.cpp
+index 28b1ec6..a351dd5 100644
+--- a/cpp/core/value_string.cpp
++++ b/cpp/core/value_string.cpp
+@@ -34,7 +34,7 @@ namespace {
+ // Goes through GCManager::GetString so it reads from the right set: a heap
+ // string may be a BigStrings slot or an InternedStrings slot (see adopt_ss).
+ const StringStorage* heap_string_storage(Value v) {
+-    GCString s = GCManager::GetString(v);
++    const GCString& s = GCManager::GetStringRef(v);
+     return s.Data.getStorageRaw();
+ }
+ 
+diff --git a/generated/GCItems.g.cpp b/generated/GCItems.g.cpp
+index 486cab0..b4b52b3 100644
+--- a/generated/GCItems.g.cpp
++++ b/generated/GCItems.g.cpp
+@@ -107,6 +107,13 @@ Boolean GCMap::TryGet(Value key,Value* value) {
+ 	*value = Value::Null;
+ 	return Boolean(false);
+ }
++Boolean GCMap::TryGetH(Value key,Int32 hash,Value* value) {   // PROTOTYPE
++	if (!IsNull(_gb) || !IsNull(_vmb)) return TryGet(key, value);
++	if (IsNull(Items)) { *value = Value::Null; return Boolean(false); }
++	if (Items.TryGetValueH(key, hash, value)) return Boolean(true);
++	*value = Value::Null;
++	return Boolean(false);
++}
+ void GCMap::Set(Value key,Value value) {
+ 	if (!IsNull(_gb)) { _gb.Set(key, value); return; }
+ 
+diff --git a/generated/GCItems.g.h b/generated/GCItems.g.h
+index cb14e2b..9659e25 100644
+--- a/generated/GCItems.g.h
++++ b/generated/GCItems.g.h
+@@ -158,6 +158,7 @@ struct GCMap {
+ 	public: void InitAsGlobals(Globals g);
+ 
+ 	public: Boolean TryGet(Value key, Value* value);
++	public: Boolean TryGetH(Value key, Int32 hash, Value* value);   // PROTOTYPE
+ 
+ 	public: void Set(Value key, Value value);
+ 
+diff --git a/generated/GCManager.g.cpp b/generated/GCManager.g.cpp
+index ce0832b..17a4eda 100644
+--- a/generated/GCManager.g.cpp
++++ b/generated/GCManager.g.cpp
+@@ -271,6 +271,10 @@ GCString GCManager::GetString(Value v) {
+ 	}
+ 	return BigStrings.Get(v.ItemIndex());
+ }
++GCString& GCManager::GetStringRef(Value v) {   // PROTOTYPE
++	if (v.GCSetIndex() == InternedStringSet) return InternedStrings.GetRef(v.ItemIndex());
++	return BigStrings.GetRef(v.ItemIndex());
++}
+ GCList GCManager::GetList(Value v) {
+ 	return Lists.Get(v.ItemIndex());
+ }
+diff --git a/generated/GCManager.g.h b/generated/GCManager.g.h
+index e99a3cc..aad2841 100644
+--- a/generated/GCManager.g.h
++++ b/generated/GCManager.g.h
+@@ -228,6 +228,7 @@ class GCManager {
+ 	// ── Convenience accessors ─────────────────────────────────────────────────
+ 
+ 	public: static GCString GetString(Value v);
++	public: static GCString& GetStringRef(Value v);   // PROTOTYPE
+ 	public: static GCList GetList(Value v);
+ 	public: static GCMap GetMap(Value v);
+ 	public: static GCError GetError(Value v);
+diff --git a/generated/GCSet.g.h b/generated/GCSet.g.h
+index c1e2c1b..38cd9b9 100644
+--- a/generated/GCSet.g.h
++++ b/generated/GCSet.g.h
+@@ -189,6 +189,7 @@ class GCStringSetStorage : public GCSetBaseStorage {
+ 	protected: void TruncateItems(Int32 newCount, Boolean trimCapacity);
+ 
+ 	public: GCString Get(Int32 idx);
++	public: GCString& GetRef(Int32 idx) { return _items[idx]; }   // PROTOTYPE
+ 
+ 	public: void SetData(Int32 idx, String s);
+ 
+@@ -206,6 +207,7 @@ class GCListSetStorage : public GCSetBaseStorage {
+ 	protected: void TruncateItems(Int32 newCount, Boolean trimCapacity);
+ 
+ 	public: GCList Get(Int32 idx);
++	public: GCList& GetRef(Int32 idx) { return _items[idx]; }   // PROTOTYPE
+ 
+ 	public: void Init(Int32 idx, Int32 capacity);
+ 
+@@ -229,6 +231,7 @@ class GCMapSetStorage : public GCSetBaseStorage {
+ 	protected: void TruncateItems(Int32 newCount, Boolean trimCapacity);
+ 
+ 	public: GCMap Get(Int32 idx);
++	public: GCMap& GetRef(Int32 idx) { return _items[idx]; }   // PROTOTYPE
+ 
+ 	public: void Init(Int32 idx, Int32 capacity);
+ 
+@@ -323,6 +326,7 @@ struct GCStringSet : public GCSetBase {
+ 	protected: void TruncateItems(Int32 newCount, Boolean trimCapacity) { return get()->TruncateItems(newCount, trimCapacity); }
+ 
+ 	public: inline GCString Get(Int32 idx);
++	public: inline GCString& GetRef(Int32 idx) { return get()->GetRef(idx); }   // PROTOTYPE
+ 
+ 	public: inline void SetData(Int32 idx, String s);
+ }; // end of struct GCStringSet
+@@ -349,6 +353,7 @@ struct GCListSet : public GCSetBase {
+ 	protected: void TruncateItems(Int32 newCount, Boolean trimCapacity) { return get()->TruncateItems(newCount, trimCapacity); }
+ 
+ 	public: inline GCList Get(Int32 idx);
++	public: inline GCList& GetRef(Int32 idx) { return get()->GetRef(idx); }   // PROTOTYPE
+ 
+ 	public: inline void Init(Int32 idx, Int32 capacity);
+ 
+@@ -382,6 +387,7 @@ struct GCMapSet : public GCSetBase {
+ 	protected: void TruncateItems(Int32 newCount, Boolean trimCapacity) { return get()->TruncateItems(newCount, trimCapacity); }
+ 
+ 	public: inline GCMap Get(Int32 idx);
++	public: inline GCMap& GetRef(Int32 idx) { return get()->GetRef(idx); }   // PROTOTYPE
+ 
+ 	public: inline void Init(Int32 idx, Int32 capacity);
+ 
+diff --git a/generated/VM.g.cpp b/generated/VM.g.cpp
+index f9841fa..ac1f9b7 100644
+--- a/generated/VM.g.cpp
++++ b/generated/VM.g.cpp
+@@ -2342,7 +2342,7 @@ Boolean VMStorage::ChainHasSetter(Value map) {
+ 	Int32 toStamp = 0;   // maps from `map` up that this walk proves clean
+ 	for (Int32 depth = 0; depth < 256; depth++) {
+ 		if (!current.IsMap()) break;   // ran off the end of the chain: clean
+-		Int32 status = GCManager::Maps.Get(current.ItemIndex())._setterStatus;
++		Int32 status = GCManager::Maps.GetRef(current.ItemIndex())._setterStatus;
+ 		if (status == -1) return Boolean(true);
+ 		if (status == gen) break;      // already stamped; so is everything above
+ 		toStamp++;                     // clean, if the rest of the walk agrees
+diff --git a/generated/VM.g.h b/generated/VM.g.h
+index eabaeb2..3ccb958 100644
+--- a/generated/VM.g.h
++++ b/generated/VM.g.h
+@@ -9,6 +9,7 @@
+ #include "IntrinsicAPI.g.h"
+ #include "ErrorTypes.g.h"
+ #include "value_map.h"
++#include "value_string.h"
+ #include <vector>
+ #include <chrono>
+ #include "GCManager.g.h"
+@@ -1130,7 +1131,10 @@ inline void VM::NoteKeyRemoved(Value key) { return get()->NoteKeyRemoved(key); }
+ inline Boolean VMStorage::IsIsaKey(Value key) {
+ 	if (key.RefEquals(Value::magicIsA)) return Boolean(true);
+ 	if (key.IsTinyString() || !key.IsString()) return Boolean(false);
+-	return key == Value::magicIsA;
++	// PROTOTYPE: length check + byte compare; `==` allocates a temporary string here
++	if (string_lengthB(key) != 5) return Boolean(false);
++	const char* cs = key.AsCString();
++	return Boolean(cs[0]=='_' && cs[1]=='_' && cs[2]=='i' && cs[3]=='s' && cs[4]=='a');
+ }
+ inline Boolean VMStorage::CanOrder(Value a,Value b) {
+ 	return (a.IsNumber() && b.IsNumber()) || (a.IsString() && b.IsString());

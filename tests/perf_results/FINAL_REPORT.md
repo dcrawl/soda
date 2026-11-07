@@ -8,7 +8,7 @@ Environment: macOS, Release host (`raylib-miniscript/build-release`), clang; pro
 - The plan is complete: every measurable item was run, and everything we confirmed was fixed in Soda, filed upstream, or deliberately left alone with reasons (below).
 - No host crashes were found with ordinary or hostile arguments. Three 1e9-size hangs were fixed.
 - Two real leaks/crashes were found and fixed or filed: BMF fonts crashed on load, and unique short strings leak host memory (VM-01).
-- The remaining frame time in Soda scenes is mostly the VM itself: refcounting/copying 14-24%, map lookup and hashing another 12-17%. Further Soda-side gains are now small; the next large gain is in miniscript2 (issue #30).
+- The remaining frame time in Soda scenes is mostly the VM itself: refcounting/copying 14-24%, map lookup and hashing another 12-17%. Further Soda-side gains are now small; the large gain is in miniscript2: a combined VM patch (below) makes 5000 balls -24% total frame time, and 28% less user time.
 
 ## What was fixed, with the measured gain
 
@@ -34,7 +34,7 @@ All PRs are open and waiting on Joe. #34 sits on #27 and #37 on #32, so each nee
 |---|---|---|
 | BIND-03 batch draw plugin | a flat-list `DrawTexturePro` batch gives no gain: building the list in MiniScript costs more than the calls it saves (11.4 vs 5.24 ms/frame; 0.35 only with a prebuilt list) | dropped, per your call |
 | S-V2 setter-key cache (VM) | assignments 3-3.6x slower when a setter exists in the chain; a cache cut 492 to 226 ns for long keys, but no end-to-end Soda gain | not proposed |
-| S-V3 isa depth | about 33-45 ns per inheritance level | note only |
+| S-V3 isa depth | about 33-45 ns per inheritance level | now fixable: see "VM patch ready to file" (14 ns per level) |
 | S-V4 tiny-string re-hash | no penalty measured | low priority |
 | S-T4 text dirty flag / offscreen cache | an idle `TextDisplay.render` costs ~0.5 ms/frame, but cells are public maps mutated directly, so a cache needs an API decision | left for Joe |
 | `tint` default (BIND-01) | prototyped on branch `perf/tint-default`; see FINDINGS | not proposed |
@@ -43,7 +43,30 @@ All PRs are open and waiting on Joe. #34 sits on #27 and #37 on #32, so each nee
 ## Filed upstream (miniscript2)
 
 - **#29 (VM-01):** unique short strings are interned and never swept by automatic GC: about 240 B leaked per distinct string, 14.7 to 179 MB over a 30 min soak of a scene that only prints `"N " + n`. Any HUD counter hits this. Soda cannot fix it cleanly (`gc.collect true` periodically recovers ~65%).
+- **#31 (map writes and isa walks):** see "VM patch" below; filed after #30 was open.
 - **#30 (S-V1):** `GCMapSet::Get` returns a struct by value, so every lookup copies `shared_ptr` members (atomic refcounts). A const-ref prototype made Soda frames 5-12% faster (scn1 5000: 32.5 to 28.6 ms). Joe decides how to express it in C#.
+
+## VM patch (miniscript2) — filed as miniscript2#31
+
+Prompted by "is there a faster map?": a replacement table is not worth it (reads are flat from 1 to 4096 keys; a perfect table saves ~5-8 ns of a ~25 ns lookup), but profiling the write and inheritance paths found three VM problems. Patch: `perf_results/map_write_combined.patch` (on unmodified main; details and caveats in FINDINGS "Map replacement question").
+
+1. **`IsIsaKey` allocates on every write to a map with a 5+ byte field name** (`key == magicIsA` goes through `string_equals`, which mallocs and frees a temporary). Writes to `self.rotation` etc. were ~150 ns; ~90% of a write-only loop was in this call. Plain C# fix (compare length, then bytes).
+2. **Inheritance walks rehash both the key and `__isa` at every level.** Hashing them once per lookup cuts the cost per `__isa` level from 34 to 14 ns.
+3. **#30 widened:** also `IsFrozen`, `MapSet` and the heap-string accessor copy a struct by value.
+
+| ns/op | base | patched |
+|---|---|---|
+| write existing key, long name | 149 | 52 |
+| field read through 6 isa levels | 272 | 107 |
+| `perf_vm` method call, depth 5 | 315 | 222 |
+
+| Scenario (ms/frame, total) | base | patched |
+|---|---|---|
+| scn1, 5000 balls | 33.0 | 25.1 (-24%) |
+| scn3 platformer | 2.89 | 2.52 (-13%) |
+| scn5 everything | 7.82 | 6.58 (-16%) |
+
+miniscript2's own test suite passes on the patched build (914/914). Not yet run on it: raylib-miniscript `interp_tests`/`handle_tests` and Soda's `qa_*.ms`. The patch edits transpiled output; Joe must express it in C#.
 
 ## Where the time goes now (scenario profiles)
 
@@ -78,4 +101,4 @@ Binding overhead (§9): about 215-250 ns dispatch floor per raylib call, and `Dr
 
 - soda: `perf/00-harness-setup` holds the harness, benchmarks, FINDINGS and this report (local). `Fixes2` holds the landed fixes; PRs #27-#30 and #32-#37 are open.
 - raylib-miniscript: PR #28 open; `perf/batch-draw-plugin` is a local prototype only.
-- miniscript2: issues #29 and #30 open; no code changes.
+- miniscript2: issues #29, #30 and #31 open; no code changes (the combined patch is kept in `perf_results/map_write_combined.patch`, tree reverted).
