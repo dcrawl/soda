@@ -729,3 +729,5 @@ Unbatched PixelDisplay calls now leave the BeginTextureMode/BlendMode bracket op
 | others | unchanged | unchanged |
 
 Hazard: any code that uses raw raylib framebuffer/texture calls (`BeginTextureMode`, `UnloadTexture` of a texture a PixelDisplay just drew, its own `BeginDrawing`) must call `PixelDisplay._closeOpen` first, else its output lands in the display or draws are lost. Three existing qa tests that do this needed a one-line `_closeOpen`. All qa_* tests pass, plus new `qa_pixelDisplay_autobatch.ms`.
+
+Update: auto-batching is now **opt-in** (`PixelDisplay.autoBatch = true`, default false; still Soda-host only). Default numbers are therefore back to baseline (paint unbatched 18.3 ms); with the flag on, `scn4_paint_auto` = 1.05 ms. `qa_pixelDisplay_autobatch.ms` runs both ways (`off` arg) and asserts the default is off; all other qa tests pass with the flag off.

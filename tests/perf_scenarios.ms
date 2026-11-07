@@ -172,6 +172,53 @@ if want(4) and PixelDisplay.hasIndex("beginBatch") then
 	clear
 end if
 
+// ---------- 4c. paint program, PixelDisplay.autoBatch = true ----------
+if want(4) then
+	clear
+	PixelDisplay.autoBatch = true
+	px = display(5)
+	px.clear "#FFFFFFFF"
+	st = {"n": 0}
+	f = function()
+		st.n = st.n + 1
+		for i in range(1, 100)
+			a = (st.n * 100 + i) * 0.1
+			x = 480 + 300 * cos(a); y = 320 + 200 * sin(a * 1.3)
+			px.line x, y, x + 20, y + 10, color.rgb(i*2, 100, 255 - i*2), 3
+		end for
+		for i in range(1, 100)
+			px.fillEllipse (i * 37 + st.n) % 900, (i * 53) % 600, 20, 14, color.rgb(255 - i*2, i*2, 120)
+		end for
+	end function
+	perf.frames "scn4_paint_auto", 1, @f, nFrames, 10
+	PixelDisplay.autoBatch = false
+	clear
+end if
+
+// ---------- 4b. paint program, one batch bracket per frame ----------
+if want(4) and PixelDisplay.hasIndex("beginBatch") then
+	clear
+	px = display(5)
+	px.clear "#FFFFFFFF"
+	st = {"n": 0}
+	f = function()
+		st.n = st.n + 1
+		px.beginBatch
+		for i in range(1, 100)
+			a = (st.n * 100 + i) * 0.1
+			x = 480 + 300 * cos(a); y = 320 + 200 * sin(a * 1.3)
+			px.line x, y, x + 20, y + 10, color.rgb(i*2, 100, 255 - i*2), 3
+		end for
+		for i in range(1, 100)
+			px.fillEllipse (i * 37 + st.n) % 900, (i * 53) % 600, 20, 14, color.rgb(255 - i*2, i*2, 120)
+		end for
+		px.endBatch
+	end function
+	perf.frames "scn4_paint_auto_batched", 1, @f, nFrames, 10
+	PixelDisplay.autoBatch = false
+	clear
+end if
+
 // ---------- 5. everything at once ----------
 if want(5) then
 	clear
