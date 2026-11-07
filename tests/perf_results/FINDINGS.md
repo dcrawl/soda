@@ -940,3 +940,29 @@ The three hostile-input TIMEOUTs (1e9 columns/rows/samples looped for minutes) n
 (4194304; returns an empty list). Non-numeric/negative sizes are rejected too. Test: `tests/qa_hostile_sizes.ms`.
 Re-ran all six hostile cases (all-args and mixed): HOSTILE_OK. The remaining null/typed-argument cases in
 hostile.csv are ordinary MiniScript runtime errors (script ends, host survives), not crashes or hangs; left as is.
+
+### Scenario 1 profile: 5000 bouncing balls (build-profile host, 300 frames, `perf_sprite_profile.ms`)
+
+Files: `scn1_5000_profile.{txt,speedscope.json,folded}`. 37 ms/frame under the profiler (about 36.6 unprofiled).
+95% of time is MiniScript code; raylib calls are only 3.4% (and that is EndDrawing's frame wait); GC 1.2%.
+
+| Function | self % | notes |
+|---|---|---|
+| Sprite.draw | 45.9 | per-sprite draw |
+| SpriteDisplay._renderSprites | 20.6 | per-sprite dispatch loop |
+| Ball.update (user code) | 17.5 | the scenario's own physics |
+| Image.texture | 3.9 | a function call per sprite just to return `_tex` |
+| Display.screenHeight | 1.7 | a function call per sprite, same value every time |
+
+Hottest lines (self ms of 11,200):
+- SpriteDisplay.ms:476 `raylib.DrawTexturePro ...` 2235 (20%): builds 3 lists, calls image.texture, looks up tint/x/y/rotation, then the call.
+- :542 `if sp isa Sprite and sp.image != null and (sp.localCorners or sp._uvs)` 1169 (10.4%): three inherited lookups + `isa` walk, per sprite.
+- :547 `sp.draw -self.scrollX, -self.scrollY` 636 (5.7%): call overhead.
+- :464/:455 (srcRect default path using `image.width/height`; the repeated `localCorners or _uvs` check) 502 + 485 (~9%).
+
+Candidate fixes (not implemented), ordered by confidence:
+1. `_renderSprites` already tests `localCorners or _uvs`; `Sprite.draw` repeats it (:455). Give `_renderSprites` a private fast path (`_drawFlat`) so the plain case does it once.
+2. Hoist `Display.screenHeight` out of the per-sprite path (read once per render).
+3. Use `image._tex` directly when set, skipping the `Image.texture` call.
+4. Cache `image.width/height` lookups when `srcRect` is null.
+Expected total gain roughly 15-25% of render time; the draw-call batching tested in BIND-03 would not help.
