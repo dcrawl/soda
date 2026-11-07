@@ -1139,7 +1139,7 @@ Files: `scn{2,3,5}_profile.{txt,speedscope.json,folded}` and `xctrace/scn{2,3,5}
 ### scn2 text adventure (printing 1-2 lines per frame)
 - `ScreenFont.drawChar` is 39.6% self, `TextDisplay.render` 23.7% self (63% total): text drawing is the frame.
 - drawChar hot lines: the per-character source-rect validity test (:272, 7.8%), the alpha/shader test with `fore[3]`/`back[3]` list reads (:288, 7.5%), and the `rl.DrawTexturePro` call itself (:290, 4.8%). Every character does a list build, 4-6 list reads and a binding call even though the font's source rects never change.
-- Candidate (Soda side, safe): cache the per-glyph `src` rect and per-colour state in `drawChar`, and skip cells whose back colour is transparent and char is blank (verify S-T2 already does the blank skip).
+- **Correction (checked afterwards):** the caching I first listed as a candidate is already in place. S-T1 (batchable rect + tinted-glyph path, 0f142c0) and S-T2 (glyph source-rect cache `_srcRects`, parsed-colour cache `_colorCache`, blank/transparent cells tested first in `TextDisplay.render`, c8e17a6) are both in PR #28 and in the code that was profiled. What the profile shows is therefore the *residue* of those fixes: ~17 us/glyph of dictionary lookups (`hasIndex` + index, twice for colours), the per-glyph `dest` list, the `src` validity test and two raylib calls. The only remaining large lever is S-T4 (dirty flag / offscreen cache, ~10 ms -> ~0.1 ms for a full screen), which was deliberately not done because cells are public maps that callers mutate directly; it needs an agreed API.
 - Native: refcounting 21%, VM dispatch 14%, map lookup 10%, hashing 6%.
 
 ### scn3 platformer (tiles + 51 sprites + pixel HUD)
@@ -1156,5 +1156,5 @@ Files: `scn{2,3,5}_profile.{txt,speedscope.json,folded}` and `xctrace/scn{2,3,5}
 
 ### Cross-scenario conclusions
 1. Across all four scenarios the VM's refcounting/copy overhead is 14-24% and map lookup + hashing another 12-17%; this is the common ceiling and it is being handled upstream (miniscript2#30).
-2. The remaining Soda-side hot spots are all "one DrawTexturePro per cell/glyph/sprite with fresh lists": text (`drawChar`), tiles (`TileDisplay.render`) and sprites. The biggest unclaimed Soda-side wins are probably in `ScreenFont.drawChar`/`TextDisplay.render` (scn2, and idle text cost in scn3) and `TileDisplay.render`.
+2. The remaining Soda-side hot spots are all "one DrawTexturePro per cell/glyph/sprite with fresh lists": text (`drawChar`), tiles (`TileDisplay.render`) and sprites. All three have already had their first round of fixes (text: PR #28; tiles: PR #29 culling + inline geometry; sprites: #32, #37), and these profiles are of the code after those fixes, so they show diminishing returns. The only big untaken Soda-side lever is S-T4 (text dirty flag / offscreen cache), which needs an API decision from Joe. A tile-level equivalent has not been investigated.
 3. Re-run scn5 with `PixelDisplay.autoBatch = true` to quantify the 12.6% EndBlendMode cost.
