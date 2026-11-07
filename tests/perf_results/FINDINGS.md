@@ -694,3 +694,26 @@ Sample BMF fonts come from the Mini Micro system disk checkout (`study/minimicro
 - `string.wrap` is mildly superlinear (4x more text costs 12x, from `s = s[i+1:]` re-slicing the remainder each line); fine up to a few hundred KB. `editDistance` is O(n^2) as expected (1000 chars: 276 ms). Matrix operations are native and fast. `list.distinct`/`counts` cost ~0.34 us per element, 5-10x `sort`.
 - Nothing here blocks a game; the useful finding for users is the 1-2 s/MB figure for json/grfon/base64.
 
+
+## Session 4 — §5 integration scenarios (`perf_scenarios.ms`)
+
+600 frames each, uncapped, Release host, on Fixes2+perf. Means, ms/frame (run1; paint-batched is run2):
+
+| Scenario | user | render | endDrawing | total | ≈fps |
+|---|---|---|---|---|---|
+| 1 balls ×100 (with bongo sounds) | 0.15 | 1.07 | 0.48 | 1.8 | 560 |
+| 1 balls ×1000 | 1.4 | 6.0 | 0.76 | 8.3 | 120 |
+| 1 balls ×5000 | 7.1 | 28.2 | 1.0 | 36.9 | 27 |
+| 2 text adventure (print + scroll) | 0.25 | 2.8 | 0.61 | 3.8 | 260 |
+| 3 platformer (200×50 tiles, 50 sprites, 20 overlaps, PixelDisplay HUD) | 0.37 | 1.75 | 0.56 | 2.9 | 350 |
+| 4 paint, 200 line/fillEllipse per frame | 18.3 | 0.59 | 0.96 | 20.0 | 50 |
+| 4b paint, same calls inside `beginBatch`/`endBatch` | 1.0 | 0.59 | 0.99 | 2.1 | 480 |
+| 5 everything (500 balls, tiles, text, pixel, music) | 2.0 | 5.0 | 1.0 | 8.3 | 120 |
+
+Findings:
+- **Nothing in the realistic scenarios is a frame-budget problem** except the paint program, and balls ≥5000 (render-dominated: ~5.6 µs/sprite render, ~1.4 µs/sprite user).
+- **Paint (scenario 4)** profile: 80% of time is `BeginBlendMode`/`EndBlendMode` (~0.027 + 0.079 ms per call), i.e. the per-primitive blend/framebuffer bracket. Wrapping the frame's draws in one `px.beginBatch`/`px.endBatch` (non-alpha, matching line/fillEllipse) cuts user time 18.3 → 1.0 ms (18×). So the S-P1 fix (PR #27) is effective, but only for callers that batch. Note `beginBatch true` (alpha) gave **no** gain here: line/fillEllipse use replace mode, so every call mismatches the batch and falls back to per-call blend setup. A caller must match the primitive's blend mode, which is easy to get wrong.
+- Resource counts after each balls run are flat (12 total, same as baseline); no leaks seen across scenarios.
+- Not done: 10-minute soak (§6), profiles for scenarios 1–3, 5 (only paint profiled; `scn4_profile.*`).
+
+Possible follow-up: make unbatched PixelDisplay primitives cheaper automatically (e.g. defer EndBlendMode/EndTextureMode to render time), so paint-style programs need no explicit batching.

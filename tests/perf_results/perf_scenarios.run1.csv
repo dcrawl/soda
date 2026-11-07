@@ -1,0 +1,46 @@
+RESULT,scn1_balls,100,user,0.1543,0.1496,0.1907,0.2275
+RESULT,scn1_balls,100,render,1.0686,1.0541,1.1472,1.2369
+RESULT,scn1_balls,100,endDrawing,0.4973,0.2502,2.2797,12.3945
+RESULT,scn1_balls,100,callbacks,0.0173,0.0137,0.0347,0.0972
+RESULT,scn1_balls,100,yieldGC,0.0512,0.0012,0.4001,0.5117
+RESULT,scn1_balls,100,total,1.7888,1.4935,3.5183,14.1439
+RESOURCES,scn1-100,{"Image": 1, "Texture": 2, "Font": 0, "Wave": 0, "Music": 0, "Sound": 1, "AudioStream": 0, "RenderTexture": 8, "Shader": 0, "Mesh": 0, "Material": 0, "Model": 0, "ModelAnimation": 0, "total": 12},hostMemory=14775744
+RESULT,scn1_balls,1000,user,1.4256,1.3782,1.6753,1.9578
+RESULT,scn1_balls,1000,render,5.9503,5.9445,6.0172,6.2584
+RESULT,scn1_balls,1000,endDrawing,0.8045,0.3649,2.1918,3.1858
+RESULT,scn1_balls,1000,callbacks,0.0162,0.0149,0.0238,0.0353
+RESULT,scn1_balls,1000,yieldGC,0.1341,0.0014,1.0641,1.1325
+RESULT,scn1_balls,1000,total,8.3308,7.905,10.178,11.5813
+RESOURCES,scn1-1000,{"Image": 1, "Texture": 2, "Font": 0, "Wave": 0, "Music": 0, "Sound": 1, "AudioStream": 0, "RenderTexture": 8, "Shader": 0, "Mesh": 0, "Material": 0, "Model": 0, "ModelAnimation": 0, "total": 12},hostMemory=17328848
+RESULT,scn1_balls,5000,user,7.0922,6.8505,8.2795,10.0022
+RESULT,scn1_balls,5000,render,27.9667,27.9111,28.3587,28.8752
+RESULT,scn1_balls,5000,endDrawing,0.996,0.5197,3.92,5.0867
+RESULT,scn1_balls,5000,callbacks,0.0272,0.0266,0.0332,0.0575
+RESULT,scn1_balls,5000,yieldGC,0.5366,0.0035,3.7779,3.9277
+RESULT,scn1_balls,5000,total,36.6186,35.6725,39.9611,44.382
+RESOURCES,scn1-5000,{"Image": 1, "Texture": 2, "Font": 0, "Wave": 0, "Music": 0, "Sound": 1, "AudioStream": 0, "RenderTexture": 8, "Shader": 0, "Mesh": 0, "Material": 0, "Model": 0, "ModelAnimation": 0, "total": 12},hostMemory=30878512
+RESULT,scn2_textAdventure,1,user,0.2533,0.1755,0.583,0.7067
+RESULT,scn2_textAdventure,1,render,2.7896,2.7915,3.2608,3.3701
+RESULT,scn2_textAdventure,1,endDrawing,0.6132,0.2837,2.4692,3.861
+RESULT,scn2_textAdventure,1,callbacks,0.0136,0.0122,0.0202,0.0332
+RESULT,scn2_textAdventure,1,yieldGC,0.1429,0.0012,1.1493,1.3437
+RESULT,scn2_textAdventure,1,total,3.8125,3.556,5.79,7.0844
+RESULT,scn3_platformer,1,user,0.3718,0.3683,0.424,0.5803
+RESULT,scn3_platformer,1,render,1.7483,1.7471,1.8318,1.891
+RESULT,scn3_platformer,1,endDrawing,0.5574,0.2976,2.1133,4.5312
+RESULT,scn3_platformer,1,callbacks,0.0141,0.0126,0.0218,0.0336
+RESULT,scn3_platformer,1,yieldGC,0.1791,0.0013,1.2594,1.3464
+RESULT,scn3_platformer,1,total,2.8708,2.4668,4.583,7.3104
+RESULT,scn4_paint,1,user,18.2926,18.3076,18.5667,18.8413
+RESULT,scn4_paint,1,render,0.5915,0.591,0.6085,0.6347
+RESULT,scn4_paint,1,endDrawing,0.9637,0.4597,3.5645,4.967
+RESULT,scn4_paint,1,callbacks,0.0218,0.0202,0.0296,0.0359
+RESULT,scn4_paint,1,yieldGC,0.1396,0.0032,0.9607,1.1302
+RESULT,scn4_paint,1,total,20.0092,19.4763,22.7794,24.7837
+RESULT,scn5_everything,1,user,2.0362,2.0615,2.2857,2.5718
+RESULT,scn5_everything,1,render,4.9882,5.0079,5.1026,5.2925
+RESULT,scn5_everything,1,endDrawing,1.0388,0.4229,2.744,3.3239
+RESULT,scn5_everything,1,callbacks,0.0264,0.0221,0.0346,0.171
+RESULT,scn5_everything,1,yieldGC,0.2312,0.002,1.6252,1.8186
+RESULT,scn5_everything,1,total,8.3209,7.8065,10.6453,12.0297
+RESOURCES,scn5-end,{"Image": 4, "Texture": 6, "Font": 0, "Wave": 0, "Music": 1, "Sound": 1, "AudioStream": 0, "RenderTexture": 8, "Shader": 1, "Mesh": 0, "Material": 0, "Model": 0, "ModelAnimation": 0, "total": 21},hostMemory=29310912

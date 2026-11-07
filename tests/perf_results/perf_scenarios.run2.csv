@@ -1,0 +1,12 @@
+RESULT,scn4_paint,1,user,18.5085,18.5186,18.7848,25.523
+RESULT,scn4_paint,1,render,0.5914,0.5898,0.6188,0.6547
+RESULT,scn4_paint,1,endDrawing,1.0014,0.4698,4.0574,4.7462
+RESULT,scn4_paint,1,callbacks,0.0222,0.0206,0.0306,0.045
+RESULT,scn4_paint,1,yieldGC,0.0541,0.0035,0.407,0.5055
+RESULT,scn4_paint,1,total,20.1776,19.7054,23.2076,26.6085
+RESULT,scn4_paint_batched,1,user,1.0179,1.0149,1.0663,1.1521
+RESULT,scn4_paint_batched,1,render,0.495,0.491,0.5175,0.56
+RESULT,scn4_paint_batched,1,endDrawing,0.5093,0.275,2.1663,3.8052
+RESULT,scn4_paint_batched,1,callbacks,0.0131,0.012,0.0183,0.061
+RESULT,scn4_paint_batched,1,yieldGC,0.0502,0.0011,0.3918,0.5513
+RESULT,scn4_paint_batched,1,total,2.0854,1.8057,3.6994,5.3335

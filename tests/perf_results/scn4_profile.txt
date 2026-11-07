@@ -1,0 +1,127 @@
+MiniScript profile (raylib-miniscript)
+
+Time recorded:              24.639 s
+  MiniScript code:           3.732 s  ( 15.1%)
+  timed raylib calls:       20.886 s  ( 84.8%)
+  garbage collection:        0.021 s  (  0.1%)  152 collections, 0.14 ms each
+  host, between slices:      0.001 s  (  0.0%)
+Samples:   587827  (about every 250 instructions)
+Yields:    1220
+Frames:    1220 (EndDrawing calls), 20.20 ms each
+
+Timed raylib calls (exact; charged to the line that made them)
+
+    total ms     %      calls   ms each  call
+     9771.90  39.7%     366634     0.027  [raylib.BeginBlendMode]
+     9724.95  39.5%     122634     0.079  [raylib.EndBlendMode]
+     1296.62   5.3%       1220     1.063  [raylib.EndDrawing]
+       53.58   0.2%     122634     0.000  [raylib.EndTextureMode]
+       38.82   0.2%     122634     0.000  [raylib.BeginTextureMode]
+
+[raylib.EndDrawing] includes the wait for SetTargetFPS, so most of it is
+usually idle time.  The others are mostly raylib submitting batched drawing.
+
+Self time is spent in a function's own code (including intrinsics it calls);
+total time also includes the MiniScript functions it calls.  [Bracketed]
+entries are timed raylib calls, and (garbage collection) is collection that
+MiniScript ran inside the line above it, usually a yield.  A yield always
+ends a sample, so a yield's line also gets the work done since the previous
+sample (up to about 1.5x the interval, in instructions).
+
+Functions by self time
+
+   self ms   self%   total ms  total%  function
+   9771.90   39.7%    9771.90   39.7%  [raylib.BeginBlendMode]
+   9724.95   39.5%    9724.95   39.5%  [raylib.EndBlendMode]
+   1296.62    5.3%    1296.62    5.3%  [raylib.EndDrawing]
+    714.41    2.9%     714.86    2.9%  TextDisplay.render (TextDisplay.ms line 481)
+    558.20    2.3%     558.20    2.3%  rgb (color.ms line 98)
+    476.25    1.9%     736.64    3.0%  PixelDisplay._beginDraw (PixelDisplay.ms line 62)
+    383.33    1.6%   19966.07   81.0%  PixelDisplay._endDraw (PixelDisplay.ms line 108)
+    273.88    1.1%   11144.94   45.2%  PixelDisplay.fillEllipse (PixelDisplay.ms line 328)
+    256.54    1.0%   10028.44   40.7%  PixelDisplay._setBlendMode (PixelDisplay.ms line 48)
+    244.47    1.0%   11113.53   45.1%  f (line 137)
+    236.64    1.0%   11129.86   45.2%  f (line 158)
+    230.38    0.9%   10054.75   40.8%  PixelDisplay.line (PixelDisplay.ms line 255)
+    145.64    0.6%     235.20    1.0%  soda.ms (soda.ms)
+     59.03    0.2%   24393.73   99.0%  perf.frames (perfHarness.ms line 48)
+     53.58    0.2%      53.58    0.2%  [raylib.EndTextureMode]
+     38.82    0.2%      38.82    0.2%  [raylib.BeginTextureMode]
+     20.91    0.1%      20.91    0.1%  (garbage collection)
+     15.65    0.1%      15.65    0.1%  hexDigitVal (color.ms line 25)
+     14.11    0.1%      14.78    0.1%  TextDisplay.ms (TextDisplay.ms)
+     12.58    0.1%      17.98    0.1%  PixelDisplay.ms (PixelDisplay.ms)
+     11.61    0.0%      11.61    0.0%  update (key.ms line 348)
+     10.38    0.0%      10.38    0.0%  TextDisplay.fillRow (TextDisplay.ms line 254)
+     10.07    0.0%      25.72    0.1%  toList (color.ms line 36)
+      9.27    0.0%       9.27    0.0%  SpriteDisplay.ms (SpriteDisplay.ms)
+      8.05    0.0%      10.05    0.0%  TileDisplay.ms (TileDisplay.ms)
+      6.44    0.0%       6.51    0.0%  key.ms (key.ms)
+      6.34    0.0%       6.34    0.0%  Sound.ms (Sound.ms)
+      5.38    0.0%       5.38    0.0%  ScreenFont.ms (ScreenFont.ms)
+      5.18    0.0%     756.81    3.1%  Display.RenderAll (Display.ms line 161)
+      4.29    0.0%       4.44    0.0%  PixelDisplay.render (PixelDisplay.ms line 671)
+      3.41    0.0%       3.41    0.0%  TextDisplayCell.Make (TextDisplay.ms line 51)
+      3.16    0.0%      73.32    0.3%  globals.ensureImport (importUtil.ms line 18)
+      2.94    0.0%      29.76    0.1%  SolidColorDisplay.render (SolidColorDisplay.ms line 15)
+      2.31    0.0%       2.31    0.0%  Display.ms (Display.ms)
+      2.13    0.0%       2.13    0.0%  _makeHexBytes (color.ms line 53)
+      2.11    0.0%       5.53    0.0%  TextDisplay.setSize (TextDisplay.ms line 109)
+      1.99    0.0%       1.99    0.0%  addNamedMap (qa.ms line 94)
+      1.86    0.0%       2.20    0.0%  update (mouse.ms line 54)
+      1.49    0.0%       1.49    0.0%  Sound.UpdateAll (Sound.ms line 124)
+      1.43    0.0%       2.56    0.0%  SpriteDisplay.render (SpriteDisplay.ms line 551)
+      1.14    0.0%       1.14    0.0%  (host, between script slices)
+      1.06    0.0%       2.48    0.0%  PixelDisplay.endBatch (PixelDisplay.ms line 156)
+      1.03    0.0%       1.03    0.0%  Display.screenHeight (Display.ms line 42)
+      0.92    0.0%       0.92    0.0%  Sound["duration="] (Sound.ms line 410)
+      0.87    0.0%       0.87    0.0%  Sprite._endQuadBatch (SpriteDisplay.ms line 374)
+      0.82    0.0%       0.82    0.0%  perf.stats (perfHarness.ms line 9)
+      0.82    0.0%       0.82    0.0%  mouse.ms (mouse.ms)
+      0.82    0.0%      82.71    0.3%  globals.yield (soda.ms line 101)
+      0.67    0.0%       0.67    0.0%  ScreenFont.load (ScreenFont.ms line 140)
+      0.66    0.0%       1.92    0.0%  PixelDisplay.beginBatch (PixelDisplay.ms line 143)
+
+Hottest lines
+
+   self ms   self%  line  in function
+   9724.73   39.5%  PixelDisplay.ms line 111  in PixelDisplay._endDraw (PixelDisplay.ms line 108)  [raylib.EndBlendMode]
+   9706.29   39.4%  PixelDisplay.ms line 55  in PixelDisplay._setBlendMode (PixelDisplay.ms line 48)  [raylib.BeginBlendMode]
+   1227.61    5.0%  perfHarness.ms line 58  in perf.frames (perfHarness.ms line 48)  [raylib.EndDrawing]
+    395.03    1.6%  color.ms line 100  in rgb (color.ms line 98)
+    203.63    0.8%  TextDisplay.ms line 502  in TextDisplay.render (TextDisplay.ms line 481)
+    163.11    0.7%  TextDisplay.ms line 501  in TextDisplay.render (TextDisplay.ms line 481)
+    145.60    0.6%  soda.ms line 24  in soda.ms (soda.ms)
+    141.06    0.6%  PixelDisplay.ms line 333  in PixelDisplay.fillEllipse (PixelDisplay.ms line 328)
+    136.75    0.6%  PixelDisplay.ms line 260  in PixelDisplay.line (PixelDisplay.ms line 255)
+    114.53    0.5%  color.ms line 103  in rgb (color.ms line 98)
+    103.79    0.4%  line 145  in f (line 137)
+    102.78    0.4%  TextDisplay.ms line 496  in TextDisplay.render (TextDisplay.ms line 481)
+    101.74    0.4%  PixelDisplay.ms line 119  in PixelDisplay._endDraw (PixelDisplay.ms line 108)
+     98.58    0.4%  line 167  in f (line 158)
+     87.16    0.4%  PixelDisplay.ms line 85  in PixelDisplay._beginDraw (PixelDisplay.ms line 62)
+     81.78    0.3%  TextDisplay.ms line 495  in TextDisplay.render (TextDisplay.ms line 481)
+     81.77    0.3%  TextDisplay.ms line 503  in TextDisplay.render (TextDisplay.ms line 481)
+     76.67    0.3%  PixelDisplay.ms line 118  in PixelDisplay._endDraw (PixelDisplay.ms line 108)
+     73.36    0.3%  PixelDisplay.ms line 110  in PixelDisplay._endDraw (PixelDisplay.ms line 108)
+     72.29    0.3%  PixelDisplay.ms line 76  in PixelDisplay._beginDraw (PixelDisplay.ms line 62)
+     69.01    0.3%  soda.ms line 93  in update (soda.ms line 89)  [raylib.EndDrawing]
+     67.79    0.3%  PixelDisplay.ms line 57  in PixelDisplay._setBlendMode (PixelDisplay.ms line 48)
+     66.19    0.3%  TextDisplay.ms line 494  in TextDisplay.render (TextDisplay.ms line 481)
+     65.61    0.3%  PixelDisplay.ms line 58  in PixelDisplay._setBlendMode (PixelDisplay.ms line 48)  [raylib.BeginBlendMode]
+     63.66    0.3%  PixelDisplay.ms line 64  in PixelDisplay._beginDraw (PixelDisplay.ms line 62)
+     59.48    0.2%  PixelDisplay.ms line 65  in PixelDisplay._beginDraw (PixelDisplay.ms line 62)
+     58.98    0.2%  PixelDisplay.ms line 58  in PixelDisplay._setBlendMode (PixelDisplay.ms line 48)
+     57.64    0.2%  line 142  in f (line 137)
+     57.36    0.2%  line 164  in f (line 158)
+     56.87    0.2%  PixelDisplay.ms line 75  in PixelDisplay._beginDraw (PixelDisplay.ms line 62)
+     55.73    0.2%  perfHarness.ms line 62  in perf.frames (perfHarness.ms line 48)
+     53.72    0.2%  PixelDisplay.ms line 81  in PixelDisplay._beginDraw (PixelDisplay.ms line 62)
+     53.43    0.2%  PixelDisplay.ms line 111  in PixelDisplay._endDraw (PixelDisplay.ms line 108)
+     52.37    0.2%  PixelDisplay.ms line 119  in PixelDisplay._endDraw (PixelDisplay.ms line 108)  [raylib.EndTextureMode]
+     49.46    0.2%  PixelDisplay.ms line 54  in PixelDisplay._setBlendMode (PixelDisplay.ms line 48)
+     41.19    0.2%  PixelDisplay.ms line 115  in PixelDisplay._endDraw (PixelDisplay.ms line 108)
+     40.72    0.2%  line 141  in f (line 137)
+     39.94    0.2%  color.ms (entry)  in rgb (color.ms line 98)
+     39.82    0.2%  line 163  in f (line 158)
+     38.20    0.2%  PixelDisplay.ms line 76  in PixelDisplay._beginDraw (PixelDisplay.ms line 62)  [raylib.BeginTextureMode]
