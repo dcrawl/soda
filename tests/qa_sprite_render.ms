@@ -49,6 +49,7 @@ d = SpriteDisplay.Make
 d.sprites = [list1, nested]
 
 rt = rl.LoadRenderTexture(W, H)
+PixelDisplay._closeOpen  // (raw BeginTextureMode: no auto-batched bracket may be open)
 rl.BeginTextureMode rt
 rl.ClearBackground "#203040FF"
 d.render
