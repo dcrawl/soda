@@ -881,3 +881,29 @@ Scripts: `perf_resize.ms` (modes resize | fullscreen | modes | rendersprites),
   one SEGV at startup (the first sweep, run next to the soak, showed 248 spurious crashes; the
   mixed sweep, overlapped by a few resize runs, showed 159, in contiguous blocks of methods).
   All of them passed when rerun alone. Run the hostile sweeps with nothing else running.
+
+### BIND-02  Cache map keys in the raylib-miniscript value converters (fixed)
+Cause of the ~2x map-argument cost measured in BIND-01: every `ValueTo*` reader did
+`map.Lookup(String("r"), ...)`, building a String and converting it to a Value per lookup
+(and "height", longer than the 5-byte tiny-string limit, also allocated on the GC heap).
+Fix (raylib-miniscript branch `perf/intern-keys`, commit 04ce1d3, not pushed): `CACHED_KEY("r")`
+builds each key Value once per call site, rooted via `GCManager::AddRoot`; all 184
+`Lookup(String("..."))` calls use it, plus the Color/Rectangle/Vector2/etc. map writers.
+Closure-subtracted ns per call (release build, `perf_binding.cachedKeys.csv`):
+| call | before | after |
+|---|---|---|
+| DrawTexturePro, map src/dst/origin + WHITE map tint | 1806 | 617 |
+| DrawTexturePro, map src/dst/origin + list tint | 1591 | 708 |
+| DrawTexturePro, list args + WHITE map tint | 884 | 580 |
+| DrawTexture, WHITE map tint | 724 | 469 |
+| DrawLineEx, map endpoints | 1325 | 1028 |
+| DrawRectangleRec, map rect | 1146 | 916 |
+| GetImageColor (returns a color map) | 892 | 655 |
+List and string argument forms unchanged. Verified: host `handle_tests` (32 checks) and
+`interp_tests` (133 checks) pass, all 19 Soda `qa_*` tests pass, and a GC stress loop (full and
+normal collections every 37-100 iterations around map conversions) gives correct values.
+Map args are now ~1.1x the list form instead of ~2x, so lib code no longer pays for them.
+
+### BUG-HOST-01 fix
+`Image.create` now returns null with a message for non-numeric, negative or over-1-GiB sizes
+instead of crashing the host (Fixes2 c817862; `tests/qa_image_create.ms`).
