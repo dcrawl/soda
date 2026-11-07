@@ -1061,3 +1061,26 @@ go-ahead per miniscript2/CLAUDE.md).
 Soda-side implications (no VM change needed): avoid assigning to long-named fields on setter-bearing objects in hot paths
 (use `super.x =` or write on a helper map), and keep hot instances shallow. Recommended VM-side fix to propose to Joe: cache
 the setter key / skip `SetterKey()` string building (S-V2), which also helps all non-Soda scripts with property setters.
+
+### S-V2 prototype: cache `SetterKey()` for names over 4 bytes — works in isolation, no Soda gain; NOT proposed
+
+Reading the code first: `SetterKey()` already does pure bit arithmetic for names of up to 4 bytes, and `ChainHasSetter` already
+stamps clean chains, so the VM's setter path was more optimized than the plan assumed. What remained was the >4-byte fallback
+(`make_string(name + "=")`: allocate + intern a fresh string on every assignment to an object whose chain has a setter).
+
+Prototype (scratch branch of miniscript2, reverted; diff kept as `perf_results/setterkey_cache.patch`): a 1024-slot
+open-addressed cache of key bits -> setter Value in `Value::SetterKeySlow()` (cpp/core), key and setter both GC-rooted,
+capped at 512 entries. It edits hand-written `cpp/core` only; a real fix would also need the C# side (`cs/Value.cs`) and the transpiler.
+
+| Op (ns) | before | after |
+|---|---|---|
+| assign long key, class with setter in chain | 492 | 226 (-54%) |
+| assign tiny key, setter class | 133 | 136 |
+| assign plain class / plain map | 135-138 | 137 |
+| field read, method call at all depths | unchanged | unchanged |
+
+End to end (release host, 2 runs each): scn2 text adventure 3.75/3.85 -> 3.94/3.86 ms; scn5 everything 8.15/7.82 -> 7.93/7.89 ms.
+**No measurable change**: Soda's hot text paths already write through `super.x =` or tiny keys, so they don't hit the slow path.
+Decision: do not propose to Joe; the remaining 226 ns is the setter lookup miss up the chain, a different (bigger) change.
+The real hot cost stays in S-V1 (refcount copies on every lookup, ~24% of native time), which needs a C# `ref readonly`-style
+change plus transpiler support and is a larger conversation for Joe.

@@ -1,0 +1,62 @@
+diff --git a/cpp/core/value.h b/cpp/core/value.h
+index c4fb8c0..10faec7 100644
+--- a/cpp/core/value.h
++++ b/cpp/core/value.h
+@@ -215,6 +215,7 @@ typedef struct Value {
+     String        ToString(void* vm = nullptr) const;
+     const char*   AsCString() const;
+     Value         SetterKey() const;
++    Value         SetterKeySlow() const;   // PROTOTYPE: cached build of "name=" for names over 4 bytes
+     inline bool   IsSetterKey() const noexcept;
+     // Like ToString().c_str() but SAFE: copies the bytes into the per-call
+     // CStrArena and returns a pointer valid until the current native (intrinsic)
+@@ -432,7 +433,7 @@ inline Value Value::SetterKey() const {
+                                    | ((uint64_t)0x3D << (8 * (len + 1))));
+         }
+     }
+-    return Value::make_string(String(AsCString()) + "=");
++    return SetterKeySlow();
+ }
+ 
+ // Whether this string is itself a property-setter key, i.e. ends in "=".
+diff --git a/cpp/core/value_string.cpp b/cpp/core/value_string.cpp
+index 28b1ec6..3d9520c 100644
+--- a/cpp/core/value_string.cpp
++++ b/cpp/core/value_string.cpp
+@@ -512,6 +512,36 @@ int   Value::Compare(Value b) const      { return string_compare(*this, b); }
+ Value Value::Split(Value delimiter) const { return string_split(*this, delimiter); }
+ Value Value::Replace(Value from, Value to) const { return string_replace(*this, from, to); }
+ 
++// PROTOTYPE (scratch/setterkey-cache): SetterKey() for names over 4 bytes used to
++// allocate and intern a fresh "name=" string on every assignment to an object whose
++// chain holds a setter.  Cache the result, keyed by the exact key Value.  Both the
++// key and its setter are GC roots, so neither can be freed and the key's bits cannot
++// be reused for a different string.  Bounded: after 512 distinct keys it just
++// builds the string as before.
++namespace {
++struct SetterKeyEntry { uint64_t key; uint64_t setter; };
++SetterKeyEntry g_setterCache[1024];   // open addressing, linear probe
++int g_setterCacheCount = 0;
++}
++Value Value::SetterKeySlow() const {
++    size_t i = (size_t)((bits >> 3) * 0x9E3779B97F4A7C15ULL >> 54) & 1023;
++    for (int probe = 0; probe < 8; probe++, i = (i + 1) & 1023) {
++        SetterKeyEntry& e = g_setterCache[i];
++        if (e.key == bits) return Value::fromBits(e.setter);
++        if (e.key == 0) {
++            Value made = Value::make_string(String(AsCString()) + "=");
++            if (g_setterCacheCount < 512) {
++                GCManager::AddRoot(*this);
++                GCManager::AddRoot(made);
++                e.key = bits; e.setter = made.bits;
++                g_setterCacheCount++;
++            }
++            return made;
++        }
++    }
++    return Value::make_string(String(AsCString()) + "=");
++}
++
+ // ── Hashing ─────────────────────────────────────────────────────────────
+ // string_hash(const char*, int) lives in hashing.c.
+ 
