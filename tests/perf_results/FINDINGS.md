@@ -778,3 +778,33 @@ Native benchmark: `raylib-miniscript/tools/bench_native.c` + `bench_native` CMak
 
 ### BIND-01 prototype: `Sprite.tint` defaults to `[255,255,255,255]` (branch `perf/tint-default`)
 Plain untinted sprites, render ms/frame (mean of 2 runs): 1000 sprites 5.63 → 5.32 (−5.5%); 5000 sprites 26.0 → 24.6 (−5.4%). Explicit `tint = raylib.WHITE` (map) stays at 5.56 / 25.9, confirming the saving is the map→list conversion (~0.3 µs/sprite, a bit more than the 175 ns microbenchmark predicted). qa_sprite_render/edges/bounds pass.
+
+## Session 6 — §6 robustness and leak soak
+
+Scripts: `perf_churn.ms`, `perf_soak.ms`, `perf_hostile.ms` + `run_hostile.sh`.
+
+### Churn (N=10000; sounds 2000)
+Images (with/without texture, released), Sprites, PixelDisplays, synthesized Sounds and
+Display.mode switches: after GC, every `resourceCounts` entry returns to baseline (the only
+residual is the RenderTexture held by the last live `px` variable). Caveat: the sprite phase
+only yielded without rendering, so it does not exercise sprite draw churn.
+
+### Soak (scenario 5, 600 s, 71,778 frames)
+`resourceCounts` flat for the whole run (RenderTexture 8, total 17, Texture 4, Sound 1).
+**`hostMemory` grew 14.6 MB -> 38.9 MB (~+2.4 MB/min), no plateau.** Not yet attributed:
+candidates are MiniScript heap growth awaiting GC, per-call map/string garbage from the
+host converters, or a real leak. Follow-up: repeat with sprites/sound/text/pixel each
+disabled in turn to bisect the source.
+
+### Hostile inputs (null, -1, 1e9, -1e9, "abc", list, map, NaN; all args the same value)
+134 public methods x 8 values = 1072 runs, one process each.
+- **Host crashes: none** (an earlier pass showed 248 SIGSEGVs for mouse/key/color/ScreenFont;
+  they did not reproduce in isolation or on rerun and are attributed to the sweep running
+  concurrently with the soak process).
+- 957 ok; 272 are MiniScript runtime errors (mostly "Can't index into null" and
+  "can't compare number and X": unvalidated arguments, not crashes).
+- **Hangs with 1e9 (3):** `Sound.noiseWave`, `TextDisplay.setSize`, `TileDisplay.extent=`
+  with a huge size run an enormous loop/allocation (> 10 s). Expected-ish, low priority.
+- Note: after a runtime error in a script run this way the host stays alive rather than
+  exiting; the driver kills it when it sees "Runtime Error".
+Raw results: `perf_hostile.csv` (`hostile.csv`).

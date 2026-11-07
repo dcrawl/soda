@@ -1,0 +1,1233 @@
+method,valueIdx,status,detail
+Bounds.contains,1,ok,
+Bounds.contains,2,ok,
+Bounds.contains,3,ok,
+Bounds.contains,5,ok,
+Bounds.contains,7,ok,
+Bounds.corners,0,ok,
+Bounds.corners,1,ok,
+Bounds.corners,2,ok,
+Bounds.corners,3,ok,
+Bounds.corners,4,ok,
+Bounds.corners,5,ok,
+Bounds.corners,6,ok,
+Bounds.corners,7,ok,
+Image.create,0,ok,
+Image.create,1,ok,
+Image.create,2,ok,
+Image.create,3,ok,
+Image.create,4,ok,
+Image.create,5,ok,
+Image.create,6,ok,
+Image.create,7,ok,
+Image.flip,0,ok,
+Image.flip,1,ok,
+Image.flip,2,ok,
+Image.flip,3,ok,
+Image.flip,4,ok,
+Image.flip,5,ok,
+Image.flip,6,ok,
+Image.flip,7,ok,
+Image.getImage,0,ok,
+Image.getImage,1,ok,
+Image.getImage,2,ok,
+Image.getImage,3,ok,
+Image.getImage,4,ok,
+Image.getImage,5,ok,
+Image.getImage,6,ok,
+Image.getImage,7,ok,
+Image.pixel,1,ok,
+Image.pixel,2,ok,
+Image.pixel,3,ok,
+Image.pixel,7,ok,
+Image.release,0,ok,
+Image.release,1,ok,
+Image.release,2,ok,
+Image.release,3,ok,
+Image.release,4,ok,
+Image.release,5,ok,
+Image.release,6,ok,
+Image.release,7,ok,
+Image.rotate,1,ok,
+Image.rotate,2,ok,
+Image.rotate,3,ok,
+Image.rotate,7,ok,
+Image.setPixel,1,ok,
+Image.setPixel,2,ok,
+Image.setPixel,3,ok,
+Image.setPixel,7,ok,
+Image.texture,0,ok,
+Image.texture,1,ok,
+Image.texture,2,ok,
+Image.texture,3,ok,
+Image.texture,4,ok,
+Image.texture,5,ok,
+Image.texture,6,ok,
+Image.texture,7,ok,
+PixelDisplay.Make,1,ok,
+PixelDisplay.Make,2,ok,
+PixelDisplay.Make,3,ok,
+PixelDisplay.Make,7,ok,
+PixelDisplay.beginBatch,0,ok,
+PixelDisplay.beginBatch,1,ok,
+PixelDisplay.beginBatch,2,ok,
+PixelDisplay.beginBatch,3,ok,
+PixelDisplay.beginBatch,4,ok,
+PixelDisplay.beginBatch,5,ok,
+PixelDisplay.beginBatch,6,ok,
+PixelDisplay.beginBatch,7,ok,
+PixelDisplay.clear,0,ok,
+PixelDisplay.clear,1,ok,
+PixelDisplay.clear,2,ok,
+PixelDisplay.clear,3,ok,
+PixelDisplay.clear,7,ok,
+PixelDisplay.clearClip,0,ok,
+PixelDisplay.clearClip,1,ok,
+PixelDisplay.clearClip,2,ok,
+PixelDisplay.clearClip,3,ok,
+PixelDisplay.clearClip,4,ok,
+PixelDisplay.clearClip,5,ok,
+PixelDisplay.clearClip,6,ok,
+PixelDisplay.clearClip,7,ok,
+PixelDisplay.drawEllipse,1,ok,
+PixelDisplay.drawEllipse,2,ok,
+PixelDisplay.drawEllipse,3,ok,
+PixelDisplay.drawEllipse,7,ok,
+PixelDisplay.drawPoly,0,ok,
+PixelDisplay.drawPoly,6,ok,
+PixelDisplay.drawRect,1,ok,
+PixelDisplay.drawRect,2,ok,
+PixelDisplay.drawRect,3,ok,
+PixelDisplay.drawRect,7,ok,
+PixelDisplay.endBatch,0,ok,
+PixelDisplay.endBatch,1,ok,
+PixelDisplay.endBatch,2,ok,
+PixelDisplay.endBatch,3,ok,
+PixelDisplay.endBatch,4,ok,
+PixelDisplay.endBatch,5,ok,
+PixelDisplay.endBatch,6,ok,
+PixelDisplay.endBatch,7,ok,
+PixelDisplay.fillEllipse,1,ok,
+PixelDisplay.fillEllipse,2,ok,
+PixelDisplay.fillEllipse,3,ok,
+PixelDisplay.fillEllipse,7,ok,
+PixelDisplay.fillPoly,0,ok,
+PixelDisplay.fillPoly,5,ok,
+PixelDisplay.fillPoly,6,ok,
+PixelDisplay.fillRect,1,ok,
+PixelDisplay.fillRect,2,ok,
+PixelDisplay.fillRect,3,ok,
+PixelDisplay.fillRect,7,ok,
+PixelDisplay.getImage,0,ok,
+PixelDisplay.getImage,1,ok,
+PixelDisplay.getImage,2,ok,
+PixelDisplay.getImage,3,ok,
+PixelDisplay.getImage,4,ok,
+PixelDisplay.getImage,5,ok,
+PixelDisplay.getImage,6,ok,
+PixelDisplay.getImage,7,ok,
+PixelDisplay.line,0,ok,
+PixelDisplay.line,1,ok,
+PixelDisplay.line,2,ok,
+PixelDisplay.line,3,ok,
+PixelDisplay.line,4,ok,
+PixelDisplay.line,5,ok,
+PixelDisplay.line,6,ok,
+PixelDisplay.line,7,ok,
+PixelDisplay.pixel,1,ok,
+PixelDisplay.pixel,2,ok,
+PixelDisplay.pixel,3,ok,
+PixelDisplay.pixel,7,ok,
+PixelDisplay.print,0,ok,
+PixelDisplay.print,1,ok,
+PixelDisplay.print,2,ok,
+PixelDisplay.print,3,ok,
+PixelDisplay.print,4,ok,
+PixelDisplay.print,6,ok,
+PixelDisplay.print,7,ok,
+PixelDisplay.render,0,ok,
+PixelDisplay.render,1,ok,
+PixelDisplay.render,2,ok,
+PixelDisplay.render,3,ok,
+PixelDisplay.render,4,ok,
+PixelDisplay.render,5,ok,
+PixelDisplay.render,6,ok,
+PixelDisplay.render,7,ok,
+PixelDisplay.runUnitTests,0,ok,
+PixelDisplay.runUnitTests,1,ok,
+PixelDisplay.runUnitTests,2,ok,
+PixelDisplay.runUnitTests,3,ok,
+PixelDisplay.runUnitTests,4,ok,
+PixelDisplay.runUnitTests,5,ok,
+PixelDisplay.runUnitTests,6,ok,
+PixelDisplay.runUnitTests,7,ok,
+PixelDisplay.setClip,0,ok,
+PixelDisplay.setClip,1,ok,
+PixelDisplay.setClip,2,ok,
+PixelDisplay.setClip,3,ok,
+PixelDisplay.setClip,4,ok,
+PixelDisplay.setClip,5,ok,
+PixelDisplay.setClip,6,ok,
+PixelDisplay.setClip,7,ok,
+PixelDisplay.setPixel,1,ok,
+PixelDisplay.setPixel,2,ok,
+PixelDisplay.setPixel,3,ok,
+PixelDisplay.setPixel,7,ok,
+ScreenFont.Make,0,ok,
+ScreenFont.Make,1,ok,
+ScreenFont.Make,2,ok,
+ScreenFont.Make,3,ok,
+ScreenFont.Make,4,ok,
+ScreenFont.Make,5,ok,
+ScreenFont.Make,6,ok,
+ScreenFont.Make,7,ok,
+ScreenFont.drawChar,0,ok,
+ScreenFont.drawChar,1,ok,
+ScreenFont.drawChar,2,ok,
+ScreenFont.drawChar,3,ok,
+ScreenFont.drawChar,4,ok,
+ScreenFont.drawChar,5,ok,
+ScreenFont.drawChar,6,ok,
+ScreenFont.drawChar,7,ok,
+ScreenFont.fontPosition,1,ok,
+ScreenFont.fontPosition,2,ok,
+ScreenFont.fontPosition,3,ok,
+ScreenFont.fontPosition,7,ok,
+ScreenFont.isLoaded,0,ok,
+ScreenFont.isLoaded,1,ok,
+ScreenFont.isLoaded,2,ok,
+ScreenFont.isLoaded,3,ok,
+ScreenFont.isLoaded,4,ok,
+ScreenFont.isLoaded,5,ok,
+ScreenFont.isLoaded,6,ok,
+ScreenFont.isLoaded,7,ok,
+ScreenFont.load,0,ok,
+ScreenFont.load,1,ok,
+ScreenFont.load,2,ok,
+ScreenFont.load,3,ok,
+ScreenFont.load,4,ok,
+ScreenFont.load,5,ok,
+ScreenFont.load,6,ok,
+ScreenFont.load,7,ok,
+ScreenFont.loadShader,0,ok,
+ScreenFont.loadShader,1,ok,
+ScreenFont.loadShader,2,ok,
+ScreenFont.loadShader,3,ok,
+ScreenFont.loadShader,4,ok,
+ScreenFont.loadShader,5,ok,
+ScreenFont.loadShader,6,ok,
+ScreenFont.loadShader,7,ok,
+ScreenFont.shaderLoaded,0,ok,
+ScreenFont.shaderLoaded,1,ok,
+ScreenFont.shaderLoaded,2,ok,
+ScreenFont.shaderLoaded,3,ok,
+ScreenFont.shaderLoaded,4,ok,
+ScreenFont.shaderLoaded,5,ok,
+ScreenFont.shaderLoaded,6,ok,
+ScreenFont.shaderLoaded,7,ok,
+ScreenFont.srcRect,1,ok,
+ScreenFont.srcRect,2,ok,
+ScreenFont.srcRect,3,ok,
+ScreenFont.srcRect,7,ok,
+ScreenFont.unload,0,ok,
+ScreenFont.unload,1,ok,
+ScreenFont.unload,2,ok,
+ScreenFont.unload,3,ok,
+ScreenFont.unload,4,ok,
+ScreenFont.unload,5,ok,
+ScreenFont.unload,6,ok,
+ScreenFont.unload,7,ok,
+ScreenFont.unloadShader,0,ok,
+ScreenFont.unloadShader,1,ok,
+ScreenFont.unloadShader,2,ok,
+ScreenFont.unloadShader,3,ok,
+ScreenFont.unloadShader,4,ok,
+ScreenFont.unloadShader,5,ok,
+ScreenFont.unloadShader,6,ok,
+ScreenFont.unloadShader,7,ok,
+SolidColorDisplay.Make,0,ok,
+SolidColorDisplay.Make,1,ok,
+SolidColorDisplay.Make,2,ok,
+SolidColorDisplay.Make,3,ok,
+SolidColorDisplay.Make,4,ok,
+SolidColorDisplay.Make,5,ok,
+SolidColorDisplay.Make,6,ok,
+SolidColorDisplay.Make,7,ok,
+SolidColorDisplay.render,0,ok,
+SolidColorDisplay.render,1,ok,
+SolidColorDisplay.render,2,ok,
+SolidColorDisplay.render,3,ok,
+SolidColorDisplay.render,4,ok,
+SolidColorDisplay.render,5,ok,
+SolidColorDisplay.render,6,ok,
+SolidColorDisplay.render,7,ok,
+Sound.FromRaylibMusicStream,1,ok,
+Sound.FromRaylibMusicStream,2,ok,
+Sound.FromRaylibMusicStream,3,ok,
+Sound.FromRaylibMusicStream,4,ok,
+Sound.FromRaylibMusicStream,5,ok,
+Sound.FromRaylibMusicStream,6,ok,
+Sound.FromRaylibMusicStream,7,ok,
+Sound.StopAll,0,ok,
+Sound.StopAll,1,ok,
+Sound.StopAll,2,ok,
+Sound.StopAll,3,ok,
+Sound.StopAll,4,ok,
+Sound.StopAll,5,ok,
+Sound.StopAll,6,ok,
+Sound.StopAll,7,ok,
+Sound.UpdateAll,0,ok,
+Sound.UpdateAll,1,ok,
+Sound.UpdateAll,2,ok,
+Sound.UpdateAll,3,ok,
+Sound.UpdateAll,4,ok,
+Sound.UpdateAll,5,ok,
+Sound.UpdateAll,6,ok,
+Sound.UpdateAll,7,ok,
+Sound.adjust,0,ok,
+Sound.adjust,1,ok,
+Sound.adjust,2,ok,
+Sound.adjust,3,ok,
+Sound.adjust,4,ok,
+Sound.adjust,5,ok,
+Sound.adjust,6,ok,
+Sound.adjust,7,ok,
+Sound.duration=,0,ok,
+Sound.duration=,1,ok,
+Sound.duration=,2,ok,
+Sound.duration=,3,ok,
+Sound.duration=,4,ok,
+Sound.duration=,5,ok,
+Sound.duration=,6,ok,
+Sound.duration=,7,ok,
+Sound.envelope=,0,ok,
+Sound.envelope=,1,ok,
+Sound.envelope=,2,ok,
+Sound.envelope=,3,ok,
+Sound.envelope=,4,ok,
+Sound.envelope=,5,ok,
+Sound.envelope=,6,ok,
+Sound.envelope=,7,ok,
+Sound.fadeIn=,0,ok,
+Sound.fadeIn=,1,ok,
+Sound.fadeIn=,2,ok,
+Sound.fadeIn=,3,ok,
+Sound.fadeIn=,4,ok,
+Sound.fadeIn=,5,ok,
+Sound.fadeIn=,6,ok,
+Sound.fadeIn=,7,ok,
+Sound.fadeOut=,0,ok,
+Sound.fadeOut=,1,ok,
+Sound.fadeOut=,2,ok,
+Sound.fadeOut=,3,ok,
+Sound.fadeOut=,4,ok,
+Sound.fadeOut=,5,ok,
+Sound.fadeOut=,6,ok,
+Sound.fadeOut=,7,ok,
+Sound.freq=,0,ok,
+Sound.freq=,1,ok,
+Sound.freq=,2,ok,
+Sound.freq=,3,ok,
+Sound.freq=,4,ok,
+Sound.freq=,5,ok,
+Sound.freq=,6,ok,
+Sound.freq=,7,ok,
+Sound.init,0,ok,
+Sound.init,1,ok,
+Sound.init,2,ok,
+Sound.init,3,ok,
+Sound.init,4,ok,
+Sound.init,5,ok,
+Sound.init,6,ok,
+Sound.init,7,ok,
+Sound.mix,0,ok,
+Sound.mix,1,ok,
+Sound.mix,2,ok,
+Sound.mix,3,ok,
+Sound.mix,4,ok,
+Sound.mix,5,ok,
+Sound.mix,6,ok,
+Sound.mix,7,ok,
+Sound.mixes=,0,ok,
+Sound.mixes=,1,ok,
+Sound.mixes=,2,ok,
+Sound.mixes=,3,ok,
+Sound.mixes=,4,ok,
+Sound.mixes=,5,ok,
+Sound.mixes=,6,ok,
+Sound.mixes=,7,ok,
+Sound.noiseWave,0,ok,
+Sound.noiseWave,1,ok,
+Sound.noiseWave,3,ok,
+Sound.noiseWave,4,ok,
+Sound.noiseWave,5,ok,
+Sound.noiseWave,6,ok,
+Sound.noiseWave,7,ok,
+Sound.play,0,ok,
+Sound.play,1,ok,
+Sound.play,2,ok,
+Sound.play,3,ok,
+Sound.play,4,ok,
+Sound.play,5,ok,
+Sound.play,6,ok,
+Sound.play,7,ok,
+Sound.sampleRate=,0,ok,
+Sound.sampleRate=,1,ok,
+Sound.sampleRate=,2,ok,
+Sound.sampleRate=,3,ok,
+Sound.sampleRate=,4,ok,
+Sound.sampleRate=,5,ok,
+Sound.sampleRate=,6,ok,
+Sound.sampleRate=,7,ok,
+Sound.stop,0,ok,
+Sound.stop,1,ok,
+Sound.stop,2,ok,
+Sound.stop,3,ok,
+Sound.stop,4,ok,
+Sound.stop,5,ok,
+Sound.stop,6,ok,
+Sound.stop,7,ok,
+Sound.stopAll,0,ok,
+Sound.stopAll,1,ok,
+Sound.stopAll,2,ok,
+Sound.stopAll,3,ok,
+Sound.stopAll,4,ok,
+Sound.stopAll,5,ok,
+Sound.stopAll,6,ok,
+Sound.stopAll,7,ok,
+Sound.unload,0,ok,
+Sound.unload,1,ok,
+Sound.unload,2,ok,
+Sound.unload,3,ok,
+Sound.unload,4,ok,
+Sound.unload,5,ok,
+Sound.unload,6,ok,
+Sound.unload,7,ok,
+Sound.update,0,ok,
+Sound.update,1,ok,
+Sound.update,2,ok,
+Sound.update,3,ok,
+Sound.update,4,ok,
+Sound.update,5,ok,
+Sound.update,6,ok,
+Sound.update,7,ok,
+Sound.waveform=,0,ok,
+Sound.waveform=,1,ok,
+Sound.waveform=,2,ok,
+Sound.waveform=,3,ok,
+Sound.waveform=,4,ok,
+Sound.waveform=,5,ok,
+Sound.waveform=,6,ok,
+Sound.waveform=,7,ok,
+Sprite.contains,0,ok,
+Sprite.contains,1,ok,
+Sprite.contains,2,ok,
+Sprite.contains,3,ok,
+Sprite.contains,4,ok,
+Sprite.contains,5,ok,
+Sprite.contains,6,ok,
+Sprite.contains,7,ok,
+Sprite.corners,0,ok,
+Sprite.corners,1,ok,
+Sprite.corners,2,ok,
+Sprite.corners,3,ok,
+Sprite.corners,4,ok,
+Sprite.corners,5,ok,
+Sprite.corners,6,ok,
+Sprite.corners,7,ok,
+Sprite.draw,0,ok,
+Sprite.draw,1,ok,
+Sprite.draw,2,ok,
+Sprite.draw,3,ok,
+Sprite.draw,4,ok,
+Sprite.draw,5,ok,
+Sprite.draw,6,ok,
+Sprite.draw,7,ok,
+Sprite.setCorners,0,ok,
+Sprite.setCorners,1,ok,
+Sprite.setCorners,2,ok,
+Sprite.setCorners,3,ok,
+Sprite.setCorners,4,ok,
+Sprite.setCorners,5,ok,
+Sprite.setCorners,6,ok,
+Sprite.setCorners,7,ok,
+Sprite.setUVs,0,ok,
+Sprite.setUVs,1,ok,
+Sprite.setUVs,2,ok,
+Sprite.setUVs,3,ok,
+Sprite.setUVs,4,ok,
+Sprite.setUVs,5,ok,
+Sprite.setUVs,6,ok,
+Sprite.setUVs,7,ok,
+Sprite.uvs,0,ok,
+Sprite.uvs,1,ok,
+Sprite.uvs,2,ok,
+Sprite.uvs,3,ok,
+Sprite.uvs,4,ok,
+Sprite.uvs,5,ok,
+Sprite.uvs,6,ok,
+Sprite.uvs,7,ok,
+Sprite.worldBounds,0,ok,
+Sprite.worldBounds,1,ok,
+Sprite.worldBounds,2,ok,
+Sprite.worldBounds,3,ok,
+Sprite.worldBounds,4,ok,
+Sprite.worldBounds,5,ok,
+Sprite.worldBounds,6,ok,
+Sprite.worldBounds,7,ok,
+TextDisplay.Make,0,ok,
+TextDisplay.Make,1,ok,
+TextDisplay.Make,2,ok,
+TextDisplay.Make,3,ok,
+TextDisplay.Make,4,ok,
+TextDisplay.Make,5,ok,
+TextDisplay.Make,6,ok,
+TextDisplay.Make,7,ok,
+TextDisplay.advance,0,ok,
+TextDisplay.advance,1,ok,
+TextDisplay.advance,2,ok,
+TextDisplay.advance,3,ok,
+TextDisplay.advance,4,ok,
+TextDisplay.advance,5,ok,
+TextDisplay.advance,6,ok,
+TextDisplay.advance,7,ok,
+TextDisplay.backup,0,ok,
+TextDisplay.backup,1,ok,
+TextDisplay.backup,2,ok,
+TextDisplay.backup,3,ok,
+TextDisplay.backup,4,ok,
+TextDisplay.backup,5,ok,
+TextDisplay.backup,6,ok,
+TextDisplay.backup,7,ok,
+TextDisplay.cell,1,ok,
+TextDisplay.cell,2,ok,
+TextDisplay.cell,3,ok,
+TextDisplay.cellBackColor,1,ok,
+TextDisplay.cellBackColor,2,ok,
+TextDisplay.cellBackColor,3,ok,
+TextDisplay.cellColor,1,ok,
+TextDisplay.cellColor,2,ok,
+TextDisplay.cellColor,3,ok,
+TextDisplay.clear,0,ok,
+TextDisplay.clear,1,ok,
+TextDisplay.clear,2,ok,
+TextDisplay.clear,3,ok,
+TextDisplay.clear,4,ok,
+TextDisplay.clear,5,ok,
+TextDisplay.clear,6,ok,
+TextDisplay.clear,7,ok,
+TextDisplay.clearRow,1,ok,
+TextDisplay.clearRow,2,ok,
+TextDisplay.clearRow,3,ok,
+TextDisplay.column=,1,ok,
+TextDisplay.column=,2,ok,
+TextDisplay.column=,3,ok,
+TextDisplay.column=,7,ok,
+TextDisplay.fillRow,1,ok,
+TextDisplay.fillRow,2,ok,
+TextDisplay.fillRow,3,ok,
+TextDisplay.hideCursor,0,ok,
+TextDisplay.hideCursor,1,ok,
+TextDisplay.hideCursor,2,ok,
+TextDisplay.hideCursor,3,ok,
+TextDisplay.hideCursor,4,ok,
+TextDisplay.hideCursor,5,ok,
+TextDisplay.hideCursor,6,ok,
+TextDisplay.hideCursor,7,ok,
+TextDisplay.loadFont,0,ok,
+TextDisplay.loadFont,1,ok,
+TextDisplay.loadFont,2,ok,
+TextDisplay.loadFont,3,ok,
+TextDisplay.loadFont,4,ok,
+TextDisplay.loadFont,5,ok,
+TextDisplay.loadFont,6,ok,
+TextDisplay.loadFont,7,ok,
+TextDisplay.nextLine,0,ok,
+TextDisplay.nextLine,1,ok,
+TextDisplay.nextLine,2,ok,
+TextDisplay.nextLine,3,ok,
+TextDisplay.nextLine,4,ok,
+TextDisplay.nextLine,5,ok,
+TextDisplay.nextLine,6,ok,
+TextDisplay.nextLine,7,ok,
+TextDisplay.render,0,ok,
+TextDisplay.render,1,ok,
+TextDisplay.render,2,ok,
+TextDisplay.render,3,ok,
+TextDisplay.render,4,ok,
+TextDisplay.render,5,ok,
+TextDisplay.render,6,ok,
+TextDisplay.render,7,ok,
+TextDisplay.row=,1,ok,
+TextDisplay.row=,2,ok,
+TextDisplay.row=,3,ok,
+TextDisplay.row=,7,ok,
+TextDisplay.scroll,0,ok,
+TextDisplay.scroll,1,ok,
+TextDisplay.scroll,2,ok,
+TextDisplay.scroll,3,ok,
+TextDisplay.scroll,4,ok,
+TextDisplay.scroll,5,ok,
+TextDisplay.scroll,6,ok,
+TextDisplay.scroll,7,ok,
+TextDisplay.setCell,5,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.setCellColor,2,ok,
+TextDisplay.setCellColor,3,ok,
+TextDisplay.setCellSpacing,0,ok,
+TextDisplay.setCellSpacing,1,ok,
+TextDisplay.setCellSpacing,2,ok,
+TextDisplay.setCellSpacing,3,ok,
+TextDisplay.setCellSpacing,4,ok,
+TextDisplay.setCellSpacing,5,ok,
+TextDisplay.setCellSpacing,6,ok,
+TextDisplay.setCellSpacing,7,ok,
+TextDisplay.setSize,0,ok,
+TextDisplay.setSize,1,ok,
+TextDisplay.setSize,3,ok,
+TextDisplay.setSize,4,ok,
+TextDisplay.setSize,5,ok,
+TextDisplay.setSize,6,ok,
+TextDisplay.setSize,7,ok,
+TextDisplay.showCursor,0,ok,
+TextDisplay.showCursor,1,ok,
+TextDisplay.showCursor,2,ok,
+TextDisplay.showCursor,3,ok,
+TextDisplay.showCursor,4,ok,
+TextDisplay.showCursor,5,ok,
+TextDisplay.showCursor,6,ok,
+TextDisplay.showCursor,7,ok,
+TextDisplay.updateOffsets,0,ok,
+TextDisplay.updateOffsets,1,ok,
+TextDisplay.updateOffsets,2,ok,
+TextDisplay.updateOffsets,3,ok,
+TextDisplay.updateOffsets,4,ok,
+TextDisplay.updateOffsets,5,ok,
+TextDisplay.updateOffsets,6,ok,
+TextDisplay.updateOffsets,7,ok,
+TileDisplay.Make,0,ok,
+TileDisplay.Make,1,ok,
+TileDisplay.Make,2,ok,
+TileDisplay.Make,3,ok,
+TileDisplay.Make,4,ok,
+TileDisplay.Make,5,ok,
+TileDisplay.Make,6,ok,
+TileDisplay.Make,7,ok,
+TileDisplay.cell,1,ok,
+TileDisplay.cell,2,ok,
+TileDisplay.cell,3,ok,
+TileDisplay.cell,7,ok,
+TileDisplay.cellTint,1,ok,
+TileDisplay.cellTint,2,ok,
+TileDisplay.cellTint,3,ok,
+TileDisplay.cellTint,7,ok,
+TileDisplay.cellTransform,1,ok,
+TileDisplay.cellTransform,2,ok,
+TileDisplay.cellTransform,3,ok,
+TileDisplay.cellTransform,7,ok,
+TileDisplay.clear,0,ok,
+TileDisplay.clear,1,ok,
+TileDisplay.clear,2,ok,
+TileDisplay.clear,3,ok,
+TileDisplay.clear,4,ok,
+TileDisplay.clear,5,ok,
+TileDisplay.clear,6,ok,
+TileDisplay.clear,7,ok,
+TileDisplay.extent,0,ok,
+TileDisplay.extent,1,ok,
+TileDisplay.extent,2,ok,
+TileDisplay.extent,3,ok,
+TileDisplay.extent,4,ok,
+TileDisplay.extent,5,ok,
+TileDisplay.extent,6,ok,
+TileDisplay.extent,7,ok,
+TileDisplay.extent=,0,ok,
+TileDisplay.extent=,1,ok,
+TileDisplay.extent=,3,ok,
+TileDisplay.extent=,4,ok,
+TileDisplay.extent=,5,ok,
+TileDisplay.extent=,6,ok,
+TileDisplay.extent=,7,ok,
+TileDisplay.render,0,ok,
+TileDisplay.render,1,ok,
+TileDisplay.render,2,ok,
+TileDisplay.render,3,ok,
+TileDisplay.render,4,ok,
+TileDisplay.render,5,ok,
+TileDisplay.render,6,ok,
+TileDisplay.render,7,ok,
+TileDisplay.setCell,0,ok,
+TileDisplay.setCellTint,0,ok,
+TileDisplay.setCellTransform,0,ok,
+color.fromList,0,ok,
+color.fromList,1,ok,
+color.fromList,2,ok,
+color.fromList,3,ok,
+color.fromList,5,ok,
+color.fromList,7,ok,
+color.hexDigitVal,4,ok,
+color.lerp,0,ok,
+color.lerp,1,ok,
+color.lerp,2,ok,
+color.lerp,3,ok,
+color.lerp,4,ok,
+color.lerp,5,ok,
+color.lerp,6,ok,
+color.lerp,7,ok,
+color.rgb,1,ok,
+color.rgb,2,ok,
+color.rgb,3,ok,
+color.rgb,7,ok,
+color.rgba,1,ok,
+color.rgba,2,ok,
+color.rgba,3,ok,
+color.rgba,7,ok,
+color.toList,0,ok,
+color.toList,1,ok,
+color.toList,2,ok,
+color.toList,3,ok,
+color.toList,4,ok,
+color.toList,5,ok,
+color.toList,6,ok,
+color.toList,7,ok,
+key.applyKeyboardLayout,0,ok,
+key.applyKeyboardLayout,1,ok,
+key.applyKeyboardLayout,2,ok,
+key.applyKeyboardLayout,3,ok,
+key.applyKeyboardLayout,4,ok,
+key.applyKeyboardLayout,5,ok,
+key.applyKeyboardLayout,6,ok,
+key.applyKeyboardLayout,7,ok,
+key.available,0,ok,
+key.available,1,ok,
+key.available,2,ok,
+key.available,3,ok,
+key.available,4,ok,
+key.available,5,ok,
+key.available,6,ok,
+key.available,7,ok,
+key.axis,4,ok,
+key.axis,5,ok,
+key.clear,0,ok,
+key.clear,1,ok,
+key.clear,2,ok,
+key.clear,3,ok,
+key.clear,4,ok,
+key.clear,5,ok,
+key.clear,6,ok,
+key.clear,7,ok,
+key.codeForName,0,ok,
+key.codeForName,1,ok,
+key.codeForName,2,ok,
+key.codeForName,3,ok,
+key.codeForName,4,ok,
+key.codeForName,5,ok,
+key.codeForName,6,ok,
+key.codeForName,7,ok,
+key.from,0,ok,
+key.from,1,ok,
+key.from,2,ok,
+key.from,3,ok,
+key.from,4,ok,
+key.from,5,ok,
+key.from,6,ok,
+key.from,7,ok,
+key.get,0,ok,
+key.get,1,ok,
+key.get,2,ok,
+key.get,3,ok,
+key.get,4,ok,
+key.get,5,ok,
+key.get,6,ok,
+key.get,7,ok,
+key.pressed,4,error,
+key.pressed,5,error,
+key.to,4,error,
+key.to,5,error,
+key.update,0,ok,
+key.update,1,ok,
+key.update,2,ok,
+key.update,3,ok,
+key.update,4,ok,
+key.update,5,ok,
+key.update,6,ok,
+key.update,7,ok,
+mouse.button,0,ok,
+mouse.button,1,ok,
+mouse.button,2,ok,
+mouse.button,3,ok,
+mouse.button,4,ok,
+mouse.button,5,ok,
+mouse.button,6,ok,
+mouse.button,7,ok,
+mouse.locked,0,ok,
+mouse.locked,1,ok,
+mouse.locked,2,ok,
+mouse.locked,3,ok,
+mouse.locked,4,ok,
+mouse.locked,5,ok,
+mouse.locked,6,ok,
+mouse.locked,7,ok,
+mouse.locked=,0,ok,
+mouse.locked=,1,ok,
+mouse.locked=,2,ok,
+mouse.locked=,3,ok,
+mouse.locked=,4,ok,
+mouse.locked=,5,ok,
+mouse.locked=,6,ok,
+mouse.locked=,7,ok,
+mouse.update,0,ok,
+mouse.update,1,ok,
+mouse.update,2,ok,
+mouse.update,3,ok,
+mouse.update,4,ok,
+mouse.update,5,ok,
+mouse.update,6,ok,
+mouse.update,7,ok,
+mouse.visible,0,ok,
+mouse.visible,1,ok,
+mouse.visible,2,ok,
+mouse.visible,3,ok,
+mouse.visible,4,ok,
+mouse.visible,5,ok,
+mouse.visible,6,ok,
+mouse.visible,7,ok,
+mouse.visible=,0,ok,
+mouse.visible=,1,ok,
+mouse.visible=,2,ok,
+mouse.visible=,3,ok,
+mouse.visible=,4,ok,
+mouse.visible=,5,ok,
+mouse.visible=,6,ok,
+mouse.visible=,7,ok,
+Bounds.contains,0,error,Runtime Error: Uncaught Type error: can't apply '-' to null and number [line 51]
+Bounds.contains,1,ok,
+Bounds.contains,2,ok,
+Bounds.contains,3,ok,
+Bounds.contains,4,error,Runtime Error: Uncaught Type error: can't apply '-' to string and number [line 51]
+Bounds.contains,5,ok,
+Bounds.contains,6,error,Runtime Error: Key Not Found: 'y' not found in map [SpriteDisplay.ms line 29]
+Bounds.contains,7,ok,
+Bounds.overlaps,0,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 53]
+Bounds.overlaps,1,error,Runtime Error: Key Not Found: 'x' not found in map [SpriteDisplay.ms line 53]
+Bounds.overlaps,2,error,Runtime Error: Key Not Found: 'x' not found in map [SpriteDisplay.ms line 53]
+Bounds.overlaps,3,error,Runtime Error: Key Not Found: 'x' not found in map [SpriteDisplay.ms line 53]
+Bounds.overlaps,4,error,Runtime Error: Key Not Found: 'x' not found in map [SpriteDisplay.ms line 53]
+Bounds.overlaps,5,error,Runtime Error: Key Not Found: 'x' not found in map [SpriteDisplay.ms line 53]
+Bounds.overlaps,6,error,Runtime Error: Key Not Found: 'x' not found in map [SpriteDisplay.ms line 53]
+Bounds.overlaps,7,error,Runtime Error: Key Not Found: 'x' not found in map [SpriteDisplay.ms line 53]
+Image.FromRaylibImage,0,error,Runtime Error: Can't index into null [Image.ms line 79]
+Image.FromRaylibImage,1,error,Runtime Error: Key Not Found: 'width' not found in map [Image.ms line 79]
+Image.FromRaylibImage,2,error,Runtime Error: Key Not Found: 'width' not found in map [Image.ms line 79]
+Image.FromRaylibImage,3,error,Runtime Error: Key Not Found: 'width' not found in map [Image.ms line 79]
+Image.FromRaylibImage,4,error,Runtime Error: Key Not Found: 'width' not found in map [Image.ms line 79]
+Image.FromRaylibImage,5,error,Runtime Error: Key Not Found: 'width' not found in map [Image.ms line 79]
+Image.FromRaylibImage,6,error,Runtime Error: Key Not Found: 'width' not found in map [Image.ms line 79]
+Image.FromRaylibImage,7,error,Runtime Error: Key Not Found: 'width' not found in map [Image.ms line 79]
+Image.pixel,0,error,Runtime Error: Undefined error field 'r' [Image.ms line 45]
+Image.pixel,1,ok,
+Image.pixel,2,ok,
+Image.pixel,3,ok,
+Image.pixel,4,error,Runtime Error: Undefined error field 'r' [Image.ms line 45]
+Image.pixel,5,error,Runtime Error: Undefined error field 'r' [Image.ms line 45]
+Image.pixel,6,error,Runtime Error: Undefined error field 'r' [Image.ms line 45]
+Image.pixel,7,ok,
+Image.rotate,0,error,Runtime Error: Error used in conditional: error: Type error: can't apply '%' to null and number [Image.ms line 148]
+Image.rotate,1,ok,
+Image.rotate,2,ok,
+Image.rotate,3,ok,
+Image.rotate,4,error,Runtime Error: Error used in conditional: error: Type error: can't apply '%' to string and number [Image.ms line 148]
+Image.rotate,5,error,Runtime Error: Error used in conditional: error: Type error: can't apply '%' to list and number [Image.ms line 148]
+Image.rotate,6,error,Runtime Error: Error used in conditional: error: Type error: can't apply '%' to map and number [Image.ms line 148]
+Image.rotate,7,ok,
+Image.setPixel,0,error,Runtime Error: Uncaught Type error: can't apply '-' to number and null [Image.ms line 118]
+Image.setPixel,1,ok,
+Image.setPixel,2,ok,
+Image.setPixel,3,ok,
+Image.setPixel,4,error,Runtime Error: Uncaught Type error: can't apply '-' to number and string [Image.ms line 118]
+Image.setPixel,5,error,Runtime Error: Uncaught Type error: can't apply '-' to number and list [Image.ms line 118]
+Image.setPixel,6,error,Runtime Error: Uncaught Type error: can't apply '-' to number and map [Image.ms line 118]
+Image.setPixel,7,ok,
+PixelDisplay.Make,0,error,Runtime Error: Uncaught Type error: can't apply '-' to null and number [PixelDisplay.ms line 333]
+PixelDisplay.Make,1,ok,
+PixelDisplay.Make,2,ok,
+PixelDisplay.Make,3,ok,
+PixelDisplay.Make,4,error,Runtime Error: Uncaught Type error: can't apply '-' to string and number [PixelDisplay.ms line 333]
+PixelDisplay.Make,5,error,Runtime Error: Uncaught Type error: can't apply '-' to list and number [PixelDisplay.ms line 333]
+PixelDisplay.Make,6,error,Runtime Error: Uncaught Type error: can't apply '-' to map and number [PixelDisplay.ms line 333]
+PixelDisplay.Make,7,ok,
+PixelDisplay.clear,0,ok,
+PixelDisplay.clear,1,ok,
+PixelDisplay.clear,2,ok,
+PixelDisplay.clear,3,ok,
+PixelDisplay.clear,4,error,Runtime Error: Uncaught Type error: can't apply '-' to string and number [PixelDisplay.ms line 333]
+PixelDisplay.clear,5,error,Runtime Error: Uncaught Type error: can't apply '-' to list and number [PixelDisplay.ms line 333]
+PixelDisplay.clear,6,error,Runtime Error: Uncaught Type error: can't apply '-' to map and number [PixelDisplay.ms line 333]
+PixelDisplay.clear,7,ok,
+PixelDisplay.drawEllipse,0,error,Runtime Error: Uncaught Type error: number required; but got null [PixelDisplay.ms line 346]
+PixelDisplay.drawEllipse,1,ok,
+PixelDisplay.drawEllipse,2,ok,
+PixelDisplay.drawEllipse,3,ok,
+PixelDisplay.drawEllipse,4,error,Runtime Error: Uncaught Format error: 'abc' is not a valid number [PixelDisplay.ms line 346]
+PixelDisplay.drawEllipse,5,error,Runtime Error: Uncaught Type error: number required; but got list [PixelDisplay.ms line 346]
+PixelDisplay.drawEllipse,6,error,Runtime Error: Uncaught Type error: number required; but got map [PixelDisplay.ms line 346]
+PixelDisplay.drawEllipse,7,ok,
+PixelDisplay.drawImage,0,error,Runtime Error: Can't index into null [PixelDisplay.ms line 683]
+PixelDisplay.drawImage,1,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 683]
+PixelDisplay.drawImage,2,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 683]
+PixelDisplay.drawImage,3,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 683]
+PixelDisplay.drawImage,4,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 683]
+PixelDisplay.drawImage,5,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 683]
+PixelDisplay.drawImage,6,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 683]
+PixelDisplay.drawImage,7,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 683]
+PixelDisplay.drawPoly,0,ok,
+PixelDisplay.drawPoly,1,error,Runtime Error: Key Not Found: 'len' not found in map [PixelDisplay.ms line 554]
+PixelDisplay.drawPoly,2,error,Runtime Error: Key Not Found: 'len' not found in map [PixelDisplay.ms line 554]
+PixelDisplay.drawPoly,3,error,Runtime Error: Key Not Found: 'len' not found in map [PixelDisplay.ms line 554]
+PixelDisplay.drawPoly,4,error,Runtime Error: Index Error: string index 1 out of range [PixelDisplay.ms line 395]
+PixelDisplay.drawPoly,5,error,Runtime Error: Can't index into 1 [PixelDisplay.ms line 395]
+PixelDisplay.drawPoly,6,ok,
+PixelDisplay.drawPoly,7,error,Runtime Error: Key Not Found: 'len' not found in map [PixelDisplay.ms line 554]
+PixelDisplay.drawRect,0,error,Runtime Error: Uncaught Type error: can't apply '-' to number and null [PixelDisplay.ms line 319]
+PixelDisplay.drawRect,1,ok,
+PixelDisplay.drawRect,2,ok,
+PixelDisplay.drawRect,3,ok,
+PixelDisplay.drawRect,4,error,Runtime Error: Uncaught Type error: can't apply '-' to number and string [PixelDisplay.ms line 319]
+PixelDisplay.drawRect,5,error,Runtime Error: Uncaught Type error: can't apply '-' to number and list [PixelDisplay.ms line 319]
+PixelDisplay.drawRect,6,error,Runtime Error: Uncaught Type error: can't apply '-' to number and map [PixelDisplay.ms line 319]
+PixelDisplay.drawRect,7,ok,
+PixelDisplay.fillEllipse,0,error,Runtime Error: Uncaught Type error: number required; but got null [PixelDisplay.ms line 380]
+PixelDisplay.fillEllipse,1,ok,
+PixelDisplay.fillEllipse,2,ok,
+PixelDisplay.fillEllipse,3,ok,
+PixelDisplay.fillEllipse,4,error,Runtime Error: Uncaught Format error: 'abc' is not a valid number [PixelDisplay.ms line 380]
+PixelDisplay.fillEllipse,5,error,Runtime Error: Uncaught Type error: number required; but got list [PixelDisplay.ms line 380]
+PixelDisplay.fillEllipse,6,error,Runtime Error: Uncaught Type error: number required; but got map [PixelDisplay.ms line 380]
+PixelDisplay.fillEllipse,7,ok,
+PixelDisplay.fillPoly,0,ok,
+PixelDisplay.fillPoly,1,error,Runtime Error: Key Not Found: 'len' not found in map [PixelDisplay.ms line 570]
+PixelDisplay.fillPoly,2,error,Runtime Error: Key Not Found: 'len' not found in map [PixelDisplay.ms line 570]
+PixelDisplay.fillPoly,3,error,Runtime Error: Key Not Found: 'len' not found in map [PixelDisplay.ms line 570]
+PixelDisplay.fillPoly,4,error,Runtime Error: Index Error: string index 1 out of range [PixelDisplay.ms line 395]
+PixelDisplay.fillPoly,5,ok,
+PixelDisplay.fillPoly,6,ok,
+PixelDisplay.fillPoly,7,error,Runtime Error: Key Not Found: 'len' not found in map [PixelDisplay.ms line 570]
+PixelDisplay.fillRect,0,error,Runtime Error: Uncaught Type error: can't apply '-' to number and null [PixelDisplay.ms line 333]
+PixelDisplay.fillRect,1,ok,
+PixelDisplay.fillRect,2,ok,
+PixelDisplay.fillRect,3,ok,
+PixelDisplay.fillRect,4,error,Runtime Error: Uncaught Type error: can't apply '-' to number and string [PixelDisplay.ms line 333]
+PixelDisplay.fillRect,5,error,Runtime Error: Uncaught Type error: can't apply '-' to number and list [PixelDisplay.ms line 333]
+PixelDisplay.fillRect,6,error,Runtime Error: Uncaught Type error: can't apply '-' to number and map [PixelDisplay.ms line 333]
+PixelDisplay.fillRect,7,ok,
+PixelDisplay.patternFill,0,error,Runtime Error: Can't index into null [PixelDisplay.ms line 692]
+PixelDisplay.patternFill,1,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 692]
+PixelDisplay.patternFill,2,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 692]
+PixelDisplay.patternFill,3,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 692]
+PixelDisplay.patternFill,4,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 692]
+PixelDisplay.patternFill,5,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 692]
+PixelDisplay.patternFill,6,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 692]
+PixelDisplay.patternFill,7,error,Runtime Error: Key Not Found: 'texture' not found in map [PixelDisplay.ms line 692]
+PixelDisplay.pixel,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [PixelDisplay.ms line 295]
+PixelDisplay.pixel,1,ok,
+PixelDisplay.pixel,2,ok,
+PixelDisplay.pixel,3,ok,
+PixelDisplay.pixel,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [PixelDisplay.ms line 295]
+PixelDisplay.pixel,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and list [PixelDisplay.ms line 295]
+PixelDisplay.pixel,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [PixelDisplay.ms line 295]
+PixelDisplay.pixel,7,ok,
+PixelDisplay.print,0,ok,
+PixelDisplay.print,1,ok,
+PixelDisplay.print,2,ok,
+PixelDisplay.print,3,ok,
+PixelDisplay.print,4,ok,
+PixelDisplay.print,5,error,Runtime Error: Index Error: list index 3 out of range [ScreenFont.ms line 288]
+PixelDisplay.print,6,ok,
+PixelDisplay.print,7,ok,
+PixelDisplay.setPixel,0,error,Runtime Error: Uncaught Type error: can't apply '+' to null and number [PixelDisplay.ms line 261]
+PixelDisplay.setPixel,1,ok,
+PixelDisplay.setPixel,2,ok,
+PixelDisplay.setPixel,3,ok,
+PixelDisplay.setPixel,4,error,Runtime Error: Uncaught Type error: can't apply '-' to number and string [PixelDisplay.ms line 261]
+PixelDisplay.setPixel,5,error,Runtime Error: Uncaught Type error: can't apply '+' to list and number [PixelDisplay.ms line 261]
+PixelDisplay.setPixel,6,error,Runtime Error: Uncaught Type error: can't apply '+' to map and number [PixelDisplay.ms line 261]
+PixelDisplay.setPixel,7,ok,
+ScreenFont.fontPosition,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [ScreenFont.ms line 220]
+ScreenFont.fontPosition,1,ok,
+ScreenFont.fontPosition,2,ok,
+ScreenFont.fontPosition,3,ok,
+ScreenFont.fontPosition,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [ScreenFont.ms line 220]
+ScreenFont.fontPosition,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and list [ScreenFont.ms line 220]
+ScreenFont.fontPosition,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [ScreenFont.ms line 220]
+ScreenFont.fontPosition,7,ok,
+ScreenFont.srcRect,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [ScreenFont.ms line 220]
+ScreenFont.srcRect,1,ok,
+ScreenFont.srcRect,2,ok,
+ScreenFont.srcRect,3,ok,
+ScreenFont.srcRect,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [ScreenFont.ms line 220]
+ScreenFont.srcRect,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and list [ScreenFont.ms line 220]
+ScreenFont.srcRect,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [ScreenFont.ms line 220]
+ScreenFont.srcRect,7,ok,
+Sound.FromRaylibMusicStream,0,error,Runtime Error: Uncaught Sound.FromRaylibMusicStream: rMusicStream is null [line 49]
+Sound.FromRaylibMusicStream,1,ok,
+Sound.FromRaylibMusicStream,2,ok,
+Sound.FromRaylibMusicStream,3,ok,
+Sound.FromRaylibMusicStream,4,ok,
+Sound.FromRaylibMusicStream,5,ok,
+Sound.FromRaylibMusicStream,6,ok,
+Sound.FromRaylibMusicStream,7,ok,
+Sound.FromRaylibSound,0,error,Runtime Error: Uncaught Sound.FromRaylibSound: rSound is null [line 49]
+Sound.FromRaylibSound,1,error,Runtime Error: Key Not Found: 'frameCount' not found in map [Sound.ms line 57]
+Sound.FromRaylibSound,2,error,Runtime Error: Key Not Found: 'frameCount' not found in map [Sound.ms line 57]
+Sound.FromRaylibSound,3,error,Runtime Error: Key Not Found: 'frameCount' not found in map [Sound.ms line 57]
+Sound.FromRaylibSound,4,error,Runtime Error: Key Not Found: 'frameCount' not found in map [Sound.ms line 57]
+Sound.FromRaylibSound,5,error,Runtime Error: Key Not Found: 'frameCount' not found in map [Sound.ms line 57]
+Sound.FromRaylibSound,6,error,Runtime Error: Key Not Found: 'frameCount' not found in map [Sound.ms line 57]
+Sound.FromRaylibSound,7,error,Runtime Error: Key Not Found: 'frameCount' not found in map [Sound.ms line 57]
+Sound.noiseWave,0,ok,
+Sound.noiseWave,1,ok,
+Sound.noiseWave,2,TIMEOUT,
+Sound.noiseWave,3,ok,
+Sound.noiseWave,4,ok,
+Sound.noiseWave,5,ok,
+Sound.noiseWave,6,ok,
+Sound.noiseWave,7,ok,
+Sprite.addBounds,0,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 95]
+Sprite.addBounds,1,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 95]
+Sprite.addBounds,2,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 95]
+Sprite.addBounds,3,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 95]
+Sprite.addBounds,4,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 95]
+Sprite.addBounds,5,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 95]
+Sprite.addBounds,6,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 95]
+Sprite.addBounds,7,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 95]
+Sprite.overlaps,0,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 510]
+Sprite.overlaps,1,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 510]
+Sprite.overlaps,2,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 510]
+Sprite.overlaps,3,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 510]
+Sprite.overlaps,4,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 510]
+Sprite.overlaps,5,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 510]
+Sprite.overlaps,6,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 510]
+Sprite.overlaps,7,error,Runtime Error: Can't index into null [SpriteDisplay.ms line 510]
+TextDisplay.cell,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [TextDisplay.ms line 162]
+TextDisplay.cell,1,ok,
+TextDisplay.cell,2,ok,
+TextDisplay.cell,3,ok,
+TextDisplay.cell,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [TextDisplay.ms line 162]
+TextDisplay.cell,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and list [TextDisplay.ms line 162]
+TextDisplay.cell,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [TextDisplay.ms line 162]
+TextDisplay.cell,7,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.cellBackColor,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [TextDisplay.ms line 162]
+TextDisplay.cellBackColor,1,ok,
+TextDisplay.cellBackColor,2,ok,
+TextDisplay.cellBackColor,3,ok,
+TextDisplay.cellBackColor,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [TextDisplay.ms line 162]
+TextDisplay.cellBackColor,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and list [TextDisplay.ms line 162]
+TextDisplay.cellBackColor,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [TextDisplay.ms line 162]
+TextDisplay.cellBackColor,7,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.cellColor,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [TextDisplay.ms line 162]
+TextDisplay.cellColor,1,ok,
+TextDisplay.cellColor,2,ok,
+TextDisplay.cellColor,3,ok,
+TextDisplay.cellColor,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [TextDisplay.ms line 162]
+TextDisplay.cellColor,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and list [TextDisplay.ms line 162]
+TextDisplay.cellColor,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [TextDisplay.ms line 162]
+TextDisplay.cellColor,7,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.clearRow,0,error,Runtime Error: Can't index into null [TextDisplay.ms line 258]
+TextDisplay.clearRow,1,ok,
+TextDisplay.clearRow,2,ok,
+TextDisplay.clearRow,3,ok,
+TextDisplay.clearRow,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [TextDisplay.ms line 257]
+TextDisplay.clearRow,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and list [TextDisplay.ms line 257]
+TextDisplay.clearRow,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [TextDisplay.ms line 257]
+TextDisplay.clearRow,7,error,Runtime Error: Can't index into null [TextDisplay.ms line 258]
+TextDisplay.column=,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare null and number [TextDisplay.ms line 395]
+TextDisplay.column=,1,ok,
+TextDisplay.column=,2,ok,
+TextDisplay.column=,3,ok,
+TextDisplay.column=,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare string and number [TextDisplay.ms line 395]
+TextDisplay.column=,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare list and number [TextDisplay.ms line 395]
+TextDisplay.column=,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare map and number [TextDisplay.ms line 395]
+TextDisplay.column=,7,ok,
+TextDisplay.fill,0,error,Runtime Error: Can't index into null [TextDisplay.ms line 258]
+TextDisplay.fill,1,error,Runtime Error: Can't index into null [TextDisplay.ms line 258]
+TextDisplay.fill,2,error,Runtime Error: Can't index into null [TextDisplay.ms line 258]
+TextDisplay.fill,3,error,Runtime Error: Can't index into null [TextDisplay.ms line 258]
+TextDisplay.fill,4,error,Runtime Error: Can't index into null [TextDisplay.ms line 258]
+TextDisplay.fill,5,error,Runtime Error: Can't index into null [TextDisplay.ms line 258]
+TextDisplay.fill,6,error,Runtime Error: Can't index into null [TextDisplay.ms line 258]
+TextDisplay.fill,7,error,Runtime Error: Can't index into null [TextDisplay.ms line 258]
+TextDisplay.fillRow,0,error,Runtime Error: Can't index into null [TextDisplay.ms line 258]
+TextDisplay.fillRow,1,ok,
+TextDisplay.fillRow,2,ok,
+TextDisplay.fillRow,3,ok,
+TextDisplay.fillRow,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [TextDisplay.ms line 257]
+TextDisplay.fillRow,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and list [TextDisplay.ms line 257]
+TextDisplay.fillRow,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [TextDisplay.ms line 257]
+TextDisplay.fillRow,7,error,Runtime Error: Can't index into null [TextDisplay.ms line 258]
+TextDisplay.print,0,error,Runtime Error: Can't index into null [TextDisplay.ms line 378]
+TextDisplay.print,1,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.print,2,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.print,3,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.print,4,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.print,5,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.print,6,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.print,7,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.put,0,error,Runtime Error: Can't index into null [TextDisplay.ms line 314]
+TextDisplay.put,1,error,Runtime Error: Key Not Found: 'code' not found in map [TextDisplay.ms line 314]
+TextDisplay.put,2,error,Runtime Error: Key Not Found: 'code' not found in map [TextDisplay.ms line 314]
+TextDisplay.put,3,error,Runtime Error: Key Not Found: 'code' not found in map [TextDisplay.ms line 314]
+TextDisplay.put,4,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.put,5,error,Runtime Error: Key Not Found: 'code' not found in map [TextDisplay.ms line 314]
+TextDisplay.put,6,error,Runtime Error: Key Not Found: 'code' not found in map [TextDisplay.ms line 314]
+TextDisplay.put,7,error,Runtime Error: Key Not Found: 'code' not found in map [TextDisplay.ms line 314]
+TextDisplay.row=,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare null and number [TextDisplay.ms line 409]
+TextDisplay.row=,1,ok,
+TextDisplay.row=,2,ok,
+TextDisplay.row=,3,ok,
+TextDisplay.row=,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare string and number [TextDisplay.ms line 409]
+TextDisplay.row=,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare list and number [TextDisplay.ms line 409]
+TextDisplay.row=,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare map and number [TextDisplay.ms line 409]
+TextDisplay.row=,7,ok,
+TextDisplay.setCell,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [TextDisplay.ms line 162]
+TextDisplay.setCell,1,ok,
+TextDisplay.setCell,2,ok,
+TextDisplay.setCell,3,ok,
+TextDisplay.setCell,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [TextDisplay.ms line 162]
+TextDisplay.setCell,5,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.setCell,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [TextDisplay.ms line 162]
+TextDisplay.setCell,7,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.setCellBackColor,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [TextDisplay.ms line 162]
+TextDisplay.setCellBackColor,1,ok,
+TextDisplay.setCellBackColor,2,ok,
+TextDisplay.setCellBackColor,3,ok,
+TextDisplay.setCellBackColor,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [TextDisplay.ms line 162]
+TextDisplay.setCellBackColor,5,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.setCellBackColor,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [TextDisplay.ms line 162]
+TextDisplay.setCellBackColor,7,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.setCellColor,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [TextDisplay.ms line 162]
+TextDisplay.setCellColor,1,ok,
+TextDisplay.setCellColor,2,ok,
+TextDisplay.setCellColor,3,ok,
+TextDisplay.setCellColor,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [TextDisplay.ms line 162]
+TextDisplay.setCellColor,5,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.setCellColor,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [TextDisplay.ms line 162]
+TextDisplay.setCellColor,7,error,Runtime Error: Can't index into null [TextDisplay.ms line 163]
+TextDisplay.setSize,0,ok,
+TextDisplay.setSize,1,ok,
+TextDisplay.setSize,2,TIMEOUT,
+TextDisplay.setSize,3,ok,
+TextDisplay.setSize,4,ok,
+TextDisplay.setSize,5,ok,
+TextDisplay.setSize,6,ok,
+TextDisplay.setSize,7,ok,
+TileDisplay.cell,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [TileDisplay.ms line 110]
+TileDisplay.cell,1,ok,
+TileDisplay.cell,2,ok,
+TileDisplay.cell,3,ok,
+TileDisplay.cell,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [TileDisplay.ms line 110]
+TileDisplay.cell,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and list [TileDisplay.ms line 110]
+TileDisplay.cell,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [TileDisplay.ms line 110]
+TileDisplay.cell,7,ok,
+TileDisplay.cellTint,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [TileDisplay.ms line 131]
+TileDisplay.cellTint,1,ok,
+TileDisplay.cellTint,2,ok,
+TileDisplay.cellTint,3,ok,
+TileDisplay.cellTint,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [TileDisplay.ms line 131]
+TileDisplay.cellTint,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and list [TileDisplay.ms line 131]
+TileDisplay.cellTint,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [TileDisplay.ms line 131]
+TileDisplay.cellTint,7,ok,
+TileDisplay.cellTransform,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [TileDisplay.ms line 152]
+TileDisplay.cellTransform,1,ok,
+TileDisplay.cellTransform,2,ok,
+TileDisplay.cellTransform,3,ok,
+TileDisplay.cellTransform,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [TileDisplay.ms line 152]
+TileDisplay.cellTransform,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and list [TileDisplay.ms line 152]
+TileDisplay.cellTransform,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [TileDisplay.ms line 152]
+TileDisplay.cellTransform,7,ok,
+TileDisplay.extent=,0,ok,
+TileDisplay.extent=,1,ok,
+TileDisplay.extent=,2,TIMEOUT,
+TileDisplay.extent=,3,ok,
+TileDisplay.extent=,4,ok,
+TileDisplay.extent=,5,ok,
+TileDisplay.extent=,6,ok,
+TileDisplay.extent=,7,ok,
+TileDisplay.setCell,0,ok,
+TileDisplay.setCell,1,error,Runtime Error: Can't index into null [TileDisplay.ms line 117]
+TileDisplay.setCell,2,error,Runtime Error: Can't index into null [TileDisplay.ms line 117]
+TileDisplay.setCell,3,error,Runtime Error: Can't index into null [TileDisplay.ms line 117]
+TileDisplay.setCell,4,error,Runtime Error: Can't index into null [TileDisplay.ms line 123]
+TileDisplay.setCell,5,error,Runtime Error: Can't index into null [TileDisplay.ms line 123]
+TileDisplay.setCell,6,error,Runtime Error: Can't index into null [TileDisplay.ms line 123]
+TileDisplay.setCell,7,error,Runtime Error: Can't index into null [TileDisplay.ms line 117]
+TileDisplay.setCellTint,0,ok,
+TileDisplay.setCellTint,1,error,Runtime Error: Can't index into null [TileDisplay.ms line 138]
+TileDisplay.setCellTint,2,error,Runtime Error: Can't index into null [TileDisplay.ms line 138]
+TileDisplay.setCellTint,3,error,Runtime Error: Can't index into null [TileDisplay.ms line 138]
+TileDisplay.setCellTint,4,error,Runtime Error: Can't index into null [TileDisplay.ms line 144]
+TileDisplay.setCellTint,5,error,Runtime Error: Can't index into null [TileDisplay.ms line 144]
+TileDisplay.setCellTint,6,error,Runtime Error: Can't index into null [TileDisplay.ms line 144]
+TileDisplay.setCellTint,7,error,Runtime Error: Can't index into null [TileDisplay.ms line 138]
+TileDisplay.setCellTransform,0,ok,
+TileDisplay.setCellTransform,1,error,Runtime Error: Can't index into null [TileDisplay.ms line 159]
+TileDisplay.setCellTransform,2,error,Runtime Error: Can't index into null [TileDisplay.ms line 159]
+TileDisplay.setCellTransform,3,error,Runtime Error: Can't index into null [TileDisplay.ms line 159]
+TileDisplay.setCellTransform,4,error,Runtime Error: Can't index into null [TileDisplay.ms line 165]
+TileDisplay.setCellTransform,5,error,Runtime Error: Can't index into null [TileDisplay.ms line 165]
+TileDisplay.setCellTransform,6,error,Runtime Error: Can't index into null [TileDisplay.ms line 165]
+TileDisplay.setCellTransform,7,error,Runtime Error: Can't index into null [TileDisplay.ms line 159]
+color.fromList,0,ok,
+color.fromList,1,ok,
+color.fromList,2,ok,
+color.fromList,3,ok,
+color.fromList,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [color.ms line 83]
+color.fromList,5,ok,
+color.fromList,6,error,Runtime Error: Key Not Found: 'r' not found in map [color.ms line 79]
+color.fromList,7,ok,
+color.hexDigitVal,0,error,Runtime Error: Can't index into null [color.ms line 27]
+color.hexDigitVal,1,error,Runtime Error: Key Not Found: 'code' not found in map [color.ms line 27]
+color.hexDigitVal,2,error,Runtime Error: Key Not Found: 'code' not found in map [color.ms line 27]
+color.hexDigitVal,3,error,Runtime Error: Key Not Found: 'code' not found in map [color.ms line 27]
+color.hexDigitVal,4,ok,
+color.hexDigitVal,5,error,Runtime Error: Key Not Found: 'code' not found in map [color.ms line 27]
+color.hexDigitVal,6,error,Runtime Error: Key Not Found: 'code' not found in map [color.ms line 27]
+color.hexDigitVal,7,error,Runtime Error: Key Not Found: 'code' not found in map [color.ms line 27]
+color.rgb,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [color.ms line 100]
+color.rgb,1,ok,
+color.rgb,2,ok,
+color.rgb,3,ok,
+color.rgb,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [color.ms line 100]
+color.rgb,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and list [color.ms line 100]
+color.rgb,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [color.ms line 100]
+color.rgb,7,ok,
+color.rgba,0,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and null [color.ms line 91]
+color.rgba,1,ok,
+color.rgba,2,ok,
+color.rgba,3,ok,
+color.rgba,4,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and string [color.ms line 91]
+color.rgba,5,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and list [color.ms line 91]
+color.rgba,6,error,Runtime Error: Error used in conditional: error: Type error: can't compare number and map [color.ms line 91]
+color.rgba,7,ok,
+key.axis,0,error,Runtime Error: Can't slice null [key.ms line 311]
+key.axis,1,error,Runtime Error: Can't slice -1 [key.ms line 311]
+key.axis,2,error,Runtime Error: Can't slice 1000000000 [key.ms line 311]
+key.axis,3,error,Runtime Error: Can't slice -1000000000 [key.ms line 311]
+key.axis,4,ok,
+key.axis,5,ok,
+key.axis,6,error,Runtime Error: Can't slice {"a": 1} [key.ms line 311]
+key.axis,7,error,Runtime Error: Can't slice 0 [key.ms line 311]
+key.pressed,0,error,Runtime Error: Can't slice null [key.ms line 222]
+key.pressed,1,error,Runtime Error: Can't slice -1 [key.ms line 222]
+key.pressed,2,error,Runtime Error: Can't slice 1000000000 [key.ms line 222]
+key.pressed,3,error,Runtime Error: Can't slice -1000000000 [key.ms line 222]
+key.pressed,4,error,
+key.pressed,5,error,
+key.pressed,6,error,Runtime Error: Can't slice {"a": 1} [key.ms line 222]
+key.pressed,7,error,Runtime Error: Can't slice 0 [key.ms line 222]
+key.to,0,error,Runtime Error: Can't slice null [key.ms line 222]
+key.to,1,error,Runtime Error: Can't slice -1 [key.ms line 222]
+key.to,2,error,Runtime Error: Can't slice 1000000000 [key.ms line 222]
+key.to,3,error,Runtime Error: Can't slice -1000000000 [key.ms line 222]
+key.to,4,error,
+key.to,5,error,
+key.to,6,error,Runtime Error: Can't slice {"a": 1} [key.ms line 222]
+key.to,7,error,Runtime Error: Can't slice 0 [key.ms line 222]
