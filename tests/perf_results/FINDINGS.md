@@ -966,3 +966,21 @@ Candidate fixes (not implemented), ordered by confidence:
 3. Use `image._tex` directly when set, skipping the `Image.texture` call.
 4. Cache `image.width/height` lookups when `srcRect` is null.
 Expected total gain roughly 15-25% of render time; the draw-call batching tested in BIND-03 would not help.
+
+### PERF-SPR-DRAW: Sprite.draw fast path (screen height cached per render, texture read directly)
+
+Implemented fixes 2 and 3 from the scenario-1 profile: `SpriteDisplay.render` caches `Display.screenHeight` in
+`Sprite._frameHeight` for the duration of the render (null again afterwards, so a lone `sprite.draw` still reads
+it live), and `Sprite.draw` uses `image._tex` directly, calling `image.texture` only when it is not yet built.
+Fix 1 (skip the repeated warp check) and fix 4 were not done: there is no safe way to tell a possibly-overridden
+`draw` that the check already happened, and the width/height lookups are already single property reads.
+
+Render ms/frame, 3 runs each, release host:
+| Workload | Before | After |
+|---|---|---|
+| scn1 balls, 1000 | 5.66 | 4.88 |
+| scn1 balls, 5000 | 26.7 | 22.6 (-15%) |
+| spr_plain 5000 (perf_sprites) | 27.7 | 20.6 (-25%) |
+| spr_10images 5000 | n/a | 25.0 |
+
+qa_sprite_render, qa_sprite_edges, qa_display_edges, qa_display_install, qa_bounds_overlaps all pass.
