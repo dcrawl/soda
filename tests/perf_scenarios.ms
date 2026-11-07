@@ -10,6 +10,7 @@ runIdx = "1"
 if shellArgs.len > 1 then runIdx = shellArgs[1]
 only = ""
 if shellArgs.len > 2 then only = shellArgs[2]
+if shellArgs.len > 3 and shellArgs[3] == "auto" then PixelDisplay.autoBatch = true	// whole-run opt-in (scenarios 3 and 5 use unbatched px calls)
 want = function(n); return only == "" or only == str(n); end function
 
 nFrames = 600

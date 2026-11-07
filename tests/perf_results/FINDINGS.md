@@ -1158,3 +1158,19 @@ Files: `scn{2,3,5}_profile.{txt,speedscope.json,folded}` and `xctrace/scn{2,3,5}
 1. Across all four scenarios the VM's refcounting/copy overhead is 14-24% and map lookup + hashing another 12-17%; this is the common ceiling and it is being handled upstream (miniscript2#30).
 2. The remaining Soda-side hot spots are all "one DrawTexturePro per cell/glyph/sprite with fresh lists": text (`drawChar`), tiles (`TileDisplay.render`) and sprites. All three have already had their first round of fixes (text: PR #28; tiles: PR #29 culling + inline geometry; sprites: #32, #37), and these profiles are of the code after those fixes, so they show diminishing returns. The only big untaken Soda-side lever is S-T4 (text dirty flag / offscreen cache), which needs an API decision from Joe. A tile-level equivalent has not been investigated.
 3. Re-run scn5 with `PixelDisplay.autoBatch = true` to quantify the 12.6% EndBlendMode cost.
+
+### PixelDisplay.autoBatch on scenarios 3 and 5 (PR #34's opt-in flag)
+
+`perf_scenarios.ms <run> <scenario> auto` sets `PixelDisplay.autoBatch = true` for the whole run. Release host, 3 runs each (ms/frame):
+
+| Scenario | user | endDrawing | total | change |
+|---|---|---|---|---|
+| scn3 platformer, off | 0.376 | 0.58 | 2.80 | |
+| scn3 platformer, auto | 0.250 | 0.55 | 2.68 | -4% |
+| scn5 everything, off | 2.04 | 1.22 | 7.91 | |
+| scn5 everything, auto | 0.91 | 0.78 | 6.37 | **-19%** |
+
+Render time is unchanged (4.45 vs 4.51 in scn5, 1.71 vs 1.75 in scn3): the saving is entirely in the `user` phase (the per-call
+`BeginBlendMode`/`EndBlendMode` brackets) plus a smaller `endDrawing` time. Runs are stable to ~1%. `qa_pixelDisplay_autobatch.ms` passes with
+the flag on and off. So autoBatch does what #34 promises on a mixed scene, not just the paint-only case (18x there); the gain scales with how many unbatched
+pixel-display calls a frame makes (about 21 in scn5, 3 in scn3). The 12.6% `EndBlendMode` share from the scenario-5 profile shows up as the 1.1 ms user drop.
