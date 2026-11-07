@@ -52,6 +52,7 @@ perf.frames = function(bench, param, frameFn, nFrames=300, warmup=30)
 		t0 = time
 		frameFn
 		t1 = time
+		PixelDisplay._closeOpen
 		raylib.BeginDrawing
 		Display.RenderAll
 		t2 = time

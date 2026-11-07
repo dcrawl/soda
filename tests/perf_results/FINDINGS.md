@@ -717,3 +717,15 @@ Findings:
 - Not done: 10-minute soak (§6), profiles for scenarios 1–3, 5 (only paint profiled; `scn4_profile.*`).
 
 Possible follow-up: make unbatched PixelDisplay primitives cheaper automatically (e.g. defer EndBlendMode/EndTextureMode to render time), so paint-style programs need no explicit batching.
+
+### Auto-batching prototype (branch `perf/autobatch`, commit on top of Fixes2)
+Unbatched PixelDisplay calls now leave the BeginTextureMode/BlendMode bracket open (Soda host only) and `PixelDisplay._closeOpen` closes it before anything else touches the GPU: another display's draw or `beginBatch`, `pixel`/`getImage` readbacks, `clear` resize, `_ensureTex`, `render`, `soda.update` (before `BeginDrawing`), ttFonts, and texture frees in `Image`/`ScreenFont`.
+
+| Scenario (user ms/frame) | before | after |
+|---|---|---|
+| 4 paint, unbatched | 18.3 | 1.04 (18×) |
+| 3 platformer (HUD print) | 0.37 | 0.25 |
+| 5 everything | 2.0 | 0.9 |
+| others | unchanged | unchanged |
+
+Hazard: any code that uses raw raylib framebuffer/texture calls (`BeginTextureMode`, `UnloadTexture` of a texture a PixelDisplay just drew, its own `BeginDrawing`) must call `PixelDisplay._closeOpen` first, else its output lands in the display or draws are lost. Three existing qa tests that do this needed a one-line `_closeOpen`. All qa_* tests pass, plus new `qa_pixelDisplay_autobatch.ms`.
