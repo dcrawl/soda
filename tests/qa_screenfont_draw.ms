@@ -11,6 +11,7 @@ w = font.charWidth; h = font.charHeight
 rt = rl.LoadRenderTexture(w * 2, h)
 
 drawAndRead = function(ch, fore, back, bg)
+	PixelDisplay._closeOpen  // (raw BeginTextureMode below needs no auto-batched bracket open)
 	rl.BeginTextureMode rt
 	rl.ClearBackground bg
 	font.drawChar ch.code, 0, 0, fore, back
