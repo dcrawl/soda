@@ -1084,3 +1084,42 @@ End to end (release host, 2 runs each): scn2 text adventure 3.75/3.85 -> 3.94/3.
 Decision: do not propose to Joe; the remaining 226 ns is the setter lookup miss up the chain, a different (bigger) change.
 The real hot cost stays in S-V1 (refcount copies on every lookup, ~24% of native time), which needs a C# `ref readonly`-style
 change plus transpiler support and is a larger conversation for Joe.
+
+### S-V1 prototype: read paths borrow the GCMap/GCList instead of copying it — 5-12% faster Soda frames
+
+Prototype (scratch branch of miniscript2, reverted; diff kept as `perf_results/gcmap_constref.patch`, 111 lines): add
+`GetRef(idx)` returning `GCMap&` / `GCList&` to `GCMapSet`/`GCListSet` (generated/GCSet.g.h), and use it in the read-only paths:
+`Value::MapGet`, `TryGet`, `Lookup`, `LookupWithOrigin`, `HasKey` (cpp/core/value_map.cpp), `Value::ListGet`
+(value_list.cpp) and `VMStorage::ChainHasSetter` (generated/VM.g.cpp). Mutating paths (`MapSet`, `Push`, ...) are unchanged.
+No other code was touched. Built as a separate release host (`build-scratch`) and compared with the unmodified release host.
+
+VM micro-benchmarks (ns/op, `perf_vm.ms`):
+| Op | before | after |
+|---|---|---|
+| field read, own map | 32 | 35 |
+| field read, 1 / 2 / 3 / 5 isa levels | 66 / 99 / 154 / 215 | 60 / 81 / 102 / 175 |
+| method call, depth 1 / 3 / 5 | 191 / 271 / 324 | 182 / 221 / 298 |
+| `list[2]` | 44 | 31 (-29%) |
+| assign tiny key, setter class | 134 | 98 |
+| `map["a"]` | 26 | 32 (slower, unexplained; this path is not one I changed) |
+
+Soda scenarios (total ms/frame):
+| Scenario | before | after |
+|---|---|---|
+| scn1 balls 1000 | 7.45 | 6.73 (-10%) |
+| scn1 balls 5000 | 32.5 | 28.6 (-12%) |
+| scn2 text adventure | 3.79 | 3.54 (-7%) |
+| scn3 platformer | 2.80 | 2.67 (-5%) |
+| scn5 everything | 8.07 | 7.27 (-10%) |
+
+Correctness: raylib-miniscript `interp_tests` (133 checks) and `handle_tests` (32 checks) pass; all 40-odd `tests/qa_*.ms` pass on the
+prototype host. NOT run: miniscript2's own test suite and `tools/benchmark.sh`.
+
+Caveats / why this is not a finished fix:
+- The gain is smaller than the 24% refcount share suggested: only the map/list `Get` copies were removed. Other copies remain
+  (`Context` copies, `FuncDef` shared_ptr copies in call setup, GCMap copies inside `LookupMember`'s callers).
+- It is a hack on `generated/`. The real fix has to be written in C# (`cs/GCSet.cs` etc.) in a form the transpiler can express as a
+  reference return; I did not check whether the transpiler supports `ref`/`ref readonly`. That needs Joe's input.
+- A reference into `_items` is invalidated if the list grows. The changed paths allocate nothing, but a C# version must keep that invariant.
+- `map["a"]` got slower (26 -> 32 ns) for a reason I did not find; worth a look before proposing.
+Recommended next step: open a miniscript2 issue with the patch and these numbers, and let Joe decide how to express it in C#.
