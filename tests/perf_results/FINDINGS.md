@@ -775,3 +775,6 @@ Binding cost per frame at the §5 scenario call counts (calls × MiniScript ns):
 Negligible: key/mouse queries (0.25 µs), rlgl immediate calls (0.28 µs each), DrawPixel/DrawRectangle/DrawLineEx with list or string args (≤0.7 µs), SetShaderValue.
 
 Native benchmark: `raylib-miniscript/tools/bench_native.c` + `bench_native` CMake target (EXCLUDE_FROM_ALL; branch `perf/bench-native`, not pushed).
+
+### BIND-01 prototype: `Sprite.tint` defaults to `[255,255,255,255]` (branch `perf/tint-default`)
+Plain untinted sprites, render ms/frame (mean of 2 runs): 1000 sprites 5.63 → 5.32 (−5.5%); 5000 sprites 26.0 → 24.6 (−5.4%). Explicit `tint = raylib.WHITE` (map) stays at 5.56 / 25.9, confirming the saving is the map→list conversion (~0.3 µs/sprite, a bit more than the 175 ns microbenchmark predicted). qa_sprite_render/edges/bounds pass.
