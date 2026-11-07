@@ -854,3 +854,30 @@ Soda-level workaround is not clean (periodic `gc.collect true` cuts it by ~65%).
 **Fix belongs in miniscript2:** (a) have MaybeCollect do an occasional full collection,
 (b) free/shrink the table after a full sweep, and/or (c) don't intern strings created by
 concatenation (only literals), or intern only on hash-key use.
+
+### §6 completion: resize, fullscreen, mode switches, sprite churn, mixed-argument hostile inputs
+Scripts: `perf_resize.ms` (modes resize | fullscreen | modes | rendersprites),
+`run_hostile_mixed.sh` (one hostile argument position, others = 2).
+- **Resize** (SetWindowSize every 5 frames across 7 sizes incl. 320x240 and 1920x1080, 600 frames,
+  2000 rotating sprites + tiles + text + pixel drawing): no crash, RenderTexture count steady (8),
+  hostMemory steady (22-26 MB, no trend).
+- **Fullscreen toggle** every 30 frames, 600 frames: no crash, same steady counts.
+- **Display.mode switches** (off / solid / text / pixel / sprite / tile) while rendering,
+  600 frames: no crash, counts flat, hostMemory flat (~19 MB).
+- **Rendered sprite churn** (200 fresh Sprites per frame, a fresh Image+texture for each on
+  every 10th frame, 3000 frames): resource counts and hostMemory flat (~20.5 -> 21 MB).
+- **Mixed-argument hostile inputs** (50 methods with >=2 params, each position x 8 bad values,
+  1152 runs): 
+
+  **[BUG-HOST-01] `Image.create` with a huge size crashes the host** (SIGSEGV/SIGBUS):
+  `Image.create(1e9, 2)`, `Image.create(2, 1e9)`, `Image.create(1e5, 1e5)` (~40 GB). Presumably
+  `GenImageColor`'s allocation fails and the NULL result is written to / used. Not a MiniScript
+  error, so a script cannot catch it. Candidate fixes: validate `width*height` in
+  `Image.create` (lib), and/or make the raylib-miniscript `GenImageColor` binding return null on
+  allocation failure (host). `Image.create(-1, 5)` and `(0, 0)` are accepted silently.
+  Other hangs (only at 1e9): `TextDisplay.setSize` (both args), `Sound.noiseWave` (2nd arg).
+  No other crash: every other combination is `ok` or an ordinary runtime error.
+- **Test-harness caveat:** running two raylib-miniscript processes at the same time can make
+  one SEGV at startup (the first sweep, run next to the soak, showed 248 spurious crashes; the
+  mixed sweep, overlapped by a few resize runs, showed 159, in contiguous blocks of methods).
+  All of them passed when rerun alone. Run the hostile sweeps with nothing else running.

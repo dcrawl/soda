@@ -43,16 +43,24 @@ f = obj[mn]
 n = nparams(@obj[mn])
 if shellArgs.len > 4 then n = val(shellArgs[4])
 v = hostile[vi]
+args = []
+for i in range(0, n - 1); args.push v; end for
+if shellArgs.len > 5 then
+	// mixed mode: only position shellArgs[5] is hostile, the rest are 2
+	for i in range(0, n - 1); args[i] = 2; end for
+	args[val(shellArgs[5])] = v
+	v = args[0]
+end if
 if n == 0 then
 	obj[mn]
 else if n == 1 then
-	obj[mn] v
+	obj[mn] args[0]
 else if n == 2 then
-	obj[mn] v, v
+	obj[mn] args[0], args[1]
 else if n == 3 then
-	obj[mn] v, v, v
+	obj[mn] args[0], args[1], args[2]
 else
-	obj[mn] v, v, v, v
+	obj[mn] args[0], args[1], args[2], args[3]
 end if
 intrinsics.yield
 print "HOSTILE_OK"
