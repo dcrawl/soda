@@ -14,7 +14,7 @@ Environment: macOS, Release host (`raylib-miniscript/build-release`), clang; pro
 
 | Area | Problem | Result | Where |
 |---|---|---|---|
-| Text | `ScreenFont.drawChar` did a shader bracket per glyph; blank cells walked anyway (S-T1, S-T2) | full 68x26 screen 415-435 ms to ~12 ms/frame (about 35x) | PR #28 |
+| Text | `ScreenFont.drawChar` did a shader bracket per glyph; blank cells walked anyway (S-T1, S-T2) | full 68x26 screen 415-435 ms/frame before; about 35x faster per PR #28 | PR #28 |
 | Tiles | every cell iterated and drawn, visible or not (S-L1, S-L2) | culling plus inline geometry; cost now scales with visible cells | PR #29 |
 | Sound | synthesis loop (S-A1) | about 2x faster | PR #30 |
 | Sprites | warped (quad) sprites 40x the cost of plain ones; `Bounds.overlaps` (S-S1..S3) | warped ~6x, overlaps ~4x | PR #32 |
@@ -37,7 +37,7 @@ All PRs are open and waiting on Joe. #34 sits on #27 and #37 on #32, so each nee
 | S-V3 isa depth | about 33-45 ns per inheritance level | note only |
 | S-V4 tiny-string re-hash | no penalty measured | low priority |
 | S-T4 text dirty flag / offscreen cache | an idle `TextDisplay.render` costs ~0.5 ms/frame, but cells are public maps mutated directly, so a cache needs an API decision | left for Joe |
-| `tint` default (BIND-01) | small win, prototyped | not pursued |
+| `tint` default (BIND-01) | prototyped on branch `perf/tint-default`; see FINDINGS | not proposed |
 | Null/wrong-type argument validation across the library | 272 of 1072 hostile calls end in an ordinary MiniScript runtime error, not a crash | skipped on purpose |
 
 ## Filed upstream (miniscript2)
