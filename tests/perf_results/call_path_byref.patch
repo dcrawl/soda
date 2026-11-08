@@ -1,0 +1,253 @@
+diff --git a/generated/FuncDef.g.h b/generated/FuncDef.g.h
+index e547be8..99fb549 100644
+--- a/generated/FuncDef.g.h
++++ b/generated/FuncDef.g.h
+@@ -11,7 +11,7 @@ namespace MiniScript {
+ struct Context;  // forward declaration; defined in VM.g.h
+ struct IntrinsicResult;  // forward declaration
+ typedef std::function<IntrinsicResult(Context, IntrinsicResult)> NativeCallbackDelegate;
+-inline bool IsNull(NativeCallbackDelegate f) { return f == nullptr; }
++inline bool IsNull(const NativeCallbackDelegate& f) { return f == nullptr; }
+ 
+ // DECLARATIONS
+ 
+@@ -102,15 +102,15 @@ struct FuncDef {
+ 
+ 	public: String Name();
+ 	public: void set_Name(String _v);
+-	public: List<UInt32> Code();
++	public: List<UInt32>& Code();
+ 	public: void set_Code(List<UInt32> _v);
+-	public: List<Value> Constants();
++	public: List<Value>& Constants();
+ 	public: void set_Constants(List<Value> _v);
+ 	public: UInt16 MaxRegs(); // how many registers to reserve for this function
+ 	public: void set_MaxRegs(UInt16 _v); // how many registers to reserve for this function
+-	public: List<Value> ParamNames(); // parameter names (as Value strings)
++	public: List<Value>& ParamNames(); // parameter names (as Value strings)
+ 	public: void set_ParamNames(List<Value> _v); // parameter names (as Value strings)
+-	public: List<Value> ParamDefaults(); // default values for parameters
++	public: List<Value>& ParamDefaults(); // default values for parameters
+ 	public: void set_ParamDefaults(List<Value> _v); // default values for parameters
+ 	public: Int16 SelfReg(); // register for 'self' (-1 if not used)
+ 	public: void set_SelfReg(Int16 _v); // register for 'self' (-1 if not used)
+@@ -122,9 +122,9 @@ struct FuncDef {
+ 	public: void set_SourceLoc(String _v);
+ 	public: String FileName();
+ 	public: void set_FileName(String _v);
+-	public: List<Value> GlobalNames();
++	public: List<Value>& GlobalNames();
+ 	public: void set_GlobalNames(List<Value> _v);
+-	public: List<Int32> GlobalSlots();
++	public: List<Int32>& GlobalSlots();
+ 	public: void set_GlobalSlots(List<Int32> _v);
+ 	public: Int32 GlobalCacheId();
+ 	public: void set_GlobalCacheId(Int32 _v);
+@@ -160,7 +160,7 @@ struct FuncDef {
+ 	// Return the source line number for the instruction at the given PC index.
+ 	// Returns 0 if no line information is available.
+ 	public: inline Int32 GetLineNumber(Int32 pc);
+-	public: NativeCallbackDelegate NativeCallback();
++	public: NativeCallbackDelegate& NativeCallback();
+ 	public: void set_NativeCallback(NativeCallbackDelegate _v);
+ 	public: UInt32 AcceptsErrorMask();
+ 	public: void set_AcceptsErrorMask(UInt32 _v);
+@@ -196,15 +196,15 @@ struct FuncDef {
+ inline FuncDefStorage* FuncDef::get() const { return static_cast<FuncDefStorage*>(storage.get()); }
+ inline String FuncDef::Name() { return get()->Name; }
+ inline void FuncDef::set_Name(String _v) { get()->Name = _v; }
+-inline List<UInt32> FuncDef::Code() { return get()->Code; }
++inline List<UInt32>& FuncDef::Code() { return get()->Code; }
+ inline void FuncDef::set_Code(List<UInt32> _v) { get()->Code = _v; }
+-inline List<Value> FuncDef::Constants() { return get()->Constants; }
++inline List<Value>& FuncDef::Constants() { return get()->Constants; }
+ inline void FuncDef::set_Constants(List<Value> _v) { get()->Constants = _v; }
+ inline UInt16 FuncDef::MaxRegs() { return get()->MaxRegs; } // how many registers to reserve for this function
+ inline void FuncDef::set_MaxRegs(UInt16 _v) { get()->MaxRegs = _v; } // how many registers to reserve for this function
+-inline List<Value> FuncDef::ParamNames() { return get()->ParamNames; } // parameter names (as Value strings)
++inline List<Value>& FuncDef::ParamNames() { return get()->ParamNames; } // parameter names (as Value strings)
+ inline void FuncDef::set_ParamNames(List<Value> _v) { get()->ParamNames = _v; } // parameter names (as Value strings)
+-inline List<Value> FuncDef::ParamDefaults() { return get()->ParamDefaults; } // default values for parameters
++inline List<Value>& FuncDef::ParamDefaults() { return get()->ParamDefaults; } // default values for parameters
+ inline void FuncDef::set_ParamDefaults(List<Value> _v) { get()->ParamDefaults = _v; } // default values for parameters
+ inline Int16 FuncDef::SelfReg() { return get()->SelfReg; } // register for 'self' (-1 if not used)
+ inline void FuncDef::set_SelfReg(Int16 _v) { get()->SelfReg = _v; } // register for 'self' (-1 if not used)
+@@ -216,9 +216,9 @@ inline String FuncDef::SourceLoc() { return get()->SourceLoc; }
+ inline void FuncDef::set_SourceLoc(String _v) { get()->SourceLoc = _v; }
+ inline String FuncDef::FileName() { return get()->FileName; }
+ inline void FuncDef::set_FileName(String _v) { get()->FileName = _v; }
+-inline List<Value> FuncDef::GlobalNames() { return get()->GlobalNames; }
++inline List<Value>& FuncDef::GlobalNames() { return get()->GlobalNames; }
+ inline void FuncDef::set_GlobalNames(List<Value> _v) { get()->GlobalNames = _v; }
+-inline List<Int32> FuncDef::GlobalSlots() { return get()->GlobalSlots; }
++inline List<Int32>& FuncDef::GlobalSlots() { return get()->GlobalSlots; }
+ inline void FuncDef::set_GlobalSlots(List<Int32> _v) { get()->GlobalSlots = _v; }
+ inline Int32 FuncDef::GlobalCacheId() { return get()->GlobalCacheId; }
+ inline void FuncDef::set_GlobalCacheId(Int32 _v) { get()->GlobalCacheId = _v; }
+@@ -229,7 +229,7 @@ inline List<Int32> FuncDef::_lineRLELine() { return get()->_lineRLELine; }
+ inline void FuncDef::set__lineRLELine(List<Int32> _v) { get()->_lineRLELine = _v; }
+ inline void FuncDef::AddInstruction(UInt32 instruction,Int32 lineNumber) { return get()->AddInstruction(instruction, lineNumber); }
+ inline Int32 FuncDef::GetLineNumber(Int32 pc) { return get()->GetLineNumber(pc); }
+-inline NativeCallbackDelegate FuncDef::NativeCallback() { return get()->NativeCallback; }
++inline NativeCallbackDelegate& FuncDef::NativeCallback() { return get()->NativeCallback; }
+ inline void FuncDef::set_NativeCallback(NativeCallbackDelegate _v) { get()->NativeCallback = _v; }
+ inline UInt32 FuncDef::AcceptsErrorMask() { return get()->AcceptsErrorMask; }
+ inline void FuncDef::set_AcceptsErrorMask(UInt32 _v) { get()->AcceptsErrorMask = _v; }
+diff --git a/generated/VM.g.cpp b/generated/VM.g.cpp
+index f9841fa..90fcaea 100644
+--- a/generated/VM.g.cpp
++++ b/generated/VM.g.cpp
+@@ -586,13 +586,13 @@ void VMStorage::CollectFunctions(FuncDef func,List<FuncDef> outList) {
+ 		if (consts[i].IsFuncRef()) CollectFunctions(consts[i].FunctionDef(), outList);
+ 	}
+ }
+-Int32 VMStorage::SelfParamOffset(FuncDef callee) {
++Int32 VMStorage::SelfParamOffset(FuncDef& callee) {
+ 	if (hasPendingContext && callee.ParamNames().Count() > 0 && callee.ParamNames()[0] == Value::selfString) {
+ 		return 1;
+ 	}
+ 	return 0;
+ }
+-Int32 VMStorage::ProcessArguments(Int32 argCount,Int32 selfParam,Int32 startPC,Int32 callerBase,Int32 calleeBase,FuncDef callee,List<UInt32> code) {
++Int32 VMStorage::ProcessArguments(Int32 argCount,Int32 selfParam,Int32 startPC,Int32 callerBase,Int32 calleeBase,FuncDef& callee,const List<UInt32>& code) {
+ 	Int32 paramCount = callee.ParamNames().Count();
+ 
+ 	// Step 1: Validate argument count (selfParam accounts for the injected self)
+@@ -635,7 +635,7 @@ Int32 VMStorage::ProcessArguments(Int32 argCount,Int32 selfParam,Int32 startPC,I
+ 
+ 	return currentPC + 1; // Return PC after the CALL instruction
+ }
+-void VMStorage::ApplyPendingContext(Int32 calleeBase,FuncDef callee) {
++void VMStorage::ApplyPendingContext(Int32 calleeBase,FuncDef& callee) {
+ 	if (!hasPendingContext) return;
+ 	if (callee.SelfReg() >= 0) {
+ 		stack[calleeBase + callee.SelfReg()] = pendingSelf;
+@@ -649,7 +649,7 @@ void VMStorage::ApplyPendingContext(Int32 calleeBase,FuncDef callee) {
+ 	pendingSuper = Value::Null;
+ 	hasPendingContext = Boolean(false);
+ }
+-void VMStorage::SetupCallFrame(Int32 argCount,Int32 selfParam,Int32 calleeBase,FuncDef callee) {
++void VMStorage::SetupCallFrame(Int32 argCount,Int32 selfParam,Int32 calleeBase,FuncDef& callee) {
+ 	Int32 paramCount = callee.ParamNames().Count();
+ 
+ 	// Step 4: Set up remaining parameters with default values
+@@ -720,7 +720,7 @@ Int32 VMStorage::AutoInvokeFuncRef(Value funcRefVal,Int32 resultReg,Int32 return
+ 	*calleeOut = callee;
+ 	return 0;
+ }
+-Value VMStorage::RefusedErrorArg(FuncDef callee,Int32 calleeBase) {
++Value VMStorage::RefusedErrorArg(FuncDef& callee,Int32 calleeBase) {
+ 	Int32 count = callee.ParamNames().Count();
+ 	for (Int32 i = 0; i < count; i++) {
+ 		Value arg = stack[calleeBase + 1 + i];
+@@ -730,7 +730,7 @@ Value VMStorage::RefusedErrorArg(FuncDef callee,Int32 calleeBase) {
+ 	}
+ 	return Value::Null;
+ }
+-bool VMStorage::InvokeNativeCallback(NativeCallbackDelegate callback,FuncDef callee,Int32 calleeBase,Int32 argCount,IntrinsicResult partialResult,Int32 absoluteResultIndex) {
++bool VMStorage::InvokeNativeCallback(const NativeCallbackDelegate& callback,FuncDef& callee,Int32 calleeBase,Int32 argCount,const IntrinsicResult& partialResult,Int32 absoluteResultIndex) {
+ 	if (partialResult.done) {
+ 		// A first call, not a continuation: refuse any unwanted error argument.
+ 		Value refused = RefusedErrorArg(callee, calleeBase);
+diff --git a/generated/VM.g.h b/generated/VM.g.h
+index eabaeb2..4731b0b 100644
+--- a/generated/VM.g.h
++++ b/generated/VM.g.h
+@@ -344,19 +344,19 @@ class VMStorage : public std::enable_shared_from_this<VMStorage> {
+ 	// Returns the PC after the CALL instruction, or -1 on error.
+ 	// Check whether pendingSelf should be injected as the first parameter.
+ 	// Returns 1 if the callee's first param is named "self" and we have pending context, else 0.
+-	private: Int32 SelfParamOffset(FuncDef callee);
++	private: Int32 SelfParamOffset(FuncDef& callee);
+ 
+-	private: Int32 ProcessArguments(Int32 argCount, Int32 selfParam, Int32 startPC, Int32 callerBase, Int32 calleeBase, FuncDef callee, List<UInt32> code);
++	private: Int32 ProcessArguments(Int32 argCount, Int32 selfParam, Int32 startPC, Int32 callerBase, Int32 calleeBase, FuncDef& callee, const List<UInt32>& code);
+ 
+ 	// Apply pending self/super context to a callee's frame, if any.
+ 	// Called after SetupCallFrame to populate the callee's self/super registers.
+-	private: void ApplyPendingContext(Int32 calleeBase, FuncDef callee);
++	private: void ApplyPendingContext(Int32 calleeBase, FuncDef& callee);
+ 
+ 	// Helper for call setup (FUNCTION_CALLS.md steps 4-6):
+ 	// Initialize remaining parameters with defaults and clear callee's registers.
+ 	// Note: Parameters start at r1 (r0 is reserved for return value)
+ 	// selfParam is 1 if pendingSelf was injected as the first arg, else 0.
+-	private: void SetupCallFrame(Int32 argCount, Int32 selfParam, Int32 calleeBase, FuncDef callee);
++	private: void SetupCallFrame(Int32 argCount, Int32 selfParam, Int32 calleeBase, FuncDef& callee);
+ 
+ 	// Auto-invoke a zero-arg funcref (used by LOADC and CALLIFREF).
+ 	// Resolves the funcref, then either:
+@@ -373,12 +373,12 @@ class VMStorage : public std::enable_shared_from_this<VMStorage> {
+ 	// the intrinsic does not run at all: the call evaluates to that error, or
+ 	// terminates if the intrinsic affects state.  This returns the first such
+ 	// error among the arguments in place at calleeBase, or null if there is none.
+-	private: Value RefusedErrorArg(FuncDef callee, Int32 calleeBase);
++	private: Value RefusedErrorArg(FuncDef& callee, Int32 calleeBase);
+ 
+ 	// Invoke a native callback and handle the result.  If done, writes the
+ 	// result to stack[absoluteResultIndex] and returns true.  If not done,
+ 	// stores the pending state for re-invocation and returns false.
+-	private: bool InvokeNativeCallback(NativeCallbackDelegate callback, FuncDef callee, Int32 calleeBase, Int32 argCount, IntrinsicResult partialResult, Int32 absoluteResultIndex);
++	private: bool InvokeNativeCallback(const NativeCallbackDelegate& callback, FuncDef& callee, Int32 calleeBase, Int32 argCount, const IntrinsicResult& partialResult, Int32 absoluteResultIndex);
+ 
+ 	public: Value Execute(FuncDef entry);
+ 
+@@ -836,19 +836,19 @@ struct VM {
+ 	// Returns the PC after the CALL instruction, or -1 on error.
+ 	// Check whether pendingSelf should be injected as the first parameter.
+ 	// Returns 1 if the callee's first param is named "self" and we have pending context, else 0.
+-	private: inline Int32 SelfParamOffset(FuncDef callee);
++	private: inline Int32 SelfParamOffset(FuncDef& callee);
+ 
+-	private: inline Int32 ProcessArguments(Int32 argCount, Int32 selfParam, Int32 startPC, Int32 callerBase, Int32 calleeBase, FuncDef callee, List<UInt32> code);
++	private: inline Int32 ProcessArguments(Int32 argCount, Int32 selfParam, Int32 startPC, Int32 callerBase, Int32 calleeBase, FuncDef& callee, const List<UInt32>& code);
+ 
+ 	// Apply pending self/super context to a callee's frame, if any.
+ 	// Called after SetupCallFrame to populate the callee's self/super registers.
+-	private: inline void ApplyPendingContext(Int32 calleeBase, FuncDef callee);
++	private: inline void ApplyPendingContext(Int32 calleeBase, FuncDef& callee);
+ 
+ 	// Helper for call setup (FUNCTION_CALLS.md steps 4-6):
+ 	// Initialize remaining parameters with defaults and clear callee's registers.
+ 	// Note: Parameters start at r1 (r0 is reserved for return value)
+ 	// selfParam is 1 if pendingSelf was injected as the first arg, else 0.
+-	private: inline void SetupCallFrame(Int32 argCount, Int32 selfParam, Int32 calleeBase, FuncDef callee);
++	private: inline void SetupCallFrame(Int32 argCount, Int32 selfParam, Int32 calleeBase, FuncDef& callee);
+ 
+ 	// Auto-invoke a zero-arg funcref (used by LOADC and CALLIFREF).
+ 	// Resolves the funcref, then either:
+@@ -865,12 +865,12 @@ struct VM {
+ 	// the intrinsic does not run at all: the call evaluates to that error, or
+ 	// terminates if the intrinsic affects state.  This returns the first such
+ 	// error among the arguments in place at calleeBase, or null if there is none.
+-	private: inline Value RefusedErrorArg(FuncDef callee, Int32 calleeBase);
++	private: inline Value RefusedErrorArg(FuncDef& callee, Int32 calleeBase);
+ 
+ 	// Invoke a native callback and handle the result.  If done, writes the
+ 	// result to stack[absoluteResultIndex] and returns true.  If not done,
+ 	// stores the pending state for re-invocation and returns false.
+-	private: inline bool InvokeNativeCallback(NativeCallbackDelegate callback, FuncDef callee, Int32 calleeBase, Int32 argCount, IntrinsicResult partialResult, Int32 absoluteResultIndex);
++	private: inline bool InvokeNativeCallback(const NativeCallbackDelegate& callback, FuncDef& callee, Int32 calleeBase, Int32 argCount, const IntrinsicResult& partialResult, Int32 absoluteResultIndex);
+ 
+ 	public: inline Value Execute(FuncDef entry);
+ 
+@@ -1106,13 +1106,13 @@ inline IntrinsicResult VM::RaiseUncaughtError(Value error) { return get()->Raise
+ inline bool VM::ReportRuntimeError() { return get()->ReportRuntimeError(); }
+ inline Value VM::BuildStackTrace() { return get()->BuildStackTrace(); }
+ inline List<FuncDef> VM::GetFunctions() { return get()->GetFunctions(); }
+-inline Int32 VM::SelfParamOffset(FuncDef callee) { return get()->SelfParamOffset(callee); }
+-inline Int32 VM::ProcessArguments(Int32 argCount,Int32 selfParam,Int32 startPC,Int32 callerBase,Int32 calleeBase,FuncDef callee,List<UInt32> code) { return get()->ProcessArguments(argCount, selfParam, startPC, callerBase, calleeBase, callee, code); }
+-inline void VM::ApplyPendingContext(Int32 calleeBase,FuncDef callee) { return get()->ApplyPendingContext(calleeBase, callee); }
+-inline void VM::SetupCallFrame(Int32 argCount,Int32 selfParam,Int32 calleeBase,FuncDef callee) { return get()->SetupCallFrame(argCount, selfParam, calleeBase, callee); }
++inline Int32 VM::SelfParamOffset(FuncDef& callee) { return get()->SelfParamOffset(callee); }
++inline Int32 VM::ProcessArguments(Int32 argCount,Int32 selfParam,Int32 startPC,Int32 callerBase,Int32 calleeBase,FuncDef& callee,const List<UInt32>& code) { return get()->ProcessArguments(argCount, selfParam, startPC, callerBase, calleeBase, callee, code); }
++inline void VM::ApplyPendingContext(Int32 calleeBase,FuncDef& callee) { return get()->ApplyPendingContext(calleeBase, callee); }
++inline void VM::SetupCallFrame(Int32 argCount,Int32 selfParam,Int32 calleeBase,FuncDef& callee) { return get()->SetupCallFrame(argCount, selfParam, calleeBase, callee); }
+ inline Int32 VM::AutoInvokeFuncRef(Value funcRefVal,Int32 resultReg,Int32 returnPC,Int32 baseIndex,FuncDef currentFunc,FuncDef* calleeOut) { return get()->AutoInvokeFuncRef(funcRefVal, resultReg, returnPC, baseIndex, currentFunc, calleeOut); }
+-inline Value VM::RefusedErrorArg(FuncDef callee,Int32 calleeBase) { return get()->RefusedErrorArg(callee, calleeBase); }
+-inline bool VM::InvokeNativeCallback(NativeCallbackDelegate callback,FuncDef callee,Int32 calleeBase,Int32 argCount,IntrinsicResult partialResult,Int32 absoluteResultIndex) { return get()->InvokeNativeCallback(callback, callee, calleeBase, argCount, partialResult, absoluteResultIndex); }
++inline Value VM::RefusedErrorArg(FuncDef& callee,Int32 calleeBase) { return get()->RefusedErrorArg(callee, calleeBase); }
++inline bool VM::InvokeNativeCallback(const NativeCallbackDelegate& callback,FuncDef& callee,Int32 calleeBase,Int32 argCount,const IntrinsicResult& partialResult,Int32 absoluteResultIndex) { return get()->InvokeNativeCallback(callback, callee, calleeBase, argCount, partialResult, absoluteResultIndex); }
+ inline Value VM::Execute(FuncDef entry) { return get()->Execute(entry); }
+ inline Value VM::Execute(FuncDef entry,UInt32 maxCycles) { return get()->Execute(entry, maxCycles); }
+ inline Value VM::Run(UInt32 maxCycles) { return get()->Run(maxCycles); }

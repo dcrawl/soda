@@ -39,7 +39,7 @@ All PRs are open and waiting on Joe. #34 sits on #27 and #37 on #32, so each nee
 | S-T4 text dirty flag / offscreen cache | an idle `TextDisplay.render` costs ~0.5 ms/frame, but cells are public maps mutated directly, so a cache needs an API decision | left for Joe |
 | `tint` default (BIND-01) | prototyped on branch `perf/tint-default`; see FINDINGS | not proposed |
 | Null/wrong-type argument validation across the library | 272 of 1072 hostile calls end in an ordinary MiniScript runtime error, not a crash | skipped on purpose |
-| Bytecode optimization / opcode fusion | fusing all cheap opcodes is worth at most about 3% of the scenario 1 frame; but a call costs 137-180 ns (60x a cheap instruction), and the two calls in `Ball.update` are about a quarter of its cost | not prototyped; intrinsic-call and call-path cost are the candidates (FINDINGS) |
+| Bytecode optimization / opcode fusion | fusing all cheap opcodes is worth at most about 3% of the scenario 1 frame; but a call costs 137-180 ns (60x a cheap instruction), and the two calls in `Ball.update` are about a quarter of its cost | not pursued; the call-path cost turned out to be fixable: next section |
 
 ## Filed upstream (miniscript2)
 
@@ -68,6 +68,15 @@ Prompted by "is there a faster map?": a replacement table is not worth it (reads
 | scn5 everything | 7.82 | 6.58 (-16%) |
 
 miniscript2's own test suite passes on the patched build (914/914). Not yet run on it: raylib-miniscript `interp_tests`/`handle_tests` and Soda's `qa_*.ms`. The patch edits transpiled output; Joe must express it in C#.
+
+## Call-path patch (miniscript2) — ready to file
+
+The C++ VM passes `FuncDef`, the native callback and `List` by value on every call, so each call pays atomic refcounts and a `std::function`
+clone (same defect class as #30). Passing them by reference (`perf_results/call_path_byref.patch`, 3 generated files, no logic change) cuts a
+user call from 171 to 94 ns, an intrinsic call from 180 to 82 ns, and `Ball.update` by 10%. Soda total frame: scn1 -16%, scn3 -11%, scn5 -14%
+alone; with the map patch (#31) -36%, -19%, -31%. miniscript2's 914 tests pass and Soda `qa_*.ms` output is unchanged. Not yet filed;
+not run: C# build, raylib-miniscript `interp_tests`/`handle_tests`. Details in FINDINGS.
+
 
 ## Where the time goes now (scenario profiles)
 

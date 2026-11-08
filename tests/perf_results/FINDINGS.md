@@ -1292,3 +1292,39 @@ Ceilings: fusing every cheap opcode away is at most about 165 ns per ball (about
 
 Candidates, by expected value: (1) intrinsic calls (`sign`, `abs`, `floor`) as opcodes or a cheaper call path; (2) cheaper user and method calls;
 (3) constant hoisting; (4) fused field read. Nothing prototyped or filed.
+
+### Call-path prototype: pass FuncDef / callback / List by reference (miniscript2)
+Cause (native sample of a 12M-call loop, `perf_call.ms`): the C++ VM passes `FuncDef` (a `shared_ptr` wrapper), `NativeCallbackDelegate`
+(`std::function`) and `List<UInt32>` by value through `SelfParamOffset`, `ProcessArguments`, `ApplyPendingContext`, `SetupCallFrame`,
+`RefusedErrorArg` and `InvokeNativeCallback`, and `FuncDef`'s getters (`ParamNames()`, `ParamDefaults()`, `Code()`, `Constants()`,
+`NativeCallback()`, ...) return `List`/`std::function` handles by value. Each is an atomic refcount pair or a `std::function` clone, many
+times per call (the profile showed `__clone`, `CallInfo` construction, `FunctionDef()`, `_tlv_get_addr`). Same class of defect as miniscript2#30.
+
+Change (`perf_results/call_path_byref.patch`, 3 generated files, +39/-39, no logic change): those six function signatures take
+`FuncDef&`, `const List<UInt32>&`, `const NativeCallbackDelegate&`, `const IntrinsicResult&`; the `FuncDef` getters for `Code`, `Constants`,
+`ParamNames`, `ParamDefaults`, `GlobalNames`, `GlobalSlots` and `NativeCallback` return references; `IsNull(NativeCallbackDelegate)` takes a
+const reference. (`FuncDef&`, not const, because FuncDef's accessors are not const-qualified.)
+
+Micro-benchmarks (ns per call, `perf_call.ms`, `perf_ballcall.ms`; base host vs patched, 2 runs agree to <1%):
+| | base | patched |
+|---|---|---|
+| user call `f(x)` | 171 | 94 (-45%) |
+| user call `f()` | 137 | 94 (-31%) |
+| intrinsic `sign(x)` via local | 180 | 82 (-55%) |
+| `Ball.update` per ball | 1370 | 1227 (-10%) |
+| empty method call + loop | 234 | 188 (-20%) |
+
+Soda scenarios (ms/frame, 2 runs agree to ~1%):
+| Scenario | user base | user call patch | total base | total call patch | total map + call patches |
+|---|---|---|---|---|---|
+| scn1 5000 balls | 7.16 | 6.35 (-11%) | 32.9 | 27.7 (-16%) | 21.2 (-36%) |
+| scn3 platformer | 0.378 | 0.349 (-8%) | 2.82 | 2.50 (-11%) | 2.29 (-19%) |
+| scn5 everything | 2.07 | 1.96 (-5%) | 8.06 | 6.95 (-14%) | 5.60 (-31%) |
+The total improves more than the user phase because the render phase makes many native (raylib) calls from MiniScript.
+The first scn1 run of the combined build read 22.95, the second 21.23 (user 4.78 vs 4.28), so the combined scn1 figure carries more noise than the others.
+
+Correctness: miniscript2 `--test` 914 passed, 0 failed, on the call patch alone and on the call patch plus `map_write_combined.patch` (the two apply
+cleanly in either order). Soda `qa_*.ms`: identical output on base and patched hosts. NOT run: raylib-miniscript `interp_tests`/`handle_tests`,
+and the C# build. Like the map patch, the edits are in `generated/`; the real change belongs in the C# sources and the transpiler's output for
+by-reference parameters (`// CPP:` annotations or a transpiler feature) needs Joe's input. Not tried: a `RefusedErrorArg` skip when
+`AcceptsErrorMask` is zero, trimming `SetupCallFrame`'s register clear, or the `_tlv_get_addr` lookup, which may give more.
