@@ -45,6 +45,7 @@ All PRs are open and waiting on Joe. #34 sits on #27 and #37 on #32, so each nee
 
 - **#29 (VM-01):** unique short strings are interned and never swept by automatic GC: about 240 B leaked per distinct string, 14.7 to 179 MB over a 30 min soak of a scene that only prints `"N " + n`. Any HUD counter hits this. Soda cannot fix it cleanly (`gc.collect true` periodically recovers ~65%).
 - **#31 (map writes and isa walks):** see "VM patch" below; filed after #30 was open.
+- **#32 (call path):** FuncDef, the native callback and List are passed by value on every call; by reference, a call is 45-55% cheaper and Soda frames 11-16% faster. See "Call-path patch" below.
 - **#30 (S-V1):** `GCMapSet::Get` returns a struct by value, so every lookup copies `shared_ptr` members (atomic refcounts). A const-ref prototype made Soda frames 5-12% faster (scn1 5000: 32.5 to 28.6 ms). Joe decides how to express it in C#.
 
 ## VM patch (miniscript2) — filed as miniscript2#31
@@ -69,12 +70,12 @@ Prompted by "is there a faster map?": a replacement table is not worth it (reads
 
 miniscript2's own test suite passes on the patched build (914/914). Not yet run on it: raylib-miniscript `interp_tests`/`handle_tests` and Soda's `qa_*.ms`. The patch edits transpiled output; Joe must express it in C#.
 
-## Call-path patch (miniscript2) — ready to file
+## Call-path patch (miniscript2) — filed as miniscript2#32
 
 The C++ VM passes `FuncDef`, the native callback and `List` by value on every call, so each call pays atomic refcounts and a `std::function`
 clone (same defect class as #30). Passing them by reference (`perf_results/call_path_byref.patch`, 3 generated files, no logic change) cuts a
 user call from 171 to 94 ns, an intrinsic call from 180 to 82 ns, and `Ball.update` by 10%. Soda total frame: scn1 -16%, scn3 -11%, scn5 -14%
-alone; with the map patch (#31) -36%, -19%, -31%. miniscript2's 914 tests pass and Soda `qa_*.ms` output is unchanged. Not yet filed;
+alone; with the map patch (#31) -36%, -19%, -31%. miniscript2's 914 tests pass and Soda `qa_*.ms` output is unchanged. Filed as JoeStrout/miniscript2#32;
 not run: C# build, raylib-miniscript `interp_tests`/`handle_tests`. Details in FINDINGS.
 
 
