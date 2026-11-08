@@ -1258,3 +1258,37 @@ Caveats:
 - The remaining write cost (52 ns) is mostly `SETRFIND` + `IDXSET` dispatch, `ChainHasSetter` and the dictionary store; remove is still
   485 ns (the `_pos` index is built on a map's first removal, and removal tombstones `_order`) and was not investigated further.
 - The tiny-key class-instance assign (30 -> 36 ns) was within the noise of two runs; it was not isolated.
+
+## Bytecode and call-overhead exploration (miniscript2)
+
+Question: is there waste in the compiler's bytecode, and what would optimization techniques (fusing opcodes, inlining, loop hoisting) be worth?
+No prototype built; this is a ceiling estimate. Scripts: `tests/perf_call.ms`, `tests/perf_ballcall.ms` (plain host scripts, local variables, best of 7).
+
+Bytecode (`miniscript -d`) for a Ball.update-like function: 123 static instructions, about 86 executed per call, about 66 of them cheap
+(LOAD 26, LOADV 16, CALLIFR 11, BRFALSE 7, JUMP 6, ARG/ARGBLK 12, ERRCHK 5). A field read `self.vy` is LOADV + LOAD + METHFIN + CALLIFR (4 dispatches
+for 1 lookup); a field write is SETRFIN + BRFALSE + IDXSET (setter-call block skipped). The compiler is not wasteful; the cheap instructions
+surround few expensive ones.
+
+Cost per operation (ns, loop overhead subtracted):
+| Operation | ns |
+|---|---|
+| Cheap instruction (register move) | 2.5 |
+| Inline `x + 1` | 6 |
+| Field read `o.k` (includes outer-variable fetch of `o`) | 35 |
+| User call `f()` | 137 |
+| User call `f(x)` | 170 |
+| Intrinsic call `sign(x)` via local | 180 |
+
+A call costs about 60 cheap instructions. An intrinsic costs the same as a user function, so it goes through the full call path. This agrees with
+miniscript2 `notes/CALL_OPT_ATTEMPT.md` (fib(33), about 130 ns per call).
+
+Ball.update, 2000 balls, ns per update: full 1372; `sign()` replaced by two comparisons 1249 (-123, 9%); empty update 234 (the `b.update` method call
+plus loop, 17%). The two calls together are about a quarter of the per-ball cost. The in-situ scenario 1 figure is lower (about 1030 ns), so read the
+shares, not the absolute values.
+
+Ceilings: fusing every cheap opcode away is at most about 165 ns per ball (about 3% of the scenario 1 frame); a fused field read alone about 80 ns
+(about 1.6%). Calls are roughly twice that. Not evaluated: constant-load hoisting out of loops (safe, only helps loop bodies), loop unrolling
+(low value), divide-to-multiply (not exact except powers of two; a divide costs about one dispatch).
+
+Candidates, by expected value: (1) intrinsic calls (`sign`, `abs`, `floor`) as opcodes or a cheaper call path; (2) cheaper user and method calls;
+(3) constant hoisting; (4) fused field read. Nothing prototyped or filed.

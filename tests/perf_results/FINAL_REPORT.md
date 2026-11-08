@@ -39,6 +39,7 @@ All PRs are open and waiting on Joe. #34 sits on #27 and #37 on #32, so each nee
 | S-T4 text dirty flag / offscreen cache | an idle `TextDisplay.render` costs ~0.5 ms/frame, but cells are public maps mutated directly, so a cache needs an API decision | left for Joe |
 | `tint` default (BIND-01) | prototyped on branch `perf/tint-default`; see FINDINGS | not proposed |
 | Null/wrong-type argument validation across the library | 272 of 1072 hostile calls end in an ordinary MiniScript runtime error, not a crash | skipped on purpose |
+| Bytecode optimization / opcode fusion | fusing all cheap opcodes is worth at most about 3% of the scenario 1 frame; but a call costs 137-180 ns (60x a cheap instruction), and the two calls in `Ball.update` are about a quarter of its cost | not prototyped; intrinsic-call and call-path cost are the candidates (FINDINGS) |
 
 ## Filed upstream (miniscript2)
 
